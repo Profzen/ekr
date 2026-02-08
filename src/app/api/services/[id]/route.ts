@@ -1,0 +1,42 @@
+import { NextResponse } from "next/server";
+import connectToDatabase from "@/lib/db";
+import ServiceModel from "@/models/Service";
+import { isAdminAuthenticated } from "@/lib/adminAuth";
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  if (!isAdminAuthenticated()) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const body = await request.json();
+  await connectToDatabase();
+
+  const service = await ServiceModel.findByIdAndUpdate(params.id, body, {
+    new: true,
+  }).lean();
+
+  if (!service) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ data: service });
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: { id: string } }
+) {
+  if (!isAdminAuthenticated()) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  await connectToDatabase();
+  const service = await ServiceModel.findByIdAndDelete(params.id).lean();
+
+  if (!service) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ data: service });
+}

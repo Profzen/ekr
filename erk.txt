@@ -1,0 +1,166 @@
+CAHIER DES CHARGES
+Site web institutionnel
+EKR AFRICA AGROVISION GROUP
+Slogan : Cultivating Africa’s Future
+
+1. Contexte et objectifs du site
+EKR AFRICA AGROVISION GROUP est une société spécialisée dans l’accompagnement, le conseil et le développement des activités agricoles en Afrique.
+Le site web a pour objectifs :
+•	Présenter la société, son historique et sa vision
+•	Mettre en valeur les services et activités agricoles
+•	Valoriser le Directeur Général
+•	Communiquer sur les événements, projets et actions via des articles
+•	Présenter les partenaires
+•	Offrir au Directeur Général une interface simple pour gérer le contenu du site
+Le site devra être simple, intuitif, ergonomique, professionnel et responsive (mobile, tablette, ordinateur).
+
+2. Public cible
+•	Producteurs agricoles
+•	Acteurs et organisations rurales
+•	Partenaires techniques et financiers
+•	Institutions publiques et privées
+•	Investisseurs et porteurs de projets agricoles
+
+3. Structure et arborescence du site
+Le site est conçu avec un nombre très limité de pages afin de garantir simplicité et ergonomie.
+
+3.1 Page d’accueil
+La page d’accueil présente l’essentiel et sert de vitrine principale.
+•	Bannière principale :
+o	Nom de la société
+o	Slogan
+•	Message institutionnel de présentation
+•	Présentation synthétique de la société
+•	Historique résumé
+•	Section « Services » (aperçu)
+•	Section « Direction Générale » :
+o	Photo officielle du Directeur Général
+o	Biographie professionnelle (résumée)
+o	Message du DG
+•	Section « Activités clés »
+•	Section « Articles & Galerie » (aperçu)
+•	Quelques photos illustratives
+•	Section « Partenaires » :
+o	Logos et noms des partenaires
+o	Défilement horizontal
+o	Positionnée juste avant le pied de page
+•	Pied de page :
+o	Coordonnées principales
+o	Informations utiles
+
+3.2 Page « Présentation – Services – Contact » (page fusionnée)
+Cette page regroupe l’ensemble des informations détaillées de la société.
+Présentation de la société
+•	Présentation détaillée de EKR AFRICA AGROVISION GROUP
+•	Contexte et historique de création
+•	Vision, mission et valeurs
+•	Engagement pour l’agriculture durable et le développement rural
+Direction Générale
+•	Photo officielle du Directeur Général
+•	Biographie professionnelle complète
+•	Message du DG
+Services
+Présentation détaillée des services proposés par la société :
+1.	Conseil agricole
+Optimisation des ressources et des pratiques culturales
+2.	Expertise agricole
+Évaluation et amélioration de projets agricoles
+3.	Formation
+Itinéraires techniques adaptés aux cultures
+4.	Accompagnement des producteurs
+Suivis personnalisés et encadrement terrain
+5.	Consultation agricole
+Stratégies pour l’amélioration de la productivité
+6.	Collecte de données agricoles
+Analyses et recommandations techniques
+7.	Gestion de projets agricoles
+Conception, suivi et évaluation
+8.	Développement rural
+Aménagement et valorisation des zones rurales
+9.	Études de faisabilité
+Évaluations économiques et techniques
+10.	Systèmes d’irrigation
+Solutions durables et adaptées
+11.	Incubation de projets agricoles
+•	Diagnostic de projets
+•	Analyses techniques et économiques
+•	Rédaction de plans d’affaires
+•	Recherche de financements
+•	Accompagnement à la mise en œuvre
+12.	Création et gestion de coopératives agricoles
+•	Filières : piment long, gingembre
+•	Orientation exportation et commercialisation
+•	Suivi et encadrement des producteurs
+Contact
+•	Coordonnées de la société
+•	Numéro de contact
+•	Formulaire de contact
+•	Localisation (si nécessaire)
+
+3.3 Page « Articles & Galerie »
+Une seule page dédiée à la communication visuelle et aux actualités.
+Articles / Actualités
+•	Liste des articles publiés
+•	Chaque article comprend :
+o	Titre
+o	Image principale
+o	Description courte
+o	Contenu détaillé
+o	Date de publication
+Galerie
+•	Photos des activités, projets et événements
+•	Classement par catégories
+•	Affichage clair et visuel
+
+4. Partenaires (sans page dédiée)
+•	Les partenaires ne disposent pas de page dédiée
+•	Les logos et noms des partenaires :
+o	Sont affichés uniquement sur la page d’accueil
+o	Défilent horizontalement
+o	Sont positionnés juste avant le pied de page
+
+5. Interface d’administration (Back-office)
+Une interface sécurisée et simple sera accessible au Directeur Général.
+5.1 Gestion des articles
+•	Créer un article
+•	Modifier un article
+•	Supprimer un article
+•	Ajouter images, titres, descriptions et contenu
+5.2 Gestion des pages
+•	Modifier les contenus de :
+o	Page d’accueil
+o	Page Présentation – Services – Contact
+o	Page Articles & Galerie
+•	Mettre à jour les textes institutionnels
+5.3 Gestion des services
+•	Ajouter, modifier ou supprimer des services
+•	Mettre à jour les descriptions
+5.4 Gestion des partenaires
+•	Ajouter un partenaire
+•	Modifier un partenaire
+•	Supprimer un partenaire
+•	Gérer les logos et noms
+5.5 Gestion de la galerie
+•	Ajouter des photos
+•	Supprimer des photos
+•	Classer par catégories
+5.6 Gestion du profil du Directeur Général
+•	Modifier la photo
+•	Mettre à jour la biographie
+•	Modifier le message du DG
+5.7 Sécurité
+•	Connexion sécurisée (identifiant et mot de passe)
+•	Accès réservé à l’administrateur
+6. Exigences techniques
+•	Site responsive (mobile, tablette, ordinateur)
+•	Navigation fluide et intuitive
+•	Design professionnel et épuré
+•	Temps de chargement optimisé
+•	Interface d’administration simple à utiliser
+•	Hébergement sécurisé
+•	Sauvegarde des données
+
+pour la stack moi je veux utiliser next js pour le back et front  et pour la base je veux utiliser mongo db atlas pour stocké les doc et les liens ,
+ pour voir ce que je fais en ligne dans un premier temps j'utiliserais vercel pour voir les chose,
+ pour sauvegarder les video et image qui seront posté sur le site , j'utiliserais cloudinary, 
+et je ferais les recuperation pour affichage et modifications
