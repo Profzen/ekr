@@ -5,29 +5,52 @@ import GalleryItemModel from "@/models/GalleryItem";
 export const dynamic = "force-dynamic";
 
 export default async function ArticlesGaleriePage() {
-  await connectToDatabase();
-  const articles = await ArticleModel.find({ status: "published" })
-    .sort({ publishedAt: -1, createdAt: -1 })
-    .lean();
+  let normalizedArticles: Array<{
+    _id: string;
+    title: string;
+    excerpt: string;
+    coverImage?: string;
+    slug?: string;
+    date: string;
+  }> = [];
+  let gallery: Array<{ _id: string; title: string; imageUrl: string; category: string }> = [];
 
-  const normalizedArticles = articles.map((article) => ({
-    _id: article._id.toString(),
-    title: article.title,
-    excerpt: article.excerpt,
-    coverImage: article.coverImage,
-    slug: article.slug,
-    date: article.publishedAt
-      ? new Date(article.publishedAt).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        })
-      : "",
-  }));
+  try {
+    await connectToDatabase();
+    const [articles, galleryItems] = await Promise.all([
+      ArticleModel.find({ status: "published" })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .lean(),
+      GalleryItemModel.find({ isActive: true })
+        .sort({ order: 1, createdAt: -1 })
+        .lean(),
+    ]);
 
-  const gallery = await GalleryItemModel.find({ isActive: true })
-    .sort({ order: 1, createdAt: -1 })
-    .lean();
+    normalizedArticles = articles.map((article) => ({
+      _id: article._id.toString(),
+      title: article.title,
+      excerpt: article.excerpt,
+      coverImage: article.coverImage,
+      slug: article.slug,
+      date: article.publishedAt
+        ? new Date(article.publishedAt).toLocaleDateString("fr-FR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          })
+        : "",
+    }));
+
+    gallery = galleryItems.map((item) => ({
+      _id: item._id.toString(),
+      title: item.title,
+      imageUrl: item.imageUrl,
+      category: item.category,
+    }));
+  } catch (error) {
+    normalizedArticles = [];
+    gallery = [];
+  }
 
   return (
     <div className="bg-white">
@@ -98,7 +121,7 @@ export default async function ArticlesGaleriePage() {
             )}
             {gallery.map((item) => (
               <div
-                key={item._id.toString()}
+                key={item._id}
                 className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm"
               >
                 <img

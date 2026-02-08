@@ -1,35 +1,33 @@
-import crypto from "crypto";
 import { cookies } from "next/headers";
 
 const COOKIE_NAME = "ekr_admin";
+const SESSION_MAX_AGE = 60 * 60 * 2;
 
 function getExpectedToken() {
-  const password = process.env.ADMIN_PASSWORD;
   const secret = process.env.ADMIN_TOKEN_SECRET;
-
-  if (!password || !secret) {
-    return null;
-  }
-
-  return crypto.createHmac("sha256", secret).update(password).digest("hex");
+  if (!secret) return null;
+  return secret;
 }
 
-export function setAdminCookie() {
+export async function setAdminCookie() {
   const token = getExpectedToken();
   if (!token) return;
 
-  cookies().set({
+  const store = await cookies();
+  store.set({
     name: COOKIE_NAME,
     value: token,
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
+    maxAge: SESSION_MAX_AGE,
   });
 }
 
-export function clearAdminCookie() {
-  cookies().set({
+export async function clearAdminCookie() {
+  const store = await cookies();
+  store.set({
     name: COOKIE_NAME,
     value: "",
     httpOnly: true,
@@ -40,10 +38,11 @@ export function clearAdminCookie() {
   });
 }
 
-export function isAdminAuthenticated() {
+export async function isAdminAuthenticated() {
   const token = getExpectedToken();
   if (!token) return false;
 
-  const cookie = cookies().get(COOKIE_NAME)?.value;
+  const store = await cookies();
+  const cookie = store.get(COOKIE_NAME)?.value;
   return cookie === token;
 }

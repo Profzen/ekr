@@ -5,11 +5,43 @@ import DirectorProfileModel from "@/models/DirectorProfile";
 export const dynamic = "force-dynamic";
 
 export default async function PresentationServicesContactPage() {
-  await connectToDatabase();
-  const services = await ServiceModel.find({ isActive: true })
-    .sort({ order: 1, createdAt: -1 })
-    .lean();
-  const director = await DirectorProfileModel.findOne().lean();
+  let services: Array<{ _id: string; title: string; description: string }> = [];
+  let director: {
+    name?: string;
+    title?: string;
+    photoUrl?: string;
+    bio?: string;
+    message?: string;
+  } | null = null;
+
+  try {
+    await connectToDatabase();
+    const [fetchedServices, fetchedDirector] = await Promise.all([
+      ServiceModel.find({ isActive: true })
+        .sort({ order: 1, createdAt: -1 })
+        .lean(),
+      DirectorProfileModel.findOne().lean(),
+    ]);
+
+    services = fetchedServices.map((service) => ({
+      _id: service._id.toString(),
+      title: service.title,
+      description: service.description,
+    }));
+
+    director = fetchedDirector
+      ? {
+          name: fetchedDirector.name,
+          title: fetchedDirector.title,
+          photoUrl: fetchedDirector.photoUrl,
+          bio: fetchedDirector.bio,
+          message: fetchedDirector.message,
+        }
+      : null;
+  } catch (error) {
+    services = [];
+    director = null;
+  }
 
   return (
     <div className="bg-white">
@@ -83,7 +115,7 @@ export default async function PresentationServicesContactPage() {
             )}
             {services.map((service) => (
               <div
-                key={service._id.toString()}
+                key={service._id}
                 className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm"
               >
                 <h3 className="text-base font-semibold text-slate-900">

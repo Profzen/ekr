@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export default function AdminLoginPage() {
     const res = await fetch("/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ username, password }),
     });
 
     if (!res.ok) {
@@ -43,6 +44,14 @@ export default function AdminLoginPage() {
       <section className="mx-auto w-full max-w-md px-6 pb-16">
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+              placeholder="Nom d’utilisateur"
+              required
+            />
             <input
               type="password"
               value={password}

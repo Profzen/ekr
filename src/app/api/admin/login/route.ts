@@ -3,12 +3,17 @@ import { setAdminCookie } from "@/lib/adminAuth";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { password } = body ?? {};
+  const { username, password } = body ?? {};
 
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  if (
+    !username ||
+    !password ||
+    username !== process.env.ADMIN_USERNAME ||
+    password !== process.env.ADMIN_PASSWORD
+  ) {
     return NextResponse.json({ error: "Invalid password" }, { status: 401 });
   }
 
-  setAdminCookie();
+  await setAdminCookie();
   return NextResponse.json({ ok: true });
 }

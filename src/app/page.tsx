@@ -7,28 +7,87 @@ import DirectorProfileModel from "@/models/DirectorProfile";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const services = await ServiceModel.find({ isActive: true })
-    .sort({ order: 1, createdAt: -1 })
-    .limit(6)
-    .lean();
-
   const activities = [
     "Optimisation des pratiques culturales",
     "Évaluation de projets agricoles",
     "Programmes d’irrigation durable",
     "Incubation et suivi de coopératives",
   ];
+  let services: Array<{ _id: string; title: string; description: string }> = [];
+  let partners: Array<{ _id: string; name: string }> = [];
+  let articles: Array<{
+    _id: string;
+    title: string;
+    excerpt: string;
+    coverImage?: string;
+    slug?: string;
+    publishedAt?: Date | null;
+  }> = [];
+  let director: {
+    name?: string;
+    title?: string;
+    photoUrl?: string;
+    bio?: string;
+    message?: string;
+  } | null = null;
 
-  await connectToDatabase();
-  const articles = await ArticleModel.find({ status: "published" })
-    .sort({ publishedAt: -1, createdAt: -1 })
-    .limit(3)
-    .lean();
+  try {
+    await connectToDatabase();
 
-  const director = await DirectorProfileModel.findOne().lean();
+    const [fetchedServices, fetchedPartners, fetchedArticles, fetchedDirector] =
+      await Promise.all([
+        ServiceModel.find({ isActive: true })
+          .sort({ order: 1, createdAt: -1 })
+          .limit(6)
+          .lean(),
+        PartnerModel.find({ isActive: true })
+          .sort({ order: 1, createdAt: -1 })
+          .lean(),
+        ArticleModel.find({ status: "published" })
+          .sort({ publishedAt: -1, createdAt: -1 })
+          .limit(3)
+          .lean(),
+        DirectorProfileModel.findOne().lean(),
+      ]);
+
+    services = fetchedServices.map((service) => ({
+      _id: service._id.toString(),
+      title: service.title,
+      description: service.description,
+    }));
+
+    partners = fetchedPartners.map((partner) => ({
+      _id: partner._id.toString(),
+      name: partner.name,
+    }));
+
+    articles = fetchedArticles.map((article) => ({
+      _id: article._id.toString(),
+      title: article.title,
+      excerpt: article.excerpt,
+      coverImage: article.coverImage,
+      slug: article.slug,
+      publishedAt: article.publishedAt,
+    }));
+
+    director = fetchedDirector
+      ? {
+          name: fetchedDirector.name,
+          title: fetchedDirector.title,
+          photoUrl: fetchedDirector.photoUrl,
+          bio: fetchedDirector.bio,
+          message: fetchedDirector.message,
+        }
+      : null;
+  } catch (error) {
+    services = [];
+    partners = [];
+    articles = [];
+    director = null;
+  }
 
   const latestArticles = articles.map((article) => ({
-    _id: article._id.toString(),
+    _id: article._id,
     title: article.title,
     excerpt: article.excerpt,
     coverImage: article.coverImage,
@@ -42,72 +101,8 @@ export default async function Home() {
       : "",
   }));
 
-  const partners = await PartnerModel.find({ isActive: true })
-    .sort({ order: 1, createdAt: -1 })
-    .lean();
-
   return (
     <div className="bg-white">
-      <section className="bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-        <div className="mx-auto w-full max-w-6xl px-6 py-20">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
-                Site institutionnel
-              </p>
-              <h1 className="mt-4 text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
-                EKR Africa Agrovision Group
-                <span className="block text-emerald-600">Cultivating Africa’s Future</span>
-              </h1>
-              <p className="mt-6 text-lg text-slate-600">
-                Cabinet de conseil et d’accompagnement des activités agricoles en Afrique. Nous
-                structurons des projets durables, renforçons les coopératives et optimisons les
-                filières agricoles.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <a
-                  href="/presentation-services-contact"
-                  className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-700"
-                >
-                  Découvrir nos services
-                </a>
-                <a
-                  href="/articles-galerie"
-                  className="rounded-full border border-emerald-200 px-6 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50"
-                >
-                  Voir les actualités
-                </a>
-              </div>
-            </div>
-            <div className="rounded-3xl border border-emerald-100 bg-white p-8 shadow-sm">
-              <p className="text-sm font-semibold text-emerald-700">Message institutionnel</p>
-              <p className="mt-4 text-base text-slate-600">
-                « Nous accompagnons les producteurs, partenaires et investisseurs dans la mise en
-                œuvre de solutions agricoles innovantes pour une Afrique prospère. »
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">+12</p>
-                  <p className="text-sm text-slate-600">Services spécialisés</p>
-                </div>
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">+40</p>
-                  <p className="text-sm text-slate-600">Projets accompagnés</p>
-                </div>
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">8</p>
-                  <p className="text-sm text-slate-600">Pays partenaires</p>
-                </div>
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">24/7</p>
-                  <p className="text-sm text-slate-600">Suivi des actions</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="mx-auto w-full max-w-6xl px-6 py-16">
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div>
@@ -152,7 +147,7 @@ export default async function Home() {
             )}
             {services.map((service) => (
               <div
-                key={service._id.toString()}
+                key={service._id}
                 className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm"
               >
                 <p className="text-base font-semibold text-slate-900">{service.title}</p>
@@ -273,7 +268,7 @@ export default async function Home() {
             )}
             {partners.map((partner) => (
               <div
-                key={partner._id.toString()}
+                key={partner._id}
                 className="min-w-[200px] rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 shadow-sm"
               >
                 {partner.name}

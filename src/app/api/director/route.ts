@@ -10,7 +10,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!isAdminAuthenticated()) {
+  if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

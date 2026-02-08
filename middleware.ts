@@ -1,17 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
-import crypto from "crypto";
 
 const COOKIE_NAME = "ekr_admin";
 
 function getExpectedToken() {
-  const password = process.env.ADMIN_PASSWORD;
   const secret = process.env.ADMIN_TOKEN_SECRET;
 
-  if (!password || !secret) {
-    return null;
-  }
-
-  return crypto.createHmac("sha256", secret).update(password).digest("hex");
+  if (!secret) return null;
+  return secret;
 }
 
 export function middleware(request: NextRequest) {
