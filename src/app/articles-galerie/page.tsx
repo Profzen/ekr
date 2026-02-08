@@ -55,7 +55,7 @@ export default async function ArticlesGaleriePage() {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Articles & Galerie
           </h1>
@@ -65,7 +65,7 @@ export default async function ArticlesGaleriePage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <h2 className="text-2xl font-semibold text-slate-900">Articles</h2>
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {normalizedArticles.length === 0 && (
@@ -108,7 +108,7 @@ export default async function ArticlesGaleriePage() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Galerie</h2>
           <p className="mt-2 text-sm text-slate-600">
             Photos et vidéos classées par catégories.

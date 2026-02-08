@@ -46,7 +46,7 @@ export default async function PresentationServicesContactPage() {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Présentation · Services · Contact
           </h1>
@@ -57,7 +57,7 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-2">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">
@@ -105,7 +105,7 @@ export default async function PresentationServicesContactPage() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Nos services</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.length === 0 && (
@@ -130,7 +130,7 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-[1.2fr,0.8fr]">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Contact</h2>

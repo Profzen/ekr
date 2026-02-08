@@ -13,6 +13,7 @@ export default async function Home() {
     "Programmes d’irrigation durable",
     "Incubation et suivi de coopératives",
   ];
+
   let services: Array<{ _id: string; title: string; description: string }> = [];
   let partners: Array<{ _id: string; name: string }> = [];
   let articles: Array<{
@@ -103,7 +104,67 @@ export default async function Home() {
 
   return (
     <div className="bg-white">
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+        <div className="mx-auto w-full max-w-7xl px-2 py-20">
+          <div className="grid gap-10 md:grid-cols-2 md:items-center">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                Site institutionnel
+              </p>
+              <h1 className="mt-4 text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
+                EKR Africa Agrovision Group
+                <span className="block text-emerald-600">Cultivating Africa’s Future</span>
+              </h1>
+              <p className="mt-6 text-lg text-slate-600">
+                Cabinet de conseil et d’accompagnement des activités agricoles en Afrique. Nous
+                structurons des projets durables, renforçons les coopératives et optimisons les
+                filières agricoles.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <a
+                  href="/presentation-services-contact"
+                  className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-700"
+                >
+                  Découvrir nos services
+                </a>
+                <a
+                  href="/articles-galerie"
+                  className="rounded-full border border-emerald-200 px-6 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50"
+                >
+                  Voir les actualités
+                </a>
+              </div>
+            </div>
+            <div className="rounded-3xl border border-emerald-100 bg-white p-8 shadow-sm">
+              <p className="text-sm font-semibold text-emerald-700">Message institutionnel</p>
+              <p className="mt-4 text-base text-slate-600">
+                « Nous accompagnons les producteurs, partenaires et investisseurs dans la mise en
+                œuvre de solutions agricoles innovantes pour une Afrique prospère. »
+              </p>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-2xl font-semibold text-emerald-700">+12</p>
+                  <p className="text-sm text-slate-600">Services spécialisés</p>
+                </div>
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-2xl font-semibold text-emerald-700">+40</p>
+                  <p className="text-sm text-slate-600">Projets accompagnés</p>
+                </div>
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-2xl font-semibold text-emerald-700">8</p>
+                  <p className="text-sm text-slate-600">Pays partenaires</p>
+                </div>
+                <div className="rounded-2xl bg-emerald-50 p-4">
+                  <p className="text-2xl font-semibold text-emerald-700">24/7</p>
+                  <p className="text-sm text-slate-600">Suivi des actions</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Présentation de la société</h2>
@@ -129,7 +190,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-slate-900">Services clés</h2>
             <a
@@ -158,7 +219,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-[1.1fr,0.9fr] md:items-center">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Direction Générale</h2>
@@ -192,7 +253,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Activités clés</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {activities.map((activity) => (
@@ -207,7 +268,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-slate-900">Articles & Galerie</h2>
           <a href="/articles-galerie" className="text-sm font-semibold text-emerald-700">
@@ -255,7 +316,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Partenaires</h2>
           <p className="mt-2 text-sm text-slate-600">
             Ils nous font confiance pour l’accompagnement des projets agricoles.
