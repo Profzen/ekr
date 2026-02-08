@@ -19,14 +19,33 @@ export default async function connectToDatabase() {
   if (!MONGODB_URI) {
     throw new Error("Missing MONGODB_URI in environment variables");
   }
+  const safeUri = MONGODB_URI.replace(/:\/\/.*?:.*?@/, "://***:***@");
   if (cached.conn) {
     return cached.conn;
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
-      bufferCommands: false,
-    });
+    console.log("[Mongo] Connecting...", safeUri);
+    cached.promise = mongoose
+      .connect(MONGODB_URI, {
+        bufferCommands: false,
+        serverSelectionTimeoutMS: 20000,
+        connectTimeoutMS: 20000,
+        socketTimeoutMS: 20000,
+        retryWrites: true,
+      })
+      .then((conn) => {
+        console.log("[Mongo] Connected");
+        return conn;
+      })
+      .catch((error) => {
+        console.error("[Mongo] Connection error:", {
+          name: error?.name,
+          message: error?.message,
+          code: error?.code,
+        });
+        throw error;
+      });
   }
 
   cached.conn = await cached.promise;

@@ -3,6 +3,7 @@ import ArticleModel from "@/models/Article";
 import ServiceModel from "@/models/Service";
 import PartnerModel from "@/models/Partner";
 import DirectorProfileModel from "@/models/DirectorProfile";
+import SiteContentModel from "@/models/SiteContent";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function Home() {
   ];
 
   let services: Array<{ _id: string; title: string; description: string }> = [];
-  let partners: Array<{ _id: string; name: string }> = [];
+  let partners: Array<{ _id: string; name: string; logoUrl?: string }> = [];
   let articles: Array<{
     _id: string;
     title: string;
@@ -31,11 +32,16 @@ export default async function Home() {
     bio?: string;
     message?: string;
   } | null = null;
+  let content: {
+    homeMessage?: string;
+    homeAbout?: string;
+    homeHistory?: string;
+  } | null = null;
 
   try {
     await connectToDatabase();
 
-    const [fetchedServices, fetchedPartners, fetchedArticles, fetchedDirector] =
+    const [fetchedServices, fetchedPartners, fetchedArticles, fetchedDirector, fetchedContent] =
       await Promise.all([
         ServiceModel.find({ isActive: true })
           .sort({ order: 1, createdAt: -1 })
@@ -49,6 +55,7 @@ export default async function Home() {
           .limit(3)
           .lean(),
         DirectorProfileModel.findOne().lean(),
+        SiteContentModel.findOne().lean(),
       ]);
 
     services = fetchedServices.map((service) => ({
@@ -60,6 +67,7 @@ export default async function Home() {
     partners = fetchedPartners.map((partner) => ({
       _id: partner._id.toString(),
       name: partner.name,
+      logoUrl: partner.logoUrl,
     }));
 
     articles = fetchedArticles.map((article) => ({
@@ -80,11 +88,20 @@ export default async function Home() {
           message: fetchedDirector.message,
         }
       : null;
+
+    content = fetchedContent
+      ? {
+          homeMessage: fetchedContent.homeMessage,
+          homeAbout: fetchedContent.homeAbout,
+          homeHistory: fetchedContent.homeHistory,
+        }
+      : null;
   } catch (error) {
     services = [];
     partners = [];
     articles = [];
     director = null;
+    content = null;
   }
 
   const latestArticles = articles.map((article) => ({
@@ -138,8 +155,8 @@ export default async function Home() {
             <div className="rounded-3xl border border-emerald-100 bg-white p-8 shadow-sm">
               <p className="text-sm font-semibold text-emerald-700">Message institutionnel</p>
               <p className="mt-4 text-base text-slate-600">
-                « Nous accompagnons les producteurs, partenaires et investisseurs dans la mise en
-                œuvre de solutions agricoles innovantes pour une Afrique prospère. »
+                {content?.homeMessage ||
+                  "« Nous accompagnons les producteurs, partenaires et investisseurs dans la mise en œuvre de solutions agricoles innovantes pour une Afrique prospère. »"}
               </p>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl bg-emerald-50 p-4">
@@ -169,13 +186,12 @@ export default async function Home() {
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Présentation de la société</h2>
             <p className="mt-4 text-base text-slate-600">
-              EKR AFRICA AGROVISION GROUP accompagne les acteurs agricoles à travers le conseil
-              stratégique, l’expertise technique et l’ingénierie de projets. Notre mission est de
-              contribuer au développement rural durable et à la sécurité alimentaire.
+              {content?.homeAbout ||
+                "EKR AFRICA AGROVISION GROUP accompagne les acteurs agricoles à travers le conseil stratégique, l’expertise technique et l’ingénierie de projets. Notre mission est de contribuer au développement rural durable et à la sécurité alimentaire."}
             </p>
             <p className="mt-4 text-base text-slate-600">
-              Historique : créé pour répondre aux besoins d’encadrement des filières agricoles, le
-              groupe a structuré des initiatives à fort impact en Afrique de l’Ouest.
+              {content?.homeHistory ||
+                "Historique : créé pour répondre aux besoins d’encadrement des filières agricoles, le groupe a structuré des initiatives à fort impact en Afrique de l’Ouest."}
             </p>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
@@ -220,34 +236,42 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-2 py-16">
-        <div className="grid gap-10 md:grid-cols-[1.1fr,0.9fr] md:items-center">
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Direction Générale</h2>
-            <p className="mt-4 text-base text-slate-600">
-              {director?.bio ||
-                "Photo officielle et biographie complète seront disponibles ici. Le Directeur Général porte la vision stratégique du groupe et supervise les projets d’impact."}
-            </p>
-            <p className="mt-4 text-base text-slate-600">
-              {director?.message ||
-                "« Ensemble, nous bâtissons une agriculture résiliente au service des communautés rurales. »"}
-            </p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-center">
-            {director?.photoUrl ? (
-              <img
-                src={director.photoUrl}
-                alt={director.name}
-                className="mx-auto h-48 w-48 rounded-full object-cover"
-              />
-            ) : (
-              <div className="mx-auto h-48 w-48 rounded-full bg-emerald-100"></div>
-            )}
-            <p className="mt-4 text-sm font-semibold text-slate-900">
-              {director?.name || "Directeur Général"}
-            </p>
-            <p className="text-sm text-slate-600">
-              {director?.title || "Bio professionnelle (résumée)"}
-            </p>
+        <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-slate-50 p-8 shadow-md">
+          <div className="flex flex-col gap-12 md:flex-row md:items-center md:gap-24 lg:gap-28">
+            <div className="flex flex-col items-center md:items-start">
+              <div className="h-80 w-80 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-4 ring-emerald-100 transition-transform duration-500 hover:-translate-y-1">
+                {director?.photoUrl ? (
+                  <img
+                    src={director.photoUrl}
+                    alt={director.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+                    Photo DG
+                  </div>
+                )}
+              </div>
+              <p className="mt-5 text-base font-semibold text-slate-900">
+                {director?.name || "Directeur Général"}
+              </p>
+            </div>
+            <div className="hidden h-48 w-px self-stretch rounded-full bg-emerald-200 md:block" />
+            <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-6 shadow-sm md:pl-10 lg:pl-12">
+              <h2 className="text-4xl font-semibold text-slate-900">Direction Générale</h2>
+              <p className="mt-3 text-xl font-semibold text-emerald-700">
+                {director?.title || "Fonction"}
+              </p>
+              <p className="mt-5 text-lg text-slate-700">
+                {director?.bio ||
+                  "Photo officielle et biographie complète seront disponibles ici. Le Directeur Général porte la vision stratégique du groupe et supervise les projets d’impact."}
+              </p>
+              <div className="my-6 h-px w-28 rounded-full bg-emerald-200" />
+              <p className="text-lg text-slate-700">
+                {director?.message ||
+                  "« Ensemble, nous bâtissons une agriculture résiliente au service des communautés rurales. »"}
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -330,9 +354,16 @@ export default async function Home() {
             {partners.map((partner) => (
               <div
                 key={partner._id}
-                className="min-w-[200px] rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 shadow-sm"
+                className="min-w-[200px] rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 shadow-sm flex items-center gap-3"
               >
-                {partner.name}
+                {partner.logoUrl ? (
+                  <img
+                    src={partner.logoUrl}
+                    alt={partner.name}
+                    className="h-8 w-8 rounded-full object-contain"
+                  />
+                ) : null}
+                <span>{partner.name}</span>
               </div>
             ))}
           </div>

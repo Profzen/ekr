@@ -124,11 +124,21 @@ export default async function ArticlesGaleriePage() {
                 key={item._id}
                 className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm"
               >
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="h-32 w-full rounded-xl object-cover"
-                />
+                {item.imageUrl.includes("/video/upload/") ||
+                item.imageUrl.endsWith(".mp4") ||
+                item.imageUrl.endsWith(".mov") ? (
+                  <video
+                    src={item.imageUrl}
+                    className="h-32 w-full rounded-xl object-cover"
+                    controls
+                  />
+                ) : (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="h-32 w-full rounded-xl object-cover"
+                  />
+                )}
                 <p className="mt-4 text-sm font-semibold text-slate-900">
                   {item.title}
                 </p>

@@ -31,11 +31,11 @@ export default function RootLayout({
                 <div>
                   <p className="text-sm font-semibold text-slate-800">Coordonnées</p>
                   <p className="mt-2 text-sm text-slate-600">
-                    Abidjan, Côte d’Ivoire
+                    {process.env.NEXT_PUBLIC_SITE_ADDRESS || "Abidjan, Côte d’Ivoire"}
                     <br />
-                    +225 00 00 00 00
+                    {process.env.NEXT_PUBLIC_SITE_PHONE || "+225 00 00 00 00"}
                     <br />
-                    contact@ekr-africa.com
+                    {process.env.NEXT_PUBLIC_SITE_EMAIL || "contact@ekr-africa.com"}
                   </p>
                 </div>
                 <div>

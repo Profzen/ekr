@@ -1,6 +1,7 @@
 import connectToDatabase from "@/lib/db";
 import ServiceModel from "@/models/Service";
 import DirectorProfileModel from "@/models/DirectorProfile";
+import SiteContentModel from "@/models/SiteContent";
 
 export const dynamic = "force-dynamic";
 
@@ -13,14 +14,25 @@ export default async function PresentationServicesContactPage() {
     bio?: string;
     message?: string;
   } | null = null;
+  let content: {
+    presentationAbout?: string;
+    presentationVision?: string;
+    presentationMission?: string;
+    presentationValues?: string;
+    contactAddress?: string;
+    contactPhone?: string;
+    contactEmail?: string;
+    mapEmbedUrl?: string;
+  } | null = null;
 
   try {
     await connectToDatabase();
-    const [fetchedServices, fetchedDirector] = await Promise.all([
+    const [fetchedServices, fetchedDirector, fetchedContent] = await Promise.all([
       ServiceModel.find({ isActive: true })
         .sort({ order: 1, createdAt: -1 })
         .lean(),
       DirectorProfileModel.findOne().lean(),
+      SiteContentModel.findOne().lean(),
     ]);
 
     services = fetchedServices.map((service) => ({
@@ -38,9 +50,22 @@ export default async function PresentationServicesContactPage() {
           message: fetchedDirector.message,
         }
       : null;
+    content = fetchedContent
+      ? {
+          presentationAbout: fetchedContent.presentationAbout,
+          presentationVision: fetchedContent.presentationVision,
+          presentationMission: fetchedContent.presentationMission,
+          presentationValues: fetchedContent.presentationValues,
+          contactAddress: fetchedContent.contactAddress,
+          contactPhone: fetchedContent.contactPhone,
+          contactEmail: fetchedContent.contactEmail,
+          mapEmbedUrl: fetchedContent.mapEmbedUrl,
+        }
+      : null;
   } catch (error) {
     services = [];
     director = null;
+    content = null;
   }
 
   return (
@@ -64,42 +89,52 @@ export default async function PresentationServicesContactPage() {
               Présentation de la société
             </h2>
             <p className="mt-4 text-base text-slate-600">
-              EKR AFRICA AGROVISION GROUP est une société spécialisée dans
-              l’accompagnement, le conseil et le développement des activités
-              agricoles en Afrique. Nous accompagnons les investisseurs,
-              producteurs et institutions dans la structuration de projets à fort
-              impact.
+              {content?.presentationAbout ||
+                "EKR AFRICA AGROVISION GROUP est une société spécialisée dans l’accompagnement, le conseil et le développement des activités agricoles en Afrique. Nous accompagnons les investisseurs, producteurs et institutions dans la structuration de projets à fort impact."}
             </p>
             <p className="mt-4 text-base text-slate-600">
-              Vision : une agriculture africaine innovante, durable et inclusive.
-              Mission : mettre en place des solutions techniques et financières
-              pour accélérer la performance des filières.
+              {content?.presentationVision ||
+                "Vision : une agriculture africaine innovante, durable et inclusive."}
+              <br />
+              {content?.presentationMission ||
+                "Mission : mettre en place des solutions techniques et financières pour accélérer la performance des filières."}
             </p>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
             <h3 className="text-lg font-semibold text-slate-900">
               Direction Générale
             </h3>
-            <p className="mt-4 text-sm text-slate-600">
-              {director?.bio ||
-                "Photo officielle, biographie complète et message du Directeur Général seront disponibles ici."}
-            </p>
-            {director?.photoUrl ? (
-              <img
-                src={director.photoUrl}
-                alt={director.name}
-                className="mt-6 h-40 w-full rounded-2xl object-cover"
-              />
-            ) : (
-              <div className="mt-6 h-40 rounded-2xl bg-emerald-100"></div>
-            )}
-            <p className="mt-4 text-sm font-semibold text-slate-800">
-              {director?.name || "Message du DG"}
-            </p>
-            <p className="mt-2 text-sm text-slate-600">
-              {director?.message ||
-                "« L’agriculture est la clé de la transformation économique en Afrique. »"}
-            </p>
+            <div className="mt-6 grid gap-6 md:grid-cols-[1.1fr,1fr] md:items-stretch">
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                {director?.photoUrl ? (
+                  <img
+                    src={director.photoUrl}
+                    alt={director.name}
+                    className="h-full w-full object-contain"
+                  />
+                ) : (
+                  <div className="flex h-56 items-center justify-center text-xs text-slate-400">
+                    Photo DG
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col justify-center">
+                <p className="text-sm font-semibold text-slate-800">
+                  {director?.title || "Fonction"}
+                </p>
+                <p className="mt-2 text-lg font-semibold text-slate-900">
+                  {director?.name || "Directeur Général"}
+                </p>
+                <p className="mt-4 text-sm text-slate-600">
+                  {director?.bio ||
+                    "Photo officielle, biographie complète et message du Directeur Général seront disponibles ici."}
+                </p>
+                <p className="mt-3 text-sm text-slate-600">
+                  {director?.message ||
+                    "« L’agriculture est la clé de la transformation économique en Afrique. »"}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -138,9 +173,9 @@ export default async function PresentationServicesContactPage() {
               Pour toute collaboration ou demande d’information, contactez-nous.
             </p>
             <div className="mt-6 space-y-2 text-sm text-slate-600">
-              <p>Abidjan, Côte d’Ivoire</p>
-              <p>+225 00 00 00 00</p>
-              <p>contact@ekr-africa.com</p>
+              <p>{content?.contactAddress || "Abidjan, Côte d’Ivoire"}</p>
+              <p>{content?.contactPhone || "+225 00 00 00 00"}</p>
+              <p>{content?.contactEmail || "contact@ekr-africa.com"}</p>
             </div>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
@@ -169,6 +204,29 @@ export default async function PresentationServicesContactPage() {
                 Envoyer
               </button>
             </form>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-50">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
+          <h2 className="text-2xl font-semibold text-slate-900">Localisation</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            {content?.contactAddress || "Adresse à préciser"}
+          </p>
+          <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-4">
+            {content?.mapEmbedUrl ? (
+              <iframe
+                src={content.mapEmbedUrl}
+                className="h-80 w-full rounded-2xl"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            ) : (
+              <div className="flex h-80 items-center justify-center rounded-2xl bg-slate-100 text-sm text-slate-500">
+                Ajoute une URL Google Maps dans l’admin pour afficher la carte.
+              </div>
+            )}
           </div>
         </div>
       </section>
