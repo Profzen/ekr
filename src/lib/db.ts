@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI ?? "";
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("Missing MONGODB_URI in environment variables");
-}
-
 type MongooseCache = {
   conn: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -20,6 +16,9 @@ const cached = globalForMongoose.mongoose || { conn: null, promise: null };
 globalForMongoose.mongoose = cached;
 
 export default async function connectToDatabase() {
+  if (!MONGODB_URI) {
+    throw new Error("Missing MONGODB_URI in environment variables");
+  }
   if (cached.conn) {
     return cached.conn;
   }
