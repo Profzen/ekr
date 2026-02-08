@@ -5,15 +5,16 @@ import { isAdminAuthenticated } from "@/lib/adminAuth";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await request.json();
   await connectToDatabase();
 
-  const service = await ServiceModel.findByIdAndUpdate(params.id, body, {
+  const service = await ServiceModel.findByIdAndUpdate(id, body, {
     new: true,
   }).lean();
 
@@ -26,13 +27,14 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   await connectToDatabase();
-  const service = await ServiceModel.findByIdAndDelete(params.id).lean();
+  const service = await ServiceModel.findByIdAndDelete(id).lean();
 
   if (!service) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });

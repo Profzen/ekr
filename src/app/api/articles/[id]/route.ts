@@ -14,10 +14,11 @@ function slugify(value: string) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   await connectToDatabase();
-  const article = await ArticleModel.findById(params.id).lean();
+  const article = await ArticleModel.findById(id).lean();
 
   if (!article) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -28,8 +29,9 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -46,7 +48,7 @@ export async function PUT(
     update.publishedAt = update.publishedAt ?? new Date();
   }
 
-  const article = await ArticleModel.findByIdAndUpdate(params.id, update, {
+  const article = await ArticleModel.findByIdAndUpdate(id, update, {
     new: true,
   }).lean();
 
@@ -59,13 +61,14 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   await connectToDatabase();
-  const article = await ArticleModel.findByIdAndDelete(params.id).lean();
+  const article = await ArticleModel.findByIdAndDelete(id).lean();
 
   if (!article) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
