@@ -52,6 +52,14 @@ type SiteContent = {
   homeMessage: string;
   homeAbout: string;
   homeHistory: string;
+  homeStat1Value: string;
+  homeStat1Label: string;
+  homeStat2Value: string;
+  homeStat2Label: string;
+  homeStat3Value: string;
+  homeStat3Label: string;
+  homeStat4Value: string;
+  homeStat4Label: string;
   presentationAbout: string;
   presentationVision: string;
   presentationMission: string;
@@ -114,6 +122,14 @@ const initialContent: SiteContent = {
   homeMessage: "",
   homeAbout: "",
   homeHistory: "",
+  homeStat1Value: "",
+  homeStat1Label: "",
+  homeStat2Value: "",
+  homeStat2Label: "",
+  homeStat3Value: "",
+  homeStat3Label: "",
+  homeStat4Value: "",
+  homeStat4Label: "",
   presentationAbout: "",
   presentationVision: "",
   presentationMission: "",
@@ -156,6 +172,7 @@ export default function AdminClient() {
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [directorEditing, setDirectorEditing] = useState(false);
+  const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const Spinner = ({ className = "h-4 w-4 border-white" }) => (
@@ -252,6 +269,14 @@ export default function AdminClient() {
         homeMessage: result.data.data.homeMessage ?? "",
         homeAbout: result.data.data.homeAbout ?? "",
         homeHistory: result.data.data.homeHistory ?? "",
+        homeStat1Value: result.data.data.homeStat1Value ?? "",
+        homeStat1Label: result.data.data.homeStat1Label ?? "",
+        homeStat2Value: result.data.data.homeStat2Value ?? "",
+        homeStat2Label: result.data.data.homeStat2Label ?? "",
+        homeStat3Value: result.data.data.homeStat3Value ?? "",
+        homeStat3Label: result.data.data.homeStat3Label ?? "",
+        homeStat4Value: result.data.data.homeStat4Value ?? "",
+        homeStat4Label: result.data.data.homeStat4Label ?? "",
         presentationAbout: result.data.data.presentationAbout ?? "",
         presentationVision: result.data.data.presentationVision ?? "",
         presentationMission: result.data.data.presentationMission ?? "",
@@ -423,8 +448,10 @@ export default function AdminClient() {
       const logoUrl = partnerFile
         ? await uploadFile(partnerFile)
         : partnerForm.logoUrl;
-      const res = await fetch("/api/partners", {
-        method: "POST",
+      const url = partnerEditingId ? `/api/partners/${partnerEditingId}` : "/api/partners";
+      const method = partnerEditingId ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...partnerForm, logoUrl }),
       });
@@ -432,13 +459,33 @@ export default function AdminClient() {
       setPartnerForm(initialPartner);
       setPartnerFile(null);
       setPartnerPreview("");
+      setPartnerEditingId(null);
       await loadPartners();
-      showSuccess("Partenaire enregistré.");
+      showSuccess(partnerEditingId ? "Partenaire mis à jour." : "Partenaire enregistré.");
     } catch (err) {
       setError("Impossible d'enregistrer le partenaire.");
     } finally {
       setPartnerSaving(false);
     }
+  };
+
+  const handlePartnerEdit = (partner: Partner) => {
+    setPartnerEditingId(partner._id);
+    setPartnerForm({
+      name: partner.name,
+      logoUrl: partner.logoUrl ?? "",
+      isActive: partner.isActive,
+      order: partner.order ?? 0,
+    });
+    setPartnerFile(null);
+    setPartnerPreview(partner.logoUrl ?? "");
+  };
+
+  const handlePartnerCancel = () => {
+    setPartnerEditingId(null);
+    setPartnerForm(initialPartner);
+    setPartnerFile(null);
+    setPartnerPreview("");
   };
 
   const handleGallerySubmit = async (
@@ -551,8 +598,6 @@ export default function AdminClient() {
       await ensureOk(res, "Enregistrement impossible.");
       await loadContent();
       showSuccess("Contenus enregistrés.");
-    } catch (err) {
-      setError("Impossible d'enregistrer le contenu.");
     } finally {
       setContentSaving(false);
     }
@@ -603,8 +648,8 @@ export default function AdminClient() {
         </button>
       </div>
       {(success || error) && (
-        <div className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg">
-          {success && <p className="text-emerald-600">{success}</p>}
+        <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-xl -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base shadow-xl">
+          {success && <p className="text-emerald-700">{success}</p>}
           {error && <p className="text-red-600">{error}</p>}
         </div>
       )}
@@ -989,13 +1034,12 @@ export default function AdminClient() {
               </p>
             </div>
             {partnerPreview && (
-              <div className="flex items-center gap-3">
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
                 <img
                   src={partnerPreview}
-                  alt="Logo partenaire"
-                  className="h-20 w-20 rounded-full object-contain"
+                  alt="Prévisualisation logo"
+                  className="h-48 w-full object-contain"
                 />
-                <span className="text-xs text-slate-500">Prévisualisation</span>
               </div>
             )}
             <button
@@ -1008,16 +1052,50 @@ export default function AdminClient() {
                   <Spinner />
                   Ajout...
                 </span>
-              ) : (
-                "Ajouter"
-              )}
+              ) : partnerEditingId ? "Mettre à jour" : "Ajouter"}
             </button>
+            {partnerEditingId && (
+              <button
+                type="button"
+                onClick={handlePartnerCancel}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+              >
+                Annuler
+              </button>
+            )}
           </form>
           <div className="mt-4 space-y-2 text-sm">
             {partners.map((partner) => (
               <div key={partner._id} className="rounded-xl border border-slate-200 p-3">
-                <p className="font-semibold text-slate-900">{partner.name}</p>
-                <p className="text-xs text-slate-600">{partner.logoUrl || "Sans logo"}</p>
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
+                    {partner.logoUrl ? (
+                      <img
+                        src={partner.logoUrl}
+                        alt={partner.name}
+                        className="h-full w-full object-contain p-1"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
+                        Logo
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">{partner.name}</p>
+                    <p className="text-xs text-slate-500">
+                      {partner.logoUrl ? "Logo enregistré" : "Sans logo"}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handlePartnerEdit(partner)}
+                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                  >
+                    Modifier
+                  </button>
                 <button
                   type="button"
                   onClick={() => deletePartner(partner._id)}
@@ -1032,7 +1110,8 @@ export default function AdminClient() {
                   ) : (
                     "Supprimer"
                   )}
-                </button>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -1132,130 +1211,6 @@ export default function AdminClient() {
       </div>
 
       <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold text-slate-900">Profil du Directeur Général</h2>
-          <button
-            type="button"
-            onClick={() => setDirectorEditing((prev) => !prev)}
-            className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
-          >
-            {directorEditing ? "Fermer" : "Modifier"}
-          </button>
-        </div>
-
-        {!directorEditing && (
-          <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="h-24 w-20 overflow-hidden rounded-xl bg-white shadow-sm">
-              {director.photoUrl ? (
-                <img
-                  src={director.photoUrl}
-                  alt="Photo DG"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
-                  Photo
-                </div>
-              )}
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">
-                {director.name || "Directeur Général"}
-              </p>
-              <p className="text-xs text-slate-600">
-                {director.title || "Fonction"}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {directorEditing && (
-          <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4 lg:grid-cols-[1fr,1.2fr]">
-            <div className="space-y-4">
-              <input
-                name="name"
-                value={director.name}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Nom complet"
-                required
-              />
-              <input
-                name="title"
-                value={director.title}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Titre / Fonction"
-                required
-              />
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      setDirectorFile(file);
-                      setDirectorPreview(URL.createObjectURL(file));
-                    }}
-                  />
-                  Choisir une photo
-                </label>
-                <p className="mt-2 text-xs text-slate-500">
-                  Cliquez pour sélectionner la photo officielle.
-                </p>
-              </div>
-              {(directorPreview || director.photoUrl) && (
-                <div className="max-w-xs overflow-hidden rounded-2xl bg-slate-100">
-                  <img
-                    src={directorPreview || director.photoUrl}
-                    alt="Photo DG"
-                    className="aspect-[3/4] w-full object-cover"
-                  />
-                </div>
-              )}
-            </div>
-            <div className="space-y-4">
-              <textarea
-                name="bio"
-                value={director.bio}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                rows={6}
-                placeholder="Biographie"
-                required
-              />
-              <textarea
-                name="message"
-                value={director.message}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                rows={5}
-                placeholder="Message du DG"
-                required
-              />
-              <button
-                type="submit"
-                disabled={directorSaving}
-                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-              >
-                {directorSaving ? (
-                  <span className="inline-flex items-center gap-2">
-                    <Spinner />
-                    Enregistrement...
-                  </span>
-                ) : (
-                  "Enregistrer le profil"
-                )}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
         <h2 className="text-xl font-semibold text-slate-900">
           Contenus institutionnels
         </h2>
@@ -1264,7 +1219,9 @@ export default function AdminClient() {
             name="homeMessage"
             value={content.homeMessage}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.homeMessage ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={3}
             placeholder="Message institutionnel (Accueil)"
           />
@@ -1272,7 +1229,9 @@ export default function AdminClient() {
             name="homeAbout"
             value={content.homeAbout}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.homeAbout ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={3}
             placeholder="Présentation synthétique (Accueil)"
           />
@@ -1280,15 +1239,98 @@ export default function AdminClient() {
             name="homeHistory"
             value={content.homeHistory}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.homeHistory ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={3}
             placeholder="Historique résumé (Accueil)"
           />
+          <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Chiffres clés (Accueil)
+            </p>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <input
+                name="homeStat1Value"
+                value={content.homeStat1Value}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat1Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Valeur 1 (ex: +12)"
+              />
+              <input
+                name="homeStat1Label"
+                value={content.homeStat1Label}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat1Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Libellé 1 (ex: Services spécialisés)"
+              />
+              <input
+                name="homeStat2Value"
+                value={content.homeStat2Value}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat2Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Valeur 2 (ex: +40)"
+              />
+              <input
+                name="homeStat2Label"
+                value={content.homeStat2Label}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat2Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Libellé 2 (ex: Projets accompagnés)"
+              />
+              <input
+                name="homeStat3Value"
+                value={content.homeStat3Value}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat3Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Valeur 3 (ex: 8)"
+              />
+              <input
+                name="homeStat3Label"
+                value={content.homeStat3Label}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat3Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Libellé 3 (ex: Pays partenaires)"
+              />
+              <input
+                name="homeStat4Value"
+                value={content.homeStat4Value}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat4Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Valeur 4 (ex: 24/7)"
+              />
+              <input
+                name="homeStat4Label"
+                value={content.homeStat4Label}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.homeStat4Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Libellé 4 (ex: Suivi des actions)"
+              />
+            </div>
+          </div>
           <textarea
             name="presentationAbout"
             value={content.presentationAbout}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.presentationAbout ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={4}
             placeholder="Présentation détaillée (Page Présentation)"
           />
@@ -1296,7 +1338,9 @@ export default function AdminClient() {
             name="presentationVision"
             value={content.presentationVision}
             onChange={handleContentChange}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`w-full rounded-xl border px-4 py-3 text-sm ${
+              content.presentationVision ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={3}
             placeholder="Vision"
           />
@@ -1304,7 +1348,9 @@ export default function AdminClient() {
             name="presentationMission"
             value={content.presentationMission}
             onChange={handleContentChange}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`w-full rounded-xl border px-4 py-3 text-sm ${
+              content.presentationMission ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={3}
             placeholder="Mission"
           />
@@ -1312,7 +1358,9 @@ export default function AdminClient() {
             name="presentationValues"
             value={content.presentationValues}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.presentationValues ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             rows={3}
             placeholder="Valeurs"
           />
@@ -1320,28 +1368,36 @@ export default function AdminClient() {
             name="contactAddress"
             value={content.contactAddress}
             onChange={handleContentChange}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`w-full rounded-xl border px-4 py-3 text-sm ${
+              content.contactAddress ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             placeholder="Adresse"
           />
           <input
             name="contactPhone"
             value={content.contactPhone}
             onChange={handleContentChange}
-            className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`w-full rounded-xl border px-4 py-3 text-sm ${
+              content.contactPhone ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             placeholder="Téléphone"
           />
           <input
             name="contactEmail"
             value={content.contactEmail}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.contactEmail ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             placeholder="Email"
           />
           <input
             name="mapEmbedUrl"
             value={content.mapEmbedUrl}
             onChange={handleContentChange}
-            className="md:col-span-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+              content.mapEmbedUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+            }`}
             placeholder="URL d’iframe Google Maps"
           />
           <button

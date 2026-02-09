@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
+import connectToDatabase from "@/lib/db";
+import SiteContentModel from "@/models/SiteContent";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,11 +10,25 @@ export const metadata: Metadata = {
     "Site institutionnel d’EKR Africa Agrovision Group : services, activités, actualités et partenaires.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let contactAddress = process.env.NEXT_PUBLIC_SITE_ADDRESS || "Abidjan, Côte d’Ivoire";
+  let contactPhone = process.env.NEXT_PUBLIC_SITE_PHONE || "+225 00 00 00 00";
+  let contactEmail = process.env.NEXT_PUBLIC_SITE_EMAIL || "contact@ekr-africa.com";
+
+  try {
+    await connectToDatabase();
+    const content = await SiteContentModel.findOne().lean();
+    contactAddress = content?.contactAddress || contactAddress;
+    contactPhone = content?.contactPhone || contactPhone;
+    contactEmail = content?.contactEmail || contactEmail;
+  } catch (error) {
+    // Fallback to env defaults when DB is unavailable.
+  }
+
   return (
     <html lang="fr">
       <body className="antialiased bg-white text-slate-900">
@@ -31,11 +47,11 @@ export default function RootLayout({
                 <div>
                   <p className="text-sm font-semibold text-slate-800">Coordonnées</p>
                   <p className="mt-2 text-sm text-slate-600">
-                    {process.env.NEXT_PUBLIC_SITE_ADDRESS || "Abidjan, Côte d’Ivoire"}
+                    {contactAddress}
                     <br />
-                    {process.env.NEXT_PUBLIC_SITE_PHONE || "+225 00 00 00 00"}
+                    {contactPhone}
                     <br />
-                    {process.env.NEXT_PUBLIC_SITE_EMAIL || "contact@ekr-africa.com"}
+                    {contactEmail}
                   </p>
                 </div>
                 <div>

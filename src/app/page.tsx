@@ -36,6 +36,14 @@ export default async function Home() {
     homeMessage?: string;
     homeAbout?: string;
     homeHistory?: string;
+    homeStat1Value?: string;
+    homeStat1Label?: string;
+    homeStat2Value?: string;
+    homeStat2Label?: string;
+    homeStat3Value?: string;
+    homeStat3Label?: string;
+    homeStat4Value?: string;
+    homeStat4Label?: string;
   } | null = null;
 
   try {
@@ -94,6 +102,14 @@ export default async function Home() {
           homeMessage: fetchedContent.homeMessage,
           homeAbout: fetchedContent.homeAbout,
           homeHistory: fetchedContent.homeHistory,
+          homeStat1Value: fetchedContent.homeStat1Value,
+          homeStat1Label: fetchedContent.homeStat1Label,
+          homeStat2Value: fetchedContent.homeStat2Value,
+          homeStat2Label: fetchedContent.homeStat2Label,
+          homeStat3Value: fetchedContent.homeStat3Value,
+          homeStat3Label: fetchedContent.homeStat3Label,
+          homeStat4Value: fetchedContent.homeStat4Value,
+          homeStat4Label: fetchedContent.homeStat4Label,
         }
       : null;
   } catch (error) {
@@ -160,20 +176,36 @@ export default async function Home() {
               </p>
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">+12</p>
-                  <p className="text-sm text-slate-600">Services spécialisés</p>
+                  <p className="text-2xl font-semibold text-emerald-700">
+                    {content?.homeStat1Value || "+12"}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {content?.homeStat1Label || "Services spécialisés"}
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">+40</p>
-                  <p className="text-sm text-slate-600">Projets accompagnés</p>
+                  <p className="text-2xl font-semibold text-emerald-700">
+                    {content?.homeStat2Value || "+40"}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {content?.homeStat2Label || "Projets accompagnés"}
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">8</p>
-                  <p className="text-sm text-slate-600">Pays partenaires</p>
+                  <p className="text-2xl font-semibold text-emerald-700">
+                    {content?.homeStat3Value || "8"}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {content?.homeStat3Label || "Pays partenaires"}
+                  </p>
                 </div>
                 <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">24/7</p>
-                  <p className="text-sm text-slate-600">Suivi des actions</p>
+                  <p className="text-2xl font-semibold text-emerald-700">
+                    {content?.homeStat4Value || "24/7"}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {content?.homeStat4Label || "Suivi des actions"}
+                  </p>
                 </div>
               </div>
             </div>
