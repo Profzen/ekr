@@ -174,6 +174,7 @@ export default function AdminClient() {
   const [directorEditing, setDirectorEditing] = useState(false);
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const articleFormRef = useRef<HTMLFormElement | null>(null);
 
   const Spinner = ({ className = "h-4 w-4 border-white" }) => (
     <span
@@ -387,6 +388,9 @@ export default function AdminClient() {
     });
     setArticlePreview(article.coverImage ?? "");
     setArticleFile(null);
+    if (articleFormRef.current) {
+      articleFormRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -660,7 +664,7 @@ export default function AdminClient() {
             Les articles publiés apparaîtront sur le site public.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form ref={articleFormRef} onSubmit={handleSubmit} className="mt-6 space-y-4">
             <input
               name="title"
               value={form.title}

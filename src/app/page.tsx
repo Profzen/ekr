@@ -44,6 +44,9 @@ export default async function Home() {
     homeStat3Label?: string;
     homeStat4Value?: string;
     homeStat4Label?: string;
+    presentationVision?: string;
+    presentationMission?: string;
+    presentationValues?: string;
   } | null = null;
 
   try {
@@ -110,6 +113,9 @@ export default async function Home() {
           homeStat3Label: fetchedContent.homeStat3Label,
           homeStat4Value: fetchedContent.homeStat4Value,
           homeStat4Label: fetchedContent.homeStat4Label,
+          presentationVision: fetchedContent.presentationVision,
+          presentationMission: fetchedContent.presentationMission,
+          presentationValues: fetchedContent.presentationValues,
         }
       : null;
   } catch (error) {
@@ -229,9 +235,18 @@ export default async function Home() {
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
             <h3 className="text-lg font-semibold text-slate-900">Vision, mission & valeurs</h3>
             <ul className="mt-4 space-y-3 text-sm text-slate-600">
-              <li>Vision : une agriculture africaine moderne, productive et inclusive.</li>
-              <li>Mission : structurer, accompagner et financer les projets agricoles.</li>
-              <li>Valeurs : intégrité, innovation, proximité, durabilité.</li>
+              <li>
+                Vision : {content?.presentationVision ||
+                  "une agriculture africaine moderne, productive et inclusive."}
+              </li>
+              <li>
+                Mission : {content?.presentationMission ||
+                  "structurer, accompagner et financer les projets agricoles."}
+              </li>
+              <li>
+                Valeurs : {content?.presentationValues ||
+                  "intégrité, innovation, proximité, durabilité."}
+              </li>
             </ul>
           </div>
         </div>

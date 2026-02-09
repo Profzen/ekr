@@ -5,12 +5,13 @@ import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 type ArticlePageProps = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export default async function ArticleDetailPage({ params }: ArticlePageProps) {
+  const { slug } = await params;
   await connectToDatabase();
-  const article = await ArticleModel.findOne({ slug: params.slug }).lean();
+  const article = await ArticleModel.findOne({ slug }).lean();
 
   if (!article) {
     notFound();
