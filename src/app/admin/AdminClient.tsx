@@ -665,31 +665,40 @@ export default function AdminClient() {
           </p>
 
           <form ref={articleFormRef} onSubmit={handleSubmit} className="mt-6 space-y-4">
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Titre"
-              required
-            />
-            <input
-              name="excerpt"
-              value={form.excerpt}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Résumé court"
-              required
-            />
-            <textarea
-              name="content"
-              value={form.content}
-              onChange={handleChange}
-              rows={5}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Contenu détaillé"
-              required
-            />
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre de l'article</label>
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Titre"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Résumé court</label>
+              <input
+                name="excerpt"
+                value={form.excerpt}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Résumé court"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Contenu détaillé</label>
+              <textarea
+                name="content"
+                value={form.content}
+                onChange={handleChange}
+                rows={5}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Contenu détaillé"
+                required
+              />
+            </div>
             <div className="space-y-2">
               <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
@@ -720,22 +729,28 @@ export default function AdminClient() {
                 </div>
               )}
             </div>
-            <input
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Catégorie"
-            />
-            <select
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-            >
-              <option value="draft">Brouillon</option>
-              <option value="published">Publié</option>
-            </select>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Catégorie</label>
+              <input
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Catégorie"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Statut</label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+              >
+                <option value="draft">Brouillon</option>
+                <option value="published">Publié</option>
+              </select>
+            </div>
 
             <button
               type="submit"
@@ -839,24 +854,30 @@ export default function AdminClient() {
                   />
                 </div>
               )}
-              <textarea
-                name="bio"
-                value={director.bio}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                rows={5}
-                placeholder="Biographie"
-                required
-              />
-              <textarea
-                name="message"
-                value={director.message}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                rows={4}
-                placeholder="Message du DG"
-                required
-              />
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Biographie</label>
+                <textarea
+                  name="bio"
+                  value={director.bio}
+                  onChange={handleDirectorChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  rows={5}
+                  placeholder="Biographie"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Message du DG</label>
+                <textarea
+                  name="message"
+                  value={director.message}
+                  onChange={handleDirectorChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  rows={4}
+                  placeholder="Message du DG"
+                  required
+                />
+              </div>
               <button
                 type="submit"
                 disabled={directorSaving}
@@ -950,23 +971,29 @@ export default function AdminClient() {
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Services</h2>
           <form onSubmit={handleServiceSubmit} className="mt-4 space-y-3">
-            <input
-              name="title"
-              value={serviceForm.title}
-              onChange={handleServiceChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Titre du service"
-              required
-            />
-            <textarea
-              name="description"
-              value={serviceForm.description}
-              onChange={handleServiceChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              rows={3}
-              placeholder="Description"
-              required
-            />
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre du service</label>
+              <input
+                name="title"
+                value={serviceForm.title}
+                onChange={handleServiceChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Titre du service"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Description</label>
+              <textarea
+                name="description"
+                value={serviceForm.description}
+                onChange={handleServiceChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                rows={3}
+                placeholder="Description"
+                required
+              />
+            </div>
             <button
               type="submit"
               disabled={serviceSaving}
@@ -1010,14 +1037,17 @@ export default function AdminClient() {
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Partenaires</h2>
           <form onSubmit={handlePartnerSubmit} className="mt-4 space-y-3">
-            <input
-              name="name"
-              value={partnerForm.name}
-              onChange={handlePartnerChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Nom du partenaire"
-              required
-            />
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Nom du partenaire</label>
+              <input
+                name="name"
+                value={partnerForm.name}
+                onChange={handlePartnerChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Nom du partenaire"
+                required
+              />
+            </div>
             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
                 <input
@@ -1124,22 +1154,28 @@ export default function AdminClient() {
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">Galerie</h2>
           <form onSubmit={handleGallerySubmit} className="mt-4 space-y-3">
-            <input
-              name="title"
-              value={galleryForm.title}
-              onChange={handleGalleryChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Titre"
-              required
-            />
-            <input
-              name="category"
-              value={galleryForm.category}
-              onChange={handleGalleryChange}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              placeholder="Catégorie"
-              required
-            />
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre du projet/photo</label>
+              <input
+                name="title"
+                value={galleryForm.title}
+                onChange={handleGalleryChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Titre"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Catégorie</label>
+              <input
+                name="category"
+                value={galleryForm.category}
+                onChange={handleGalleryChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Catégorie"
+                required
+              />
+            </div>
             <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
               <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
                 <input
@@ -1219,36 +1255,45 @@ export default function AdminClient() {
           Contenus institutionnels
         </h2>
         <form onSubmit={handleContentSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
-          <textarea
-            name="homeMessage"
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Message institutionnel (Accueil)</label>
+            <textarea
+              name="homeMessage"
             value={content.homeMessage}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
               content.homeMessage ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={3}
-            placeholder="Message institutionnel (Accueil)"
-          />
-          <textarea
-            name="homeAbout"
+              placeholder="Message institutionnel (Accueil)"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Présentation synthétique (Accueil)</label>
+            <textarea
+              name="homeAbout"
             value={content.homeAbout}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
               content.homeAbout ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={3}
-            placeholder="Présentation synthétique (Accueil)"
-          />
-          <textarea
-            name="homeHistory"
+              placeholder="Présentation synthétique (Accueil)"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Historique résumé (Accueil)</label>
+            <textarea
+              name="homeHistory"
             value={content.homeHistory}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
               content.homeHistory ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={3}
-            placeholder="Historique résumé (Accueil)"
-          />
+              placeholder="Historique résumé (Accueil)"
+            />
+          </div>
           <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               Chiffres clés (Accueil)
@@ -1328,75 +1373,98 @@ export default function AdminClient() {
               />
             </div>
           </div>
-          <textarea
-            name="presentationAbout"
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Présentation détaillée (Page Présentation)</label>
+            <textarea
+              name="presentationAbout"
             value={content.presentationAbout}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
               content.presentationAbout ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={4}
-            placeholder="Présentation détaillée (Page Présentation)"
-          />
-          <textarea
-            name="presentationVision"
+              placeholder="Présentation détaillée (Page Présentation)"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Vision</label>
+            <textarea
+              name="presentationVision"
             value={content.presentationVision}
             onChange={handleContentChange}
             className={`w-full rounded-xl border px-4 py-3 text-sm ${
               content.presentationVision ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={3}
-            placeholder="Vision"
-          />
-          <textarea
-            name="presentationMission"
+              placeholder="Vision"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Mission</label>
+            <textarea
+              name="presentationMission"
             value={content.presentationMission}
             onChange={handleContentChange}
             className={`w-full rounded-xl border px-4 py-3 text-sm ${
               content.presentationMission ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={3}
-            placeholder="Mission"
-          />
-          <textarea
-            name="presentationValues"
+              placeholder="Mission"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Valeurs</label>
+            <textarea
+              name="presentationValues"
             value={content.presentationValues}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
               content.presentationValues ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
             rows={3}
-            placeholder="Valeurs"
-          />
-          <input
-            name="contactAddress"
+              placeholder="Valeurs"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Adresse</label>
+            <input
+              name="contactAddress"
             value={content.contactAddress}
             onChange={handleContentChange}
             className={`w-full rounded-xl border px-4 py-3 text-sm ${
               content.contactAddress ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
-            placeholder="Adresse"
-          />
-          <input
-            name="contactPhone"
+              placeholder="Adresse"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Téléphone</label>
+            <input
+              name="contactPhone"
             value={content.contactPhone}
             onChange={handleContentChange}
             className={`w-full rounded-xl border px-4 py-3 text-sm ${
               content.contactPhone ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
-            placeholder="Téléphone"
-          />
-          <input
-            name="contactEmail"
+              placeholder="Téléphone"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Email</label>
+            <input
+              name="contactEmail"
             value={content.contactEmail}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
               content.contactEmail ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
             }`}
-            placeholder="Email"
-          />
-          <input
-            name="mapEmbedUrl"
+              placeholder="Email"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">URL d'iframe Google Maps</label>
+            <input
+              name="mapEmbedUrl"
             value={content.mapEmbedUrl}
             onChange={handleContentChange}
             className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
@@ -1404,6 +1472,7 @@ export default function AdminClient() {
             }`}
             placeholder="URL d’iframe Google Maps"
           />
+          </div>
           <button
             type="submit"
             disabled={contentSaving}

@@ -147,9 +147,6 @@ export default async function Home() {
         <div className="mx-auto w-full max-w-7xl px-2 py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
-                Site institutionnel
-              </p>
               <h1 className="mt-4 text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
                 EKR Africa Agrovision Group
                 <span className="block text-emerald-600">Cultivating Africa’s Future</span>
@@ -286,7 +283,7 @@ export default async function Home() {
         <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-slate-50 p-8 shadow-md">
           <div className="flex flex-col gap-12 md:flex-row md:items-center md:gap-24 lg:gap-28">
             <div className="flex flex-col items-center md:items-start">
-              <div className="h-80 w-80 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-4 ring-emerald-100 transition-transform duration-500 hover:-translate-y-1">
+              <div className="h-64 w-64 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-4 ring-emerald-100 transition-transform duration-500 hover:-translate-y-1">
                 {director?.photoUrl ? (
                   <img
                     src={director.photoUrl}
@@ -305,16 +302,16 @@ export default async function Home() {
             </div>
             <div className="hidden h-48 w-px self-stretch rounded-full bg-emerald-200 md:block" />
             <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-6 shadow-sm md:pl-10 lg:pl-12">
-              <h2 className="text-4xl font-semibold text-slate-900">Direction Générale</h2>
-              <p className="mt-3 text-xl font-semibold text-emerald-700">
+              <h2 className="text-2xl font-semibold text-slate-900">Directeur Général</h2>
+              <p className="mt-2 text-sm font-semibold text-emerald-700">
                 {director?.title || "Fonction"}
               </p>
-              <p className="mt-5 text-lg text-slate-700">
+              <p className="mt-4 text-sm text-slate-700">
                 {director?.bio ||
-                  "Photo officielle et biographie complète seront disponibles ici. Le Directeur Général porte la vision stratégique du groupe et supervise les projets d’impact."}
+                  "Photo officielle et biographie complète seront disponibles ici. Le Directeur Général porte la vision stratégique du groupe et supervise les projets d'impact."}
               </p>
-              <div className="my-6 h-px w-28 rounded-full bg-emerald-200" />
-              <p className="text-lg text-slate-700">
+              <div className="my-4 h-px w-28 rounded-full bg-emerald-200" />
+              <p className="text-sm text-slate-700">
                 {director?.message ||
                   "« Ensemble, nous bâtissons une agriculture résiliente au service des communautés rurales. »"}
               </p>
