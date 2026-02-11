@@ -52,6 +52,7 @@ type SiteContent = {
   homeMessage: string;
   homeAbout: string;
   homeHistory: string;
+  homeHeroBackgroundUrl: string;
   homeStat1Value: string;
   homeStat1Label: string;
   homeStat2Value: string;
@@ -122,6 +123,7 @@ const initialContent: SiteContent = {
   homeMessage: "",
   homeAbout: "",
   homeHistory: "",
+  homeHeroBackgroundUrl: "/agro2.jpg",
   homeStat1Value: "",
   homeStat1Label: "",
   homeStat2Value: "",
@@ -160,6 +162,8 @@ export default function AdminClient() {
   const [galleryPreview, setGalleryPreview] = useState<string>("");
   const [directorFile, setDirectorFile] = useState<File | null>(null);
   const [directorPreview, setDirectorPreview] = useState<string>("");
+  const [heroBackgroundFile, setHeroBackgroundFile] = useState<File | null>(null);
+  const [heroBackgroundPreview, setHeroBackgroundPreview] = useState<string>("");
   const [articleSaving, setArticleSaving] = useState(false);
   const [serviceSaving, setServiceSaving] = useState(false);
   const [partnerSaving, setPartnerSaving] = useState(false);
@@ -266,10 +270,12 @@ export default function AdminClient() {
   const loadContent = async () => {
     const result = await fetchJsonSafe("/api/content", { cache: "no-store" });
     if (result.data?.data) {
+      const heroBackgroundUrl = result.data.data.homeHeroBackgroundUrl ?? "/agro2.jpg";
       setContent({
         homeMessage: result.data.data.homeMessage ?? "",
         homeAbout: result.data.data.homeAbout ?? "",
         homeHistory: result.data.data.homeHistory ?? "",
+        homeHeroBackgroundUrl: heroBackgroundUrl,
         homeStat1Value: result.data.data.homeStat1Value ?? "",
         homeStat1Label: result.data.data.homeStat1Label ?? "",
         homeStat2Value: result.data.data.homeStat2Value ?? "",
@@ -287,6 +293,7 @@ export default function AdminClient() {
         contactEmail: result.data.data.contactEmail ?? "",
         mapEmbedUrl: result.data.data.mapEmbedUrl ?? "",
       });
+      setHeroBackgroundPreview(heroBackgroundUrl);
     }
   };
 
@@ -594,13 +601,20 @@ export default function AdminClient() {
     setError(null);
     setSuccess(null);
     try {
+      const heroBackgroundUrl = heroBackgroundFile
+        ? await uploadFile(heroBackgroundFile)
+        : content.homeHeroBackgroundUrl;
       const res = await fetch("/api/content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(content),
+        body: JSON.stringify({
+          ...content,
+          homeHeroBackgroundUrl: heroBackgroundUrl,
+        }),
       });
       await ensureOk(res, "Enregistrement impossible.");
       await loadContent();
+      setHeroBackgroundFile(null);
       showSuccess("Contenus enregistrés.");
     } finally {
       setContentSaving(false);
@@ -770,62 +784,135 @@ export default function AdminClient() {
             </button>
           </form>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 className="text-xl font-semibold text-slate-900">
-              Profil du Directeur Général
-            </h2>
-            <button
-              type="button"
-              onClick={() => setDirectorEditing((prev) => !prev)}
-              className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
-            >
-              {directorEditing ? "Fermer" : "Modifier"}
-            </button>
-          </div>
+        <div className="space-y-10">
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="text-xl font-semibold text-slate-900">
+                Profil du Directeur Général
+              </h2>
+              <button
+                type="button"
+                onClick={() => setDirectorEditing((prev) => !prev)}
+                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+              >
+                {directorEditing ? "Fermer" : "Modifier"}
+              </button>
+            </div>
 
-          {!directorEditing && (
-            <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="h-28 w-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                {director.photoUrl ? (
-                  <img
-                    src={director.photoUrl}
-                    alt="Photo DG"
-                    className="h-full w-full object-contain p-1"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
-                    Photo
+            {!directorEditing && (
+              <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="h-28 w-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                  {director.photoUrl ? (
+                    <img
+                      src={director.photoUrl}
+                      alt="Photo DG"
+                      className="h-full w-full object-contain p-1"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+                      Photo
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">
+                    {director.name || "Directeur Général"}
+                  </p>
+                  <p className="text-xs text-slate-600">{director.title || "Fonction"}</p>
+                </div>
+              </div>
+            )}
+
+            {directorEditing && (
+              <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
+                <input
+                  name="name"
+                  value={director.name}
+                  onChange={handleDirectorChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Nom complet"
+                  required
+                />
+                <input
+                  name="title"
+                  value={director.title}
+                  onChange={handleDirectorChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Titre / Fonction"
+                  required
+                />
+                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+                        setDirectorFile(file);
+                        setDirectorPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    Choisir une photo
+                  </label>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Cliquez pour sélectionner la photo officielle.
+                  </p>
+                </div>
+                {(directorPreview || director.photoUrl) && (
+                  <div className="max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <img
+                      src={directorPreview || director.photoUrl}
+                      alt="Photo DG"
+                      className="aspect-[3/4] w-full object-contain p-2"
+                    />
                   </div>
                 )}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">
-                  {director.name || "Directeur Général"}
-                </p>
-                <p className="text-xs text-slate-600">{director.title || "Fonction"}</p>
-              </div>
-            </div>
-          )}
-
-          {directorEditing && (
-            <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
-              <input
-                name="name"
-                value={director.name}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Nom complet"
-                required
-              />
-              <input
-                name="title"
-                value={director.title}
-                onChange={handleDirectorChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Titre / Fonction"
-                required
-              />
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Biographie</label>
+                  <textarea
+                    name="bio"
+                    value={director.bio}
+                    onChange={handleDirectorChange}
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                    rows={5}
+                    placeholder="Biographie"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Message du DG</label>
+                  <textarea
+                    name="message"
+                    value={director.message}
+                    onChange={handleDirectorChange}
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                    rows={4}
+                    placeholder="Message du DG"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={directorSaving}
+                  className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                >
+                  {directorSaving ? (
+                    <span className="inline-flex items-center gap-2">
+                      <Spinner />
+                      Enregistrement...
+                    </span>
+                  ) : (
+                    "Enregistrer le profil"
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Fond Accueil</h2>
+            <div className="mt-6 space-y-3">
               <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
                   <input
@@ -835,65 +922,35 @@ export default function AdminClient() {
                     onChange={(event) => {
                       const file = event.target.files?.[0];
                       if (!file) return;
-                      setDirectorFile(file);
-                      setDirectorPreview(URL.createObjectURL(file));
+                      setHeroBackgroundFile(file);
+                      setHeroBackgroundPreview(URL.createObjectURL(file));
                     }}
                   />
-                  Choisir une photo
+                  Choisir une image
                 </label>
-                <p className="mt-2 text-xs text-slate-500">
-                  Cliquez pour sélectionner la photo officielle.
-                </p>
               </div>
-              {(directorPreview || director.photoUrl) && (
-                <div className="max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
+                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
                   <img
-                    src={directorPreview || director.photoUrl}
-                    alt="Photo DG"
-                    className="aspect-[3/4] w-full object-contain p-2"
+                    src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
+                    alt="Prévisualisation fond accueil"
+                    className="h-40 w-full object-cover"
                   />
                 </div>
               )}
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Biographie</label>
-                <textarea
-                  name="bio"
-                  value={director.bio}
-                  onChange={handleDirectorChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                  rows={5}
-                  placeholder="Biographie"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Message du DG</label>
-                <textarea
-                  name="message"
-                  value={director.message}
-                  onChange={handleDirectorChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                  rows={4}
-                  placeholder="Message du DG"
-                  required
-                />
-              </div>
               <button
-                type="submit"
-                disabled={directorSaving}
-                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                type="button"
+                onClick={() => {
+                  setContent((prev) => ({ ...prev, homeHeroBackgroundUrl: "" }));
+                  setHeroBackgroundFile(null);
+                  setHeroBackgroundPreview("");
+                }}
+                className="text-xs font-semibold text-slate-600"
               >
-                {directorSaving ? (
-                  <span className="inline-flex items-center gap-2">
-                    <Spinner />
-                    Enregistrement...
-                  </span>
-                ) : (
-                  "Enregistrer le profil"
-                )}
+                Revenir au fond par defaut
               </button>
-            </form>
-          )}
+            </div>
+          </div>
         </div>
       </div>
 

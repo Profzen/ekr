@@ -5,6 +5,7 @@ const SiteContentSchema = new Schema(
     homeMessage: { type: String, default: "" },
     homeAbout: { type: String, default: "" },
     homeHistory: { type: String, default: "" },
+    homeHeroBackgroundUrl: { type: String, default: "/agro2.jpg" },
     homeStat1Value: { type: String, default: "+12" },
     homeStat1Label: { type: String, default: "Services spécialisés" },
     homeStat2Value: { type: String, default: "+40" },

@@ -36,6 +36,7 @@ export default async function Home() {
     homeMessage?: string;
     homeAbout?: string;
     homeHistory?: string;
+    homeHeroBackgroundUrl?: string;
     homeStat1Value?: string;
     homeStat1Label?: string;
     homeStat2Value?: string;
@@ -105,6 +106,7 @@ export default async function Home() {
           homeMessage: fetchedContent.homeMessage,
           homeAbout: fetchedContent.homeAbout,
           homeHistory: fetchedContent.homeHistory,
+          homeHeroBackgroundUrl: fetchedContent.homeHeroBackgroundUrl,
           homeStat1Value: fetchedContent.homeStat1Value,
           homeStat1Label: fetchedContent.homeStat1Label,
           homeStat2Value: fetchedContent.homeStat2Value,
@@ -143,15 +145,22 @@ export default async function Home() {
 
   return (
     <div className="bg-white">
-      <section className="bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
-        <div className="mx-auto w-full max-w-7xl px-2 py-20">
+      <section
+        className="relative overflow-hidden bg-slate-900 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${content?.homeHeroBackgroundUrl || "/agro2.jpg"})`,
+        }}
+      >
+        <div className="absolute inset-0 bg-emerald-950/45" />
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 via-emerald-900/10 to-transparent" />
+        <div className="relative mx-auto w-full max-w-7xl px-2 py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
-              <h1 className="mt-4 text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
+              <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
                 EKR Africa Agrovision Group
-                <span className="block text-emerald-600">Cultivating Africa’s Future</span>
+                <span className="block text-emerald-200">Cultivating Africa’s Future</span>
               </h1>
-              <p className="mt-6 text-lg text-slate-600">
+              <p className="mt-6 text-lg text-emerald-50/90">
                 Cabinet de conseil et d’accompagnement des activités agricoles en Afrique. Nous
                 structurons des projets durables, renforçons les coopératives et optimisons les
                 filières agricoles.
