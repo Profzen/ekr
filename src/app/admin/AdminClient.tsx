@@ -784,8 +784,8 @@ export default function AdminClient() {
             </button>
           </form>
         </div>
-        <div className="space-y-10">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <div className="flex h-full flex-col gap-10">
+          <div className="flex flex-1 flex-col rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-slate-900">
                 Profil du Directeur Général
@@ -934,7 +934,7 @@ export default function AdminClient() {
                   <img
                     src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
                     alt="Prévisualisation fond accueil"
-                    className="h-40 w-full object-cover"
+                    className="h-96 w-full object-cover"
                   />
                 </div>
               )}
