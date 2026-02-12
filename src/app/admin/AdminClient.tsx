@@ -621,6 +621,59 @@ export default function AdminClient() {
     }
   };
 
+  const handleHeroBackgroundSave = async () => {
+    setContentSaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      let heroBackgroundUrl = content.homeHeroBackgroundUrl;
+      if (heroBackgroundFile) {
+        heroBackgroundUrl = await uploadFile(heroBackgroundFile);
+      }
+      const res = await fetch("/api/content", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...content,
+          homeHeroBackgroundUrl: heroBackgroundUrl,
+        }),
+      });
+      await ensureOk(res, "Enregistrement impossible.");
+      await loadContent();
+      setHeroBackgroundFile(null);
+      showSuccess("Fond Accueil mise à jour.");
+    } catch (err) {
+      setError("Impossible de mettre à jour le fond.");
+    } finally {
+      setContentSaving(false);
+    }
+  };
+
+  const handleRevertToDefaultBackground = async () => {
+    setContentSaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await fetch("/api/content", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...content,
+          homeHeroBackgroundUrl: "/agro2.jpg",
+        }),
+      });
+      await ensureOk(res, "Enregistrement impossible.");
+      await loadContent();
+      setHeroBackgroundFile(null);
+      setHeroBackgroundPreview("");
+      showSuccess("Fond Accueil revenu à la valeur par défaut.");
+    } catch (err) {
+      setError("Impossible de revenir au fond par défaut.");
+    } finally {
+      setContentSaving(false);
+    }
+  };
+
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -825,22 +878,28 @@ export default function AdminClient() {
 
             {directorEditing && (
               <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
-                <input
-                  name="name"
-                  value={director.name}
-                  onChange={handleDirectorChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                  placeholder="Nom complet"
-                  required
-                />
-                <input
-                  name="title"
-                  value={director.title}
-                  onChange={handleDirectorChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                  placeholder="Titre / Fonction"
-                  required
-                />
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Nom complet</label>
+                  <input
+                    name="name"
+                    value={director.name}
+                    onChange={handleDirectorChange}
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                    placeholder="Nom complet"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre / Fonction</label>
+                  <input
+                    name="title"
+                    value={director.title}
+                    onChange={handleDirectorChange}
+                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                    placeholder="Titre / Fonction"
+                    required
+                  />
+                </div>
                 <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
                   <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
                     <input
@@ -930,24 +989,47 @@ export default function AdminClient() {
                 </label>
               </div>
               {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                  <img
-                    src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
-                    alt="Prévisualisation fond accueil"
-                    className="h-96 w-full object-cover"
-                  />
+                <div className="space-y-3">
+                  <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <img
+                      src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
+                      alt="Prévisualisation fond accueil"
+                      className="h-96 w-full object-cover"
+                    />
+                  </div>
+                  {heroBackgroundFile && (
+                    <button
+                      type="button"
+                      onClick={handleHeroBackgroundSave}
+                      disabled={contentSaving}
+                      className="w-full rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white"
+                    >
+                      {contentSaving ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner className="h-3 w-3 border-white" />
+                          Enregistrement...
+                        </span>
+                      ) : (
+                        "Valider le fond"
+                      )}
+                    </button>
+                  )}
                 </div>
               )}
               <button
                 type="button"
-                onClick={() => {
-                  setContent((prev) => ({ ...prev, homeHeroBackgroundUrl: "" }));
-                  setHeroBackgroundFile(null);
-                  setHeroBackgroundPreview("");
-                }}
-                className="text-xs font-semibold text-slate-600"
+                onClick={handleRevertToDefaultBackground}
+                disabled={contentSaving}
+                className="w-full rounded-xl bg-slate-600 px-4 py-2 text-xs font-semibold text-white"
               >
-                Revenir au fond par defaut
+                {contentSaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner className="h-3 w-3 border-white" />
+                    Enregistrement...
+                  </span>
+                ) : (
+                  "Revenir au fond par defaut"
+                )}
               </button>
             </div>
           </div>
