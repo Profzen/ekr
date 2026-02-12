@@ -15,19 +15,24 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError(null);
 
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (!res.ok) {
-      setError("Mot de passe incorrect.");
+      if (!res.ok) {
+        setError("Identifiants invalides ou accès refusé.");
+        return;
+      }
+
+      router.push("/admin");
+    } catch (error) {
+      setError("Connexion impossible. Vérifie ta connexion et réessaie.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    router.push("/admin");
   };
 
   return (
