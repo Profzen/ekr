@@ -177,6 +177,7 @@ export default function AdminClient() {
   const [success, setSuccess] = useState<string | null>(null);
   const [directorEditing, setDirectorEditing] = useState(false);
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
+  const [sessionStatus, setSessionStatus] = useState<"ok" | "expired" | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const articleFormRef = useRef<HTMLFormElement | null>(null);
 
@@ -297,6 +298,15 @@ export default function AdminClient() {
     }
   };
 
+  const checkAdminSession = async () => {
+    try {
+      const res = await fetch("/api/admin/check", { cache: "no-store" });
+      setSessionStatus(res.ok ? "ok" : "expired");
+    } catch (error) {
+      setSessionStatus("expired");
+    }
+  };
+
   useEffect(() => {
     loadArticles();
     loadServices();
@@ -304,6 +314,7 @@ export default function AdminClient() {
     loadGallery();
     loadDirector();
     loadContent();
+    checkAdminSession();
   }, []);
 
   const handleChange = (
@@ -718,6 +729,34 @@ export default function AdminClient() {
           )}
         </button>
       </div>
+      {sessionStatus && (
+        <div
+          className={`rounded-2xl border px-4 py-3 text-xs font-semibold ${
+            sessionStatus === "ok"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span>
+              {sessionStatus === "ok"
+                ? "Session admin active."
+                : "Session expirée ou invalide. Reconnecte-toi."}
+            </span>
+            {sessionStatus === "expired" && (
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = "/admin/login";
+                }}
+                className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-semibold text-red-700"
+              >
+                Se reconnecter
+              </button>
+            )}
+          </div>
+        </div>
+      )}
       {(success || error) && (
         <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-xl -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base shadow-xl">
           {success && <p className="text-emerald-700">{success}</p>}
