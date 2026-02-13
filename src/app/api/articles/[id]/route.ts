@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
 import ArticleModel from "@/models/Article";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { deleteCloudinaryByUrl } from "@/lib/cloudinaryDelete";
 
 function slugify(value: string) {
   return value
@@ -38,6 +39,11 @@ export async function PUT(
   const body = await request.json();
   await connectToDatabase();
 
+  const existing = await ArticleModel.findById(id).lean();
+  if (!existing) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
   const update: Record<string, unknown> = { ...body };
 
   if (typeof update.title === "string" && update.title.length > 0) {
@@ -48,12 +54,24 @@ export async function PUT(
     update.publishedAt = update.publishedAt ?? new Date();
   }
 
+  if (
+    typeof update.coverImage === "string" &&
+    existing.coverImage &&
+    update.coverImage !== existing.coverImage
+  ) {
+    await deleteCloudinaryByUrl(existing.coverImage);
+  }
+
   const article = await ArticleModel.findByIdAndUpdate(id, update, {
     new: true,
   }).lean();
 
   if (!article) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (article.coverImage) {
+    await deleteCloudinaryByUrl(article.coverImage);
   }
 
   return NextResponse.json({ data: article });

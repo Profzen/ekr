@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
 import DirectorProfileModel from "@/models/DirectorProfile";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
+import { deleteCloudinaryByUrl } from "@/lib/cloudinaryDelete";
 
 export async function GET() {
   await connectToDatabase();
@@ -26,6 +27,14 @@ export async function PUT(request: Request) {
 
   await connectToDatabase();
   const existing = await DirectorProfileModel.findOne();
+
+  if (
+    typeof photoUrl === "string" &&
+    existing?.photoUrl &&
+    photoUrl !== existing.photoUrl
+  ) {
+    await deleteCloudinaryByUrl(existing.photoUrl);
+  }
 
   const profile = existing
     ? await DirectorProfileModel.findByIdAndUpdate(existing._id, {
