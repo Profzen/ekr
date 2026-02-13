@@ -407,16 +407,16 @@ export default async function Home() {
             {partners.map((partner) => (
               <div
                 key={partner._id}
-                className="min-w-[200px] rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-semibold text-slate-700 shadow-sm flex items-center gap-3"
+                className="min-w-[240px] h-60 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm flex flex-col items-center text-center"
               >
                 {partner.logoUrl ? (
                   <img
                     src={partner.logoUrl}
                     alt={partner.name}
-                    className="h-8 w-8 rounded-full object-contain"
+                    className="h-44 w-44 rounded-lg object-contain"
                   />
                 ) : null}
-                <span>{partner.name}</span>
+                <span className="text-base leading-tight">{partner.name}</span>
               </div>
             ))}
           </div>
