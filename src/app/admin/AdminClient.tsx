@@ -30,6 +30,15 @@ type Partner = {
   order?: number;
 };
 
+type TeamMember = {
+  _id: string;
+  name: string;
+  role: string;
+  photoUrl?: string;
+  isActive: boolean;
+  order?: number;
+};
+
 type GalleryItem = {
   _id: string;
   title: string;
@@ -103,6 +112,14 @@ const initialPartner = {
   order: 0,
 };
 
+const initialTeam = {
+  name: "",
+  role: "",
+  photoUrl: "",
+  isActive: true,
+  order: 0,
+};
+
 const initialGallery = {
   title: "",
   imageUrl: "",
@@ -146,6 +163,7 @@ export default function AdminClient() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [director, setDirector] = useState<DirectorProfile>(initialDirector);
   const [content, setContent] = useState<SiteContent>(initialContent);
@@ -153,11 +171,14 @@ export default function AdminClient() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [serviceForm, setServiceForm] = useState(initialService);
   const [partnerForm, setPartnerForm] = useState(initialPartner);
+  const [teamForm, setTeamForm] = useState(initialTeam);
   const [galleryForm, setGalleryForm] = useState(initialGallery);
   const [articleFile, setArticleFile] = useState<File | null>(null);
   const [articlePreview, setArticlePreview] = useState<string>("");
   const [partnerFile, setPartnerFile] = useState<File | null>(null);
   const [partnerPreview, setPartnerPreview] = useState<string>("");
+  const [teamFile, setTeamFile] = useState<File | null>(null);
+  const [teamPreview, setTeamPreview] = useState<string>("");
   const [galleryFile, setGalleryFile] = useState<File | null>(null);
   const [galleryPreview, setGalleryPreview] = useState<string>("");
   const [directorFile, setDirectorFile] = useState<File | null>(null);
@@ -167,6 +188,7 @@ export default function AdminClient() {
   const [articleSaving, setArticleSaving] = useState(false);
   const [serviceSaving, setServiceSaving] = useState(false);
   const [partnerSaving, setPartnerSaving] = useState(false);
+  const [teamSaving, setTeamSaving] = useState(false);
   const [gallerySaving, setGallerySaving] = useState(false);
   const [directorSaving, setDirectorSaving] = useState(false);
   const [contentSaving, setContentSaving] = useState(false);
@@ -177,6 +199,7 @@ export default function AdminClient() {
   const [success, setSuccess] = useState<string | null>(null);
   const [directorEditing, setDirectorEditing] = useState(false);
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
+  const [teamEditingId, setTeamEditingId] = useState<string | null>(null);
   const [sessionStatus, setSessionStatus] = useState<"ok" | "expired" | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const articleFormRef = useRef<HTMLFormElement | null>(null);
@@ -250,6 +273,11 @@ export default function AdminClient() {
     setPartners(result.data?.data ?? []);
   };
 
+  const loadTeam = async () => {
+    const result = await fetchJsonSafe("/api/team", { cache: "no-store" });
+    setTeam(result.data?.data ?? []);
+  };
+
   const loadGallery = async () => {
     const result = await fetchJsonSafe("/api/gallery", { cache: "no-store" });
     setGallery(result.data?.data ?? []);
@@ -311,6 +339,7 @@ export default function AdminClient() {
     loadArticles();
     loadServices();
     loadPartners();
+    loadTeam();
     loadGallery();
     loadDirector();
     loadContent();
@@ -336,6 +365,13 @@ export default function AdminClient() {
   ) => {
     const { name, value } = event.target;
     setPartnerForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTeamChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = event.target;
+    setTeamForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleGalleryChange = (
@@ -510,6 +546,56 @@ export default function AdminClient() {
     setPartnerPreview("");
   };
 
+  const handleTeamSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setTeamSaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const photoUrl = teamFile ? await uploadFile(teamFile) : teamForm.photoUrl;
+      const url = teamEditingId ? `/api/team/${teamEditingId}` : "/api/team";
+      const method = teamEditingId ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...teamForm, photoUrl }),
+      });
+      await ensureOk(res, "Enregistrement impossible.");
+      setTeamForm(initialTeam);
+      setTeamFile(null);
+      setTeamPreview("");
+      setTeamEditingId(null);
+      await loadTeam();
+      showSuccess(teamEditingId ? "Membre mis à jour." : "Membre ajouté.");
+    } catch (err) {
+      setError("Impossible d'enregistrer le membre.");
+    } finally {
+      setTeamSaving(false);
+    }
+  };
+
+  const handleTeamEdit = (member: TeamMember) => {
+    setTeamEditingId(member._id);
+    setTeamForm({
+      name: member.name,
+      role: member.role,
+      photoUrl: member.photoUrl ?? "",
+      isActive: member.isActive,
+      order: member.order ?? 0,
+    });
+    setTeamFile(null);
+    setTeamPreview(member.photoUrl ?? "");
+  };
+
+  const handleTeamCancel = () => {
+    setTeamEditingId(null);
+    setTeamForm(initialTeam);
+    setTeamFile(null);
+    setTeamPreview("");
+  };
+
   const handleGallerySubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -557,6 +643,16 @@ export default function AdminClient() {
     await loadPartners();
     setActionLoading((prev) => ({ ...prev, [`partner-${id}`]: false }));
     showSuccess("Partenaire supprimé.");
+  };
+
+  const deleteTeamMember = async (id: string) => {
+    if (!confirm("Supprimer ce membre ?")) return;
+    setActionLoading((prev) => ({ ...prev, [`team-${id}`]: true }));
+    const res = await fetch(`/api/team/${id}`, { method: "DELETE" });
+    await ensureOk(res, "Suppression impossible.");
+    await loadTeam();
+    setActionLoading((prev) => ({ ...prev, [`team-${id}`]: false }));
+    showSuccess("Membre supprimé.");
   };
 
   const deleteGalleryItem = async (id: string) => {
@@ -1207,6 +1303,132 @@ export default function AdminClient() {
                     "Supprimer"
                   )}
                 </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">Equipe</h2>
+          <form onSubmit={handleTeamSubmit} className="mt-4 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Nom et prenom</label>
+              <input
+                name="name"
+                value={teamForm.name}
+                onChange={handleTeamChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Nom et prenom"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Poste</label>
+              <input
+                name="role"
+                value={teamForm.role}
+                onChange={handleTeamChange}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                placeholder="Poste"
+                required
+              />
+            </div>
+            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (!file) return;
+                    setTeamFile(file);
+                    setTeamPreview(URL.createObjectURL(file));
+                  }}
+                />
+                Choisir une photo
+              </label>
+              <p className="mt-2 text-xs text-slate-500">
+                Cliquez pour selectionner une photo.
+              </p>
+            </div>
+            {teamPreview && (
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <img
+                  src={teamPreview}
+                  alt="Previsualisation"
+                  className="h-48 w-full object-cover"
+                />
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={teamSaving}
+              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+            >
+              {teamSaving ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner />
+                  Enregistrement...
+                </span>
+              ) : teamEditingId ? "Mettre a jour" : "Ajouter"}
+            </button>
+            {teamEditingId && (
+              <button
+                type="button"
+                onClick={handleTeamCancel}
+                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+              >
+                Annuler
+              </button>
+            )}
+          </form>
+          <div className="mt-4 space-y-2 text-sm">
+            {team.map((member) => (
+              <div key={member._id} className="rounded-xl border border-slate-200 p-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
+                    {member.photoUrl ? (
+                      <img
+                        src={member.photoUrl}
+                        alt={member.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
+                        Photo
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">{member.name}</p>
+                    <p className="text-xs text-slate-500">{member.role}</p>
+                  </div>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleTeamEdit(member)}
+                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteTeamMember(member._id)}
+                    disabled={actionLoading[`team-${member._id}`]}
+                    className="text-xs font-semibold text-red-600"
+                  >
+                    {actionLoading[`team-${member._id}`] ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Spinner className="h-3 w-3 border-red-500" />
+                        Suppression...
+                      </span>
+                    ) : (
+                      "Supprimer"
+                    )}
+                  </button>
+                </div>
               </div>
             ))}
           </div>

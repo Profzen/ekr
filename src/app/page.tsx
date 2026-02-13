@@ -181,8 +181,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="rounded-3xl border border-emerald-100 bg-white p-8 shadow-sm">
-              <p className="text-sm font-semibold text-emerald-700">Message institutionnel</p>
-              <p className="mt-4 text-base text-slate-600">
+              <p className="mt-2 text-base text-slate-600">
                 {content?.homeMessage ||
                   "« Nous accompagnons les producteurs, partenaires et investisseurs dans la mise en œuvre de solutions agricoles innovantes pour une Afrique prospère. »"}
               </p>
