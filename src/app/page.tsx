@@ -4,6 +4,7 @@ import ServiceModel from "@/models/Service";
 import PartnerModel from "@/models/Partner";
 import DirectorProfileModel from "@/models/DirectorProfile";
 import SiteContentModel from "@/models/SiteContent";
+import PartnersCarousel from "@/components/PartnersCarousel";
 
 export const dynamic = "force-dynamic";
 
@@ -397,28 +398,7 @@ export default async function Home() {
           <p className="mt-2 text-sm text-slate-600">
             Ils nous font confiance pour l’accompagnement des projets agricoles.
           </p>
-          <div className="mt-6 flex gap-4 overflow-x-auto pb-2">
-            {partners.length === 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600">
-                Aucun partenaire enregistré pour le moment.
-              </div>
-            )}
-            {partners.map((partner) => (
-              <div
-                key={partner._id}
-                className="min-w-[240px] h-60 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm flex flex-col items-center text-center"
-              >
-                {partner.logoUrl ? (
-                  <img
-                    src={partner.logoUrl}
-                    alt={partner.name}
-                    className="h-44 w-44 rounded-lg object-contain"
-                  />
-                ) : null}
-                <span className="text-base leading-tight">{partner.name}</span>
-              </div>
-            ))}
-          </div>
+          <PartnersCarousel partners={partners} />
         </div>
       </section>
     </div>

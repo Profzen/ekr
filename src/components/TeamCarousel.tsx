@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type TeamMember = {
   _id: string;
@@ -16,6 +16,7 @@ type TeamCarouselProps = {
 export default function TeamCarousel({ members }: TeamCarouselProps) {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const hasMembers = members.length > 0;
+  const [isPaused, setIsPaused] = useState(false);
 
   const cardWidth = useMemo(() => 260, []);
 
@@ -25,12 +26,31 @@ export default function TeamCarousel({ members }: TeamCarouselProps) {
     trackRef.current.scrollBy({ left: delta, behavior: "smooth" });
   };
 
+  useEffect(() => {
+    if (!hasMembers || isPaused) return;
+    const id = window.setInterval(() => {
+      const track = trackRef.current;
+      if (!track) return;
+      const isAtEnd =
+        track.scrollLeft + track.clientWidth >= track.scrollWidth - cardWidth / 2;
+      if (isAtEnd) {
+        track.scrollTo({ left: 0, behavior: "smooth" });
+        return;
+      }
+      scrollBy("next");
+    }, 2000);
+
+    return () => window.clearInterval(id);
+  }, [cardWidth, hasMembers, isPaused]);
+
   return (
     <div className="relative">
       {hasMembers ? (
         <div
           ref={trackRef}
-          className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-2"
+          className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-2"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
           {members.map((member) => (
             <div
@@ -62,24 +82,6 @@ export default function TeamCarousel({ members }: TeamCarouselProps) {
       ) : (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
           Aucune personne de l'equipe n'est encore enregistrée.
-        </div>
-      )}
-      {hasMembers && (
-        <div className="mt-4 flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => scrollBy("prev")}
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600"
-          >
-            Precedent
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollBy("next")}
-            className="rounded-full border border-emerald-200 bg-emerald-600 px-4 py-2 text-xs font-semibold text-white"
-          >
-            Suivant
-          </button>
         </div>
       )}
     </div>
