@@ -18,6 +18,10 @@ export default async function PresentationServicesContactPage() {
     contactPhone?: string;
     contactEmail?: string;
     mapEmbedUrl?: string;
+    socialXUrl?: string;
+    socialFacebookUrl?: string;
+    socialWhatsappUrl?: string;
+    socialInstagramUrl?: string;
   } | null = null;
 
   try {
@@ -54,6 +58,10 @@ export default async function PresentationServicesContactPage() {
           contactPhone: fetchedContent.contactPhone,
           contactEmail: fetchedContent.contactEmail,
           mapEmbedUrl: fetchedContent.mapEmbedUrl,
+          socialXUrl: fetchedContent.socialXUrl,
+          socialFacebookUrl: fetchedContent.socialFacebookUrl,
+          socialWhatsappUrl: fetchedContent.socialWhatsappUrl,
+          socialInstagramUrl: fetchedContent.socialInstagramUrl,
         }
       : null;
   } catch (error) {
@@ -147,61 +155,97 @@ export default async function PresentationServicesContactPage() {
       <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-[1.2fr,0.8fr]">
           <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">Contact</h2>
-            <p className="mt-4 text-base text-slate-600">
-              Pour toute collaboration ou demande d'information, contactez-nous.
-            </p>
-            <div className="mt-6 space-y-4">
-              <div className="flex items-start gap-3 rounded-xl bg-white p-4 border border-slate-200">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Adresse</p>
-                  <p className="mt-1 text-sm text-slate-700">{content?.contactAddress || "Abidjan, Côte d'Ivoire"}</p>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Contact</p>
+                <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+                  Parlons de votre projet
+                </h2>
+                <p className="mt-3 text-sm text-slate-600">
+                  Notre equipe repond rapidement pour cadrer votre besoin.
+                </p>
+              </div>
+              <div className="hidden h-14 w-14 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 text-emerald-700 md:flex">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M21 10a8.9 8.9 0 0 1-4 7.4L12 21l-5-3.6A8.9 8.9 0 0 1 3 10a9 9 0 1 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+            </div>
+            <div className="mt-6 grid gap-4">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M21 10a8.9 8.9 0 0 1-4 7.4L12 21l-5-3.6A8.9 8.9 0 0 1 3 10a9 9 0 1 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Adresse</p>
+                    <p className="mt-1 text-sm text-slate-700">{content?.contactAddress || "Abidjan, Côte d'Ivoire"}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-xl bg-white p-4 border border-slate-200">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Téléphone</p>
-                  <p className="mt-1 text-sm text-slate-700">{content?.contactPhone || "+225 00 00 00 00"}</p>
+              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 3 4.2 2 2 0 0 1 5 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1l-1.2 1.2a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Telephone</p>
+                    <p className="mt-1 text-sm text-slate-700">{content?.contactPhone || "+225 00 00 00 00"}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-xl bg-white p-4 border border-slate-200">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Email</p>
-                  <p className="mt-1 text-sm text-slate-700">{content?.contactEmail || "contact@ekr-africa.com"}</p>
+              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <path d="m22 6-10 7L2 6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Email</p>
+                    <p className="mt-1 text-sm text-slate-700">{content?.contactEmail || "contact@ekr-africa.com"}</p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="mt-6">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Réseaux sociaux</p>
-              <div className="mt-3 flex flex-wrap gap-3">
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Reseaux sociaux</p>
+              <div className="mt-4 flex flex-wrap gap-3">
                 <a
-                  href="https://x.com/ekr-africa"
+                  href={content?.socialXUrl || "https://x.com/ekr-africa"}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="X"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-black text-white shadow-md transition hover:-translate-y-0.5"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
                     <path d="M4.5 4h3.2l2.7 3.7L12.8 4H15l-3.9 5.3 4.4 6.7h-3.2l-2.9-4-3.1 4H4l4.6-6.3L4.5 4z" />
                   </svg>
                 </a>
                 <a
-                  href="https://facebook.com/ekr-africa"
+                  href={content?.socialFacebookUrl || "https://facebook.com/ekr-africa"}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Facebook"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-md transition hover:-translate-y-0.5"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
                     <path d="M14 8h2V5h-2c-2.2 0-3.5 1.4-3.5 3.5V11H8v3h2.5v5H14v-5h2.1l.4-3H14V8.6c0-.4.3-.6.6-.6z" />
                   </svg>
                 </a>
                 <a
-                  href="https://wa.me/225000000000?text=Bonjour"
+                  href={content?.socialWhatsappUrl || "https://wa.me/225000000000?text=Bonjour"}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="WhatsApp"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-md transition hover:-translate-y-0.5"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
                     <path d="M12 3a9 9 0 0 0-7.5 13.9L4 21l4.3-1.1A9 9 0 1 0 12 3z" />
@@ -209,19 +253,22 @@ export default async function PresentationServicesContactPage() {
                   </svg>
                 </a>
                 <a
-                  href="https://instagram.com/ekr-africa"
+                  href={content?.socialInstagramUrl || "https://instagram.com/ekr-africa"}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Instagram"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-300 hover:text-emerald-700"
+                  className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#515BD4] text-white shadow-md transition hover:-translate-y-0.5"
                 >
                   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden="true">
-                    <rect x="4" y="4" width="16" height="16" rx="4" ry="4" stroke="currentColor" strokeWidth="2" />
-                    <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
-                    <circle cx="17" cy="7" r="1.5" fill="currentColor" />
+                    <rect x="4" y="4" width="16" height="16" rx="4" ry="4" stroke="white" strokeWidth="2" />
+                    <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
+                    <circle cx="17" cy="7" r="1.5" fill="white" />
                   </svg>
                 </a>
               </div>
+              <p className="mt-3 text-xs text-slate-500">
+                Suivez-nous pour les actualites et les projets en cours.
+              </p>
             </div>
           </div>
           <div className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-sm">

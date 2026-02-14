@@ -23,6 +23,10 @@ const SiteContentSchema = new Schema(
     contactPhone: { type: String, default: "" },
     contactEmail: { type: String, default: "" },
     mapEmbedUrl: { type: String, default: "" },
+    socialXUrl: { type: String, default: "" },
+    socialFacebookUrl: { type: String, default: "" },
+    socialWhatsappUrl: { type: String, default: "" },
+    socialInstagramUrl: { type: String, default: "" },
   },
   { timestamps: true, strict: false }
 );

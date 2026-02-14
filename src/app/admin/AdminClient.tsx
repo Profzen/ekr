@@ -78,6 +78,10 @@ type SiteContent = {
   contactPhone: string;
   contactEmail: string;
   mapEmbedUrl: string;
+  socialXUrl: string;
+  socialFacebookUrl: string;
+  socialWhatsappUrl: string;
+  socialInstagramUrl: string;
 };
 
 type FormState = {
@@ -157,6 +161,10 @@ const initialContent: SiteContent = {
   contactPhone: "",
   contactEmail: "",
   mapEmbedUrl: "",
+  socialXUrl: "",
+  socialFacebookUrl: "",
+  socialWhatsappUrl: "",
+  socialInstagramUrl: "",
 };
 
 export default function AdminClient() {
@@ -321,6 +329,10 @@ export default function AdminClient() {
         contactPhone: result.data.data.contactPhone ?? "",
         contactEmail: result.data.data.contactEmail ?? "",
         mapEmbedUrl: result.data.data.mapEmbedUrl ?? "",
+        socialXUrl: result.data.data.socialXUrl ?? "",
+        socialFacebookUrl: result.data.data.socialFacebookUrl ?? "",
+        socialWhatsappUrl: result.data.data.socialWhatsappUrl ?? "",
+        socialInstagramUrl: result.data.data.socialInstagramUrl ?? "",
       });
       setHeroBackgroundPreview(heroBackgroundUrl);
     }
@@ -1872,6 +1884,49 @@ export default function AdminClient() {
             }`}
             placeholder="URL d’iframe Google Maps"
           />
+          </div>
+          <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Reseaux sociaux (Contact)
+            </p>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <input
+                name="socialXUrl"
+                value={content.socialXUrl}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.socialXUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Lien X (Twitter)"
+              />
+              <input
+                name="socialFacebookUrl"
+                value={content.socialFacebookUrl}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.socialFacebookUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Lien Facebook"
+              />
+              <input
+                name="socialWhatsappUrl"
+                value={content.socialWhatsappUrl}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.socialWhatsappUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Lien WhatsApp"
+              />
+              <input
+                name="socialInstagramUrl"
+                value={content.socialInstagramUrl}
+                onChange={handleContentChange}
+                className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                  content.socialInstagramUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
+                }`}
+                placeholder="Lien Instagram"
+              />
+            </div>
           </div>
           <button
             type="submit"
