@@ -36,7 +36,7 @@ export default async function RootLayout({
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <footer className="border-t border-slate-200 bg-slate-50">
-            <div className="mx-auto w-full max-w-7xl px-2 py-10">
+            <div className="mx-auto w-full max-w-7xl px-1 py-10">
               <div className="grid gap-8 md:grid-cols-3">
                 <div>
                   <p className="text-sm font-semibold text-emerald-700">EKR AFRICA AGROVISION GROUP</p>

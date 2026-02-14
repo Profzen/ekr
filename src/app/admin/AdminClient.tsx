@@ -48,6 +48,16 @@ type GalleryItem = {
   order?: number;
 };
 
+type AdminSectionKey =
+  | "articles"
+  | "services"
+  | "partners"
+  | "team"
+  | "gallery"
+  | "content"
+  | "profile"
+  | "settings";
+
 type DirectorProfile = {
   _id?: string;
   name: string;
@@ -208,6 +218,8 @@ export default function AdminClient() {
   const [directorEditing, setDirectorEditing] = useState(false);
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
   const [teamEditingId, setTeamEditingId] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<AdminSectionKey>("articles");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sessionStatus, setSessionStatus] = useState<"ok" | "expired" | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const articleFormRef = useRef<HTMLFormElement | null>(null);
@@ -818,620 +830,450 @@ export default function AdminClient() {
   const isVideo = (url: string) =>
     url.includes("/video/upload/") || url.endsWith(".mp4") || url.endsWith(".mov");
 
+  const menuItems: Array<{ key: AdminSectionKey; label: string; description: string }> = [
+    { key: "articles", label: "Articles", description: "Creer et gerer les articles" },
+    { key: "services", label: "Services", description: "Mettre a jour les services" },
+    { key: "partners", label: "Partenaires", description: "Logos et partenaires" },
+    { key: "team", label: "Equipe", description: "Gestion de l'equipe" },
+    { key: "gallery", label: "Galerie", description: "Photos et videos" },
+    { key: "content", label: "Contenus institutionnels", description: "Textes et stats" },
+    { key: "profile", label: "Profil + Fond", description: "DG et fond d'accueil" },
+    { key: "settings", label: "Parametres", description: "Session et acces" },
+  ];
+
+  const sectionTitle: Record<AdminSectionKey, { title: string; subtitle: string }> = {
+    articles: {
+      title: "Gestion des articles",
+      subtitle: "Creer, modifier et publier vos articles.",
+    },
+    services: {
+      title: "Gestion des services",
+      subtitle: "Mettez a jour les services proposes.",
+    },
+    partners: {
+      title: "Gestion des partenaires",
+      subtitle: "Ajoutez et maintenez les partenaires.",
+    },
+    team: {
+      title: "Gestion de l'equipe",
+      subtitle: "Membres, postes et photos.",
+    },
+    gallery: {
+      title: "Gestion de la galerie",
+      subtitle: "Photos et videos du site.",
+    },
+    content: {
+      title: "Contenus institutionnels",
+      subtitle: "Textes de presentation et informations de contact.",
+    },
+    profile: {
+      title: "Profil DG et fond d'accueil",
+      subtitle: "Edition du directeur et du visuel d'accueil.",
+    },
+    settings: {
+      title: "Parametres",
+      subtitle: "Etat de session et actions admin.",
+    },
+  };
+
   return (
-    <div className="space-y-10">
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={handleLogout}
-          disabled={logoutLoading}
-          className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
-        >
-          {logoutLoading ? (
-            <span className="inline-flex items-center gap-2">
-              <Spinner className="h-3 w-3 border-slate-600" />
-              Déconnexion...
-            </span>
-          ) : (
-            "Se déconnecter"
-          )}
-        </button>
-      </div>
-      {sessionStatus && (
-        <div
-          className={`rounded-2xl border px-4 py-3 text-xs font-semibold ${
-            sessionStatus === "ok"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          }`}
-        >
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span>
-              {sessionStatus === "ok"
-                ? "Session admin active."
-                : "Session expirée ou invalide. Reconnecte-toi."}
-            </span>
-            {sessionStatus === "expired" && (
-              <button
-                type="button"
-                onClick={() => {
-                  window.location.href = "/admin/login";
-                }}
-                className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-semibold text-red-700"
-              >
-                Se reconnecter
-              </button>
+    <div className="flex gap-6">
+      <aside
+        className={`flex h-[calc(100vh-4rem)] flex-col rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${
+          sidebarOpen ? "w-64" : "w-16"
+        }`}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
+              EKR
+            </div>
+            {sidebarOpen && (
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Administration</p>
+                <p className="text-xs text-slate-500">Tableau de bord</p>
+              </div>
             )}
           </div>
+          <button
+            type="button"
+            onClick={() => setSidebarOpen((prev) => !prev)}
+            className="rounded-full border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600"
+            aria-label="Afficher ou masquer la navigation"
+          >
+            {sidebarOpen ? "<<" : ">>"}
+          </button>
         </div>
-      )}
-      {(success || error) && (
-        <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-xl -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base shadow-xl">
-          {success && <p className="text-emerald-700">{success}</p>}
-          {error && <p className="text-red-600">{error}</p>}
-        </div>
-      )}
-      <div className="grid gap-10 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900">Créer un article</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Les articles publiés apparaîtront sur le site public.
-          </p>
-
-          <form ref={articleFormRef} onSubmit={handleSubmit} className="mt-6 space-y-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre de l'article</label>
-              <input
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Titre"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Résumé court</label>
-              <input
-                name="excerpt"
-                value={form.excerpt}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Résumé court"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Contenu détaillé</label>
-              <textarea
-                name="content"
-                value={form.content}
-                onChange={handleChange}
-                rows={5}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Contenu détaillé"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      setArticleFile(file);
-                      setArticlePreview(URL.createObjectURL(file));
-                    }}
-                  />
-                  Choisir une image
-                </label>
-                <p className="mt-2 text-xs text-slate-500">
-                  Cliquez pour sélectionner l’image de couverture.
-                </p>
-              </div>
-              {(articlePreview || form.coverImage) && (
-                <div className="overflow-hidden rounded-xl bg-slate-100">
-                  <img
-                    src={articlePreview || form.coverImage}
-                    alt="Prévisualisation"
-                    className="h-48 w-full object-cover"
-                  />
-                </div>
-              )}
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Catégorie</label>
-              <input
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Catégorie"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Statut</label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-              >
-                <option value="draft">Brouillon</option>
-                <option value="published">Publié</option>
-              </select>
-            </div>
-
+        <nav className="mt-6 flex-1 space-y-2">
+          {menuItems.map((item) => (
             <button
-              type="submit"
-              disabled={loading || articleSaving}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+              key={item.key}
+              type="button"
+              onClick={() => setActiveSection(item.key)}
+              className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left text-sm font-semibold transition ${
+                activeSection === item.key
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
             >
-              {loading || articleSaving ? (
-                <span className="inline-flex items-center gap-2">
-                  <Spinner />
-                  Enregistrement...
-                </span>
-              ) : editingId ? (
-                "Mettre à jour"
-              ) : (
-                "Créer l’article"
-              )}
-            </button>
-          </form>
-        </div>
-        <div className="flex h-full flex-col gap-10">
-          <div className="flex flex-1 flex-col rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <h2 className="text-xl font-semibold text-slate-900">
-                Profil du Directeur Général
-              </h2>
-              <button
-                type="button"
-                onClick={() => setDirectorEditing((prev) => !prev)}
-                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
-              >
-                {directorEditing ? "Fermer" : "Modifier"}
-              </button>
-            </div>
-
-            {!directorEditing && (
-              <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <div className="h-28 w-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                  {director.photoUrl ? (
-                    <img
-                      src={director.photoUrl}
-                      alt="Photo DG"
-                      className="h-full w-full object-contain p-1"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
-                      Photo
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    {director.name || "Directeur Général"}
-                  </p>
-                  <p className="text-xs text-slate-600">{director.title || "Fonction"}</p>
-                </div>
-              </div>
-            )}
-
-            {directorEditing && (
-              <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Nom complet</label>
-                  <input
-                    name="name"
-                    value={director.name}
-                    onChange={handleDirectorChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                    placeholder="Nom complet"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre / Fonction</label>
-                  <input
-                    name="title"
-                    value={director.title}
-                    onChange={handleDirectorChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                    placeholder="Titre / Fonction"
-                    required
-                  />
-                </div>
-                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(event) => {
-                        const file = event.target.files?.[0];
-                        if (!file) return;
-                        setDirectorFile(file);
-                        setDirectorPreview(URL.createObjectURL(file));
-                      }}
-                    />
-                    Choisir une photo
-                  </label>
-                  <p className="mt-2 text-xs text-slate-500">
-                    Cliquez pour sélectionner la photo officielle.
-                  </p>
-                </div>
-                {(directorPreview || director.photoUrl) && (
-                  <div className="max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                    <img
-                      src={directorPreview || director.photoUrl}
-                      alt="Photo DG"
-                      className="aspect-[3/4] w-full object-contain p-2"
-                    />
-                  </div>
-                )}
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Biographie</label>
-                  <textarea
-                    name="bio"
-                    value={director.bio}
-                    onChange={handleDirectorChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                    rows={5}
-                    placeholder="Biographie"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Message du DG</label>
-                  <textarea
-                    name="message"
-                    value={director.message}
-                    onChange={handleDirectorChange}
-                    className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                    rows={4}
-                    placeholder="Message du DG"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={directorSaving}
-                  className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-                >
-                  {directorSaving ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Spinner />
-                      Enregistrement...
-                    </span>
-                  ) : (
-                    "Enregistrer le profil"
-                  )}
-                </button>
-              </form>
-            )}
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Fond Accueil</h2>
-            <div className="mt-6 space-y-3">
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-                      setHeroBackgroundFile(file);
-                      setHeroBackgroundPreview(URL.createObjectURL(file));
-                    }}
-                  />
-                  Choisir une image
-                </label>
-              </div>
-              {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
-                <div className="space-y-3">
-                  <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                    <img
-                      src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
-                      alt="Prévisualisation fond accueil"
-                      className="h-96 w-full object-cover"
-                    />
-                  </div>
-                  {heroBackgroundFile && (
-                    <button
-                      type="button"
-                      onClick={handleHeroBackgroundSave}
-                      disabled={contentSaving}
-                      className="w-full rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white"
-                    >
-                      {contentSaving ? (
-                        <span className="inline-flex items-center gap-2">
-                          <Spinner className="h-3 w-3 border-white" />
-                          Enregistrement...
-                        </span>
-                      ) : (
-                        "Valider le fond"
-                      )}
-                    </button>
-                  )}
-                </div>
-              )}
-              <button
-                type="button"
-                onClick={handleRevertToDefaultBackground}
-                disabled={contentSaving}
-                className="w-full rounded-xl bg-slate-600 px-4 py-2 text-xs font-semibold text-white"
-              >
-                {contentSaving ? (
-                  <span className="inline-flex items-center gap-2">
-                    <Spinner className="h-3 w-3 border-white" />
-                    Enregistrement...
+              <span className="h-2 w-2 rounded-full bg-current" aria-hidden="true" />
+              {sidebarOpen && (
+                <span>
+                  <span className="block">{item.label}</span>
+                  <span className="block text-xs font-normal text-slate-400">
+                    {item.description}
                   </span>
-                ) : (
-                  "Revenir au fond par defaut"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900">Articles existants</h2>
-        <div className="mt-6 space-y-4">
-          {articles.length === 0 && (
-            <p className="text-sm text-slate-500">Aucun article enregistré.</p>
-          )}
-          {articles.map((article) => (
-            <div key={article._id} className="rounded-2xl border border-slate-200 p-4">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{article.title}</p>
-                  <p className="mt-1 text-xs text-slate-500">{article.category}</p>
-                </div>
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    article.status === "published"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-slate-100 text-slate-600"
-                  }`}
-                >
-                  {article.status === "published" ? "Publié" : "Brouillon"}
                 </span>
-              </div>
-              <p className="mt-3 text-xs text-slate-600">{article.excerpt}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleEdit(article)}
-                  className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
-                >
-                  Modifier
-                </button>
-                <button
-                  type="button"
-                  onClick={() => togglePublish(article)}
-                  disabled={actionLoading[`publish-${article._id}`]}
-                  className="rounded-full border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700"
-                >
-                  {actionLoading[`publish-${article._id}`] ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Spinner className="h-3 w-3 border-emerald-600" />
-                      En cours...
-                    </span>
-                  ) : article.status === "published" ? (
-                    "Passer en brouillon"
-                  ) : (
-                    "Publier"
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(article._id)}
-                  disabled={actionLoading[`delete-${article._id}`]}
-                  className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600"
-                >
-                  {actionLoading[`delete-${article._id}`] ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Spinner className="h-3 w-3 border-red-500" />
-                      Suppression...
-                    </span>
-                  ) : (
-                    "Supprimer"
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid gap-10 lg:grid-cols-3">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900">Services</h2>
-          <form onSubmit={handleServiceSubmit} className="mt-4 space-y-3">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre du service</label>
-              <input
-                name="title"
-                value={serviceForm.title}
-                onChange={handleServiceChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Titre du service"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Description</label>
-              <textarea
-                name="description"
-                value={serviceForm.description}
-                onChange={handleServiceChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                rows={3}
-                placeholder="Description"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={serviceSaving}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-            >
-              {serviceSaving ? (
-                <span className="inline-flex items-center gap-2">
-                  <Spinner />
-                  Ajout...
-                </span>
-              ) : (
-                "Ajouter"
               )}
             </button>
-          </form>
-          <div className="mt-4 space-y-2 text-sm">
-            {services.map((service) => (
-              <div key={service._id} className="rounded-xl border border-slate-200 p-3">
-                <p className="font-semibold text-slate-900">{service.title}</p>
-                <p className="text-xs text-slate-600">{service.description}</p>
+          ))}
+        </nav>
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={logoutLoading}
+            aria-label="Se deconnecter"
+            className={`flex w-full items-center justify-center rounded-2xl border border-slate-200 text-xs font-semibold text-slate-600 ${
+              sidebarOpen ? "px-4 py-2" : "h-10 px-2"
+            }`}
+          >
+            {logoutLoading ? (
+              <span className="inline-flex items-center gap-2">
+                <Spinner className="h-3 w-3 border-slate-600" />
+                {sidebarOpen ? "Déconnexion..." : null}
+              </span>
+            ) : sidebarOpen ? (
+              "Se déconnecter"
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+                <path d="M12 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h7" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </aside>
+
+      <main className="flex-1 space-y-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">
+              {sectionTitle[activeSection].title}
+            </h1>
+            <p className="mt-2 text-sm text-slate-600">
+              {sectionTitle[activeSection].subtitle}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={checkAdminSession}
+            className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+          >
+            Verifier la session
+          </button>
+        </div>
+        {sessionStatus && (
+          <div
+            className={`rounded-2xl border px-4 py-3 text-xs font-semibold ${
+              sessionStatus === "ok"
+                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                : "border-red-200 bg-red-50 text-red-700"
+            }`}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <span>
+                {sessionStatus === "ok"
+                  ? "Session admin active."
+                  : "Session expirée ou invalide. Reconnecte-toi."}
+              </span>
+              {sessionStatus === "expired" && (
                 <button
                   type="button"
-                  onClick={() => deleteService(service._id)}
-                  disabled={actionLoading[`service-${service._id}`]}
-                  className="mt-2 text-xs font-semibold text-red-600"
-                >
-                  {actionLoading[`service-${service._id}`] ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Spinner className="h-3 w-3 border-red-500" />
-                      Suppression...
-                    </span>
-                  ) : (
-                    "Supprimer"
-                  )}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900">Equipe</h2>
-          <form onSubmit={handleTeamSubmit} className="mt-4 space-y-3">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Nom et prenom</label>
-              <input
-                name="name"
-                value={teamForm.name}
-                onChange={handleTeamChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Nom et prenom"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Poste</label>
-              <input
-                name="role"
-                value={teamForm.role}
-                onChange={handleTeamChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Poste"
-                required
-              />
-            </div>
-            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (!file) return;
-                    setTeamFile(file);
-                    setTeamPreview(URL.createObjectURL(file));
+                  onClick={() => {
+                    window.location.href = "/admin/login";
                   }}
-                />
-                Choisir une photo
-              </label>
-              <p className="mt-2 text-xs text-slate-500">
-                Cliquez pour selectionner une photo.
-              </p>
+                  className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-semibold text-red-700"
+                >
+                  Se reconnecter
+                </button>
+              )}
             </div>
-            {teamPreview && (
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                <img
-                  src={teamPreview}
-                  alt="Previsualisation"
-                  className="h-48 w-full object-cover"
-                />
-              </div>
-            )}
-            <button
-              type="submit"
-              disabled={teamSaving}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-            >
-              {teamSaving ? (
-                <span className="inline-flex items-center gap-2">
-                  <Spinner />
-                  Enregistrement...
-                </span>
-              ) : teamEditingId ? "Mettre a jour" : "Ajouter"}
-            </button>
-            {teamEditingId && (
-              <button
-                type="button"
-                onClick={handleTeamCancel}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
-              >
-                Annuler
-              </button>
-            )}
-          </form>
-          <div className="mt-4 space-y-2 text-sm">
-            {team.map((member) => (
-              <div key={member._id} className="rounded-xl border border-slate-200 p-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
-                    {member.photoUrl ? (
-                      <img
-                        src={member.photoUrl}
-                        alt={member.name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
-                        Photo
+          </div>
+        )}
+        {(success || error) && (
+          <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-xl -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base shadow-xl">
+            {success && <p className="text-emerald-700">{success}</p>}
+            {error && <p className="text-red-600">{error}</p>}
+          </div>
+        )}
+
+        {activeSection === "articles" && (
+          <div className="space-y-8">
+            <div className="grid gap-10 lg:grid-cols-2">
+              <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-slate-900">Créer un article</h2>
+                <p className="mt-2 text-sm text-slate-600">
+                  Les articles publiés apparaîtront sur le site public.
+                </p>
+
+                <form ref={articleFormRef} onSubmit={handleSubmit} className="mt-6 space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Titre de l'article
+                    </label>
+                    <input
+                      name="title"
+                      value={form.title}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      placeholder="Titre"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Résumé court
+                    </label>
+                    <input
+                      name="excerpt"
+                      value={form.excerpt}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      placeholder="Résumé court"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Contenu détaillé
+                    </label>
+                    <textarea
+                      name="content"
+                      value={form.content}
+                      onChange={handleChange}
+                      rows={5}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      placeholder="Contenu détaillé"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+                            if (!file) return;
+                            setArticleFile(file);
+                            setArticlePreview(URL.createObjectURL(file));
+                          }}
+                        />
+                        Choisir une image
+                      </label>
+                      <p className="mt-2 text-xs text-slate-500">
+                        Cliquez pour sélectionner l’image de couverture.
+                      </p>
+                    </div>
+                    {(articlePreview || form.coverImage) && (
+                      <div className="overflow-hidden rounded-xl bg-slate-100">
+                        <img
+                          src={articlePreview || form.coverImage}
+                          alt="Prévisualisation"
+                          className="h-48 w-full object-cover"
+                        />
                       </div>
                     )}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{member.name}</p>
-                    <p className="text-xs text-slate-500">{member.role}</p>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Catégorie
+                    </label>
+                    <input
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      placeholder="Catégorie"
+                    />
                   </div>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Statut
+                    </label>
+                    <select
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                    >
+                      <option value="draft">Brouillon</option>
+                      <option value="published">Publié</option>
+                    </select>
+                  </div>
+
                   <button
-                    type="button"
-                    onClick={() => handleTeamEdit(member)}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                    type="submit"
+                    disabled={loading || articleSaving}
+                    className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
                   >
-                    Modifier
+                    {loading || articleSaving ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Spinner />
+                        Enregistrement...
+                      </span>
+                    ) : editingId ? (
+                      "Mettre à jour"
+                    ) : (
+                      "Créer l’article"
+                    )}
                   </button>
+                </form>
+              </div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+              <h2 className="text-xl font-semibold text-slate-900">Articles existants</h2>
+              <div className="mt-6 space-y-4">
+                {articles.length === 0 && (
+                  <p className="text-sm text-slate-500">Aucun article enregistré.</p>
+                )}
+                {articles.map((article) => (
+                  <div key={article._id} className="rounded-2xl border border-slate-200 p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">{article.title}</p>
+                        <p className="mt-1 text-xs text-slate-500">{article.category}</p>
+                      </div>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          article.status === "published"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-slate-100 text-slate-600"
+                        }`}
+                      >
+                        {article.status === "published" ? "Publié" : "Brouillon"}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-xs text-slate-600">{article.excerpt}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(article)}
+                        className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => togglePublish(article)}
+                        disabled={actionLoading[`publish-${article._id}`]}
+                        className="rounded-full border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700"
+                      >
+                        {actionLoading[`publish-${article._id}`] ? (
+                          <span className="inline-flex items-center gap-2">
+                            <Spinner className="h-3 w-3 border-emerald-600" />
+                            En cours...
+                          </span>
+                        ) : article.status === "published" ? (
+                          "Passer en brouillon"
+                        ) : (
+                          "Publier"
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(article._id)}
+                        disabled={actionLoading[`delete-${article._id}`]}
+                        className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600"
+                      >
+                        {actionLoading[`delete-${article._id}`] ? (
+                          <span className="inline-flex items-center gap-2">
+                            <Spinner className="h-3 w-3 border-red-500" />
+                            Suppression...
+                          </span>
+                        ) : (
+                          "Supprimer"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          </div>
+        )}
+
+        {activeSection === "services" && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Services</h2>
+            <form onSubmit={handleServiceSubmit} className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Titre du service
+                </label>
+                <input
+                  name="title"
+                  value={serviceForm.title}
+                  onChange={handleServiceChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Titre du service"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={serviceForm.description}
+                  onChange={handleServiceChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  rows={3}
+                  placeholder="Description"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={serviceSaving}
+                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+              >
+                {serviceSaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner />
+                    Ajout...
+                  </span>
+                ) : (
+                  "Ajouter"
+                )}
+              </button>
+            </form>
+            <div className="mt-4 space-y-2 text-sm">
+              {services.map((service) => (
+                <div key={service._id} className="rounded-xl border border-slate-200 p-3">
+                  <p className="font-semibold text-slate-900">{service.title}</p>
+                  <p className="text-xs text-slate-600">{service.description}</p>
                   <button
                     type="button"
-                    onClick={() => deleteTeamMember(member._id)}
-                    disabled={actionLoading[`team-${member._id}`]}
-                    className="text-xs font-semibold text-red-600"
+                    onClick={() => deleteService(service._id)}
+                    disabled={actionLoading[`service-${service._id}`]}
+                    className="mt-2 text-xs font-semibold text-red-600"
                   >
-                    {actionLoading[`team-${member._id}`] ? (
+                    {actionLoading[`service-${service._id}`] ? (
                       <span className="inline-flex items-center gap-2">
                         <Spinner className="h-3 w-3 border-red-500" />
                         Suppression...
@@ -1441,509 +1283,965 @@ export default function AdminClient() {
                     )}
                   </button>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900">Partenaires</h2>
-          <form onSubmit={handlePartnerSubmit} className="mt-4 space-y-3">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Nom du partenaire</label>
-              <input
-                name="name"
-                value={partnerForm.name}
-                onChange={handlePartnerChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Nom du partenaire"
-                required
-              />
-            </div>
-            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+        {activeSection === "team" && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Equipe</h2>
+            <form onSubmit={handleTeamSubmit} className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Nom et prenom
+                </label>
                 <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (!file) return;
-                    setPartnerFile(file);
-                    setPartnerPreview(URL.createObjectURL(file));
-                  }}
-                />
-                Choisir un logo
-              </label>
-              <p className="mt-2 text-xs text-slate-500">
-                Cliquez pour sélectionner le logo.
-              </p>
-            </div>
-            {partnerPreview && (
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                <img
-                  src={partnerPreview}
-                  alt="Prévisualisation logo"
-                  className="h-48 w-full object-contain"
+                  name="name"
+                  value={teamForm.name}
+                  onChange={handleTeamChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Nom et prenom"
+                  required
                 />
               </div>
-            )}
-            <button
-              type="submit"
-              disabled={partnerSaving}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-            >
-              {partnerSaving ? (
-                <span className="inline-flex items-center gap-2">
-                  <Spinner />
-                  Ajout...
-                </span>
-              ) : partnerEditingId ? "Mettre à jour" : "Ajouter"}
-            </button>
-            {partnerEditingId && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Poste
+                </label>
+                <input
+                  name="role"
+                  value={teamForm.role}
+                  onChange={handleTeamChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Poste"
+                  required
+                />
+              </div>
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (!file) return;
+                      setTeamFile(file);
+                      setTeamPreview(URL.createObjectURL(file));
+                    }}
+                  />
+                  Choisir une photo
+                </label>
+                <p className="mt-2 text-xs text-slate-500">
+                  Cliquez pour selectionner une photo.
+                </p>
+              </div>
+              {teamPreview && (
+                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <img
+                    src={teamPreview}
+                    alt="Previsualisation"
+                    className="h-48 w-full object-cover"
+                  />
+                </div>
+              )}
               <button
-                type="button"
-                onClick={handlePartnerCancel}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+                type="submit"
+                disabled={teamSaving}
+                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
               >
-                Annuler
+                {teamSaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner />
+                    Enregistrement...
+                  </span>
+                ) : teamEditingId ? "Mettre a jour" : "Ajouter"}
               </button>
-            )}
-          </form>
-          <div className="mt-4 space-y-2 text-sm">
-            {partners.map((partner) => (
-              <div key={partner._id} className="rounded-xl border border-slate-200 p-3">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
-                    {partner.logoUrl ? (
+              {teamEditingId && (
+                <button
+                  type="button"
+                  onClick={handleTeamCancel}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+                >
+                  Annuler
+                </button>
+              )}
+            </form>
+            <div className="mt-4 space-y-2 text-sm">
+              {team.map((member) => (
+                <div key={member._id} className="rounded-xl border border-slate-200 p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
+                      {member.photoUrl ? (
+                        <img
+                          src={member.photoUrl}
+                          alt={member.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
+                          Photo
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">{member.name}</p>
+                      <p className="text-xs text-slate-500">{member.role}</p>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleTeamEdit(member)}
+                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteTeamMember(member._id)}
+                      disabled={actionLoading[`team-${member._id}`]}
+                      className="text-xs font-semibold text-red-600"
+                    >
+                      {actionLoading[`team-${member._id}`] ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner className="h-3 w-3 border-red-500" />
+                          Suppression...
+                        </span>
+                      ) : (
+                        "Supprimer"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeSection === "partners" && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Partenaires</h2>
+            <form onSubmit={handlePartnerSubmit} className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Nom du partenaire
+                </label>
+                <input
+                  name="name"
+                  value={partnerForm.name}
+                  onChange={handlePartnerChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Nom du partenaire"
+                  required
+                />
+              </div>
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (!file) return;
+                      setPartnerFile(file);
+                      setPartnerPreview(URL.createObjectURL(file));
+                    }}
+                  />
+                  Choisir un logo
+                </label>
+                <p className="mt-2 text-xs text-slate-500">
+                  Cliquez pour sélectionner le logo.
+                </p>
+              </div>
+              {partnerPreview && (
+                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                  <img
+                    src={partnerPreview}
+                    alt="Prévisualisation logo"
+                    className="h-48 w-full object-contain"
+                  />
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={partnerSaving}
+                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+              >
+                {partnerSaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner />
+                    Ajout...
+                  </span>
+                ) : partnerEditingId ? "Mettre à jour" : "Ajouter"}
+              </button>
+              {partnerEditingId && (
+                <button
+                  type="button"
+                  onClick={handlePartnerCancel}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+                >
+                  Annuler
+                </button>
+              )}
+            </form>
+            <div className="mt-4 space-y-2 text-sm">
+              {partners.map((partner) => (
+                <div key={partner._id} className="rounded-xl border border-slate-200 p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
+                      {partner.logoUrl ? (
+                        <img
+                          src={partner.logoUrl}
+                          alt={partner.name}
+                          className="h-full w-full object-contain p-1"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
+                          Logo
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">{partner.name}</p>
+                      <p className="text-xs text-slate-500">
+                        {partner.logoUrl ? "Logo enregistré" : "Sans logo"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handlePartnerEdit(partner)}
+                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deletePartner(partner._id)}
+                      disabled={actionLoading[`partner-${partner._id}`]}
+                      className="mt-2 text-xs font-semibold text-red-600"
+                    >
+                      {actionLoading[`partner-${partner._id}`] ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner className="h-3 w-3 border-red-500" />
+                          Suppression...
+                        </span>
+                      ) : (
+                        "Supprimer"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeSection === "gallery" && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Galerie</h2>
+            <form onSubmit={handleGallerySubmit} className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Titre du projet/photo
+                </label>
+                <input
+                  name="title"
+                  value={galleryForm.title}
+                  onChange={handleGalleryChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Titre"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Catégorie
+                </label>
+                <input
+                  name="category"
+                  value={galleryForm.category}
+                  onChange={handleGalleryChange}
+                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  placeholder="Catégorie"
+                  required
+                />
+              </div>
+              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (!file) return;
+                      setGalleryFile(file);
+                      setGalleryPreview(URL.createObjectURL(file));
+                    }}
+                  />
+                  Choisir un média
+                </label>
+                <p className="mt-2 text-xs text-slate-500">
+                  Cliquez pour sélectionner une image ou une vidéo.
+                </p>
+              </div>
+              {galleryPreview &&
+                (galleryFile?.type.startsWith("video/") ? (
+                  <video
+                    src={galleryPreview}
+                    className="h-48 w-full rounded-xl object-cover"
+                    controls
+                  />
+                ) : (
+                  <img
+                    src={galleryPreview}
+                    alt="Prévisualisation"
+                    className="h-48 w-full rounded-xl object-cover"
+                  />
+                ))}
+              <button
+                type="submit"
+                disabled={gallerySaving}
+                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+              >
+                {gallerySaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner />
+                    Ajout...
+                  </span>
+                ) : (
+                  "Ajouter"
+                )}
+              </button>
+            </form>
+            <div className="mt-4 space-y-2 text-sm">
+              {gallery.map((item) => (
+                <div key={item._id} className="rounded-xl border border-slate-200 p-3">
+                  <p className="font-semibold text-slate-900">{item.title}</p>
+                  <p className="text-xs text-slate-600">{item.category}</p>
+                  <button
+                    type="button"
+                    onClick={() => deleteGalleryItem(item._id)}
+                    disabled={actionLoading[`gallery-${item._id}`]}
+                    className="mt-2 text-xs font-semibold text-red-600"
+                  >
+                    {actionLoading[`gallery-${item._id}`] ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Spinner className="h-3 w-3 border-red-500" />
+                        Suppression...
+                      </span>
+                    ) : (
+                      "Supprimer"
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeSection === "content" && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">
+              Contenus institutionnels
+            </h2>
+            <form onSubmit={handleContentSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Message institutionnel (Accueil)
+                </label>
+                <textarea
+                  name="homeMessage"
+                  value={content.homeMessage}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.homeMessage
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Message institutionnel (Accueil)"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Présentation synthétique (Accueil)
+                </label>
+                <textarea
+                  name="homeAbout"
+                  value={content.homeAbout}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.homeAbout
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Présentation synthétique (Accueil)"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Historique résumé (Accueil)
+                </label>
+                <textarea
+                  name="homeHistory"
+                  value={content.homeHistory}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.homeHistory
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Historique résumé (Accueil)"
+                />
+              </div>
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Chiffres clés (Accueil)
+                </p>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <input
+                    name="homeStat1Value"
+                    value={content.homeStat1Value}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat1Value
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Valeur 1 (ex: +12)"
+                  />
+                  <input
+                    name="homeStat1Label"
+                    value={content.homeStat1Label}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat1Label
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Libellé 1 (ex: Services spécialisés)"
+                  />
+                  <input
+                    name="homeStat2Value"
+                    value={content.homeStat2Value}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat2Value
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Valeur 2 (ex: +40)"
+                  />
+                  <input
+                    name="homeStat2Label"
+                    value={content.homeStat2Label}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat2Label
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Libellé 2 (ex: Projets accompagnés)"
+                  />
+                  <input
+                    name="homeStat3Value"
+                    value={content.homeStat3Value}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat3Value
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Valeur 3 (ex: 8)"
+                  />
+                  <input
+                    name="homeStat3Label"
+                    value={content.homeStat3Label}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat3Label
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Libellé 3 (ex: Pays partenaires)"
+                  />
+                  <input
+                    name="homeStat4Value"
+                    value={content.homeStat4Value}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat4Value
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Valeur 4 (ex: 24/7)"
+                  />
+                  <input
+                    name="homeStat4Label"
+                    value={content.homeStat4Label}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.homeStat4Label
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Libellé 4 (ex: Suivi des actions)"
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Présentation détaillée (Page Présentation)
+                </label>
+                <textarea
+                  name="presentationAbout"
+                  value={content.presentationAbout}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.presentationAbout
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={4}
+                  placeholder="Présentation détaillée (Page Présentation)"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Vision
+                </label>
+                <textarea
+                  name="presentationVision"
+                  value={content.presentationVision}
+                  onChange={handleContentChange}
+                  className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.presentationVision
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Vision"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Mission
+                </label>
+                <textarea
+                  name="presentationMission"
+                  value={content.presentationMission}
+                  onChange={handleContentChange}
+                  className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.presentationMission
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Mission"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Valeurs
+                </label>
+                <textarea
+                  name="presentationValues"
+                  value={content.presentationValues}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.presentationValues
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Valeurs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Adresse
+                </label>
+                <input
+                  name="contactAddress"
+                  value={content.contactAddress}
+                  onChange={handleContentChange}
+                  className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.contactAddress
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  placeholder="Adresse"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Téléphone
+                </label>
+                <input
+                  name="contactPhone"
+                  value={content.contactPhone}
+                  onChange={handleContentChange}
+                  className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.contactPhone
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  placeholder="Téléphone"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Email
+                </label>
+                <input
+                  name="contactEmail"
+                  value={content.contactEmail}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.contactEmail
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  placeholder="Email"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  URL d'iframe Google Maps
+                </label>
+                <input
+                  name="mapEmbedUrl"
+                  value={content.mapEmbedUrl}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.mapEmbedUrl
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  placeholder="URL d’iframe Google Maps"
+                />
+              </div>
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Reseaux sociaux (Contact)
+                </p>
+                <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <input
+                    name="socialXUrl"
+                    value={content.socialXUrl}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.socialXUrl
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Lien X (Twitter)"
+                  />
+                  <input
+                    name="socialFacebookUrl"
+                    value={content.socialFacebookUrl}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.socialFacebookUrl
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Lien Facebook"
+                  />
+                  <input
+                    name="socialWhatsappUrl"
+                    value={content.socialWhatsappUrl}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.socialWhatsappUrl
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Lien WhatsApp"
+                  />
+                  <input
+                    name="socialInstagramUrl"
+                    value={content.socialInstagramUrl}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.socialInstagramUrl
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-slate-200"
+                    }`}
+                    placeholder="Lien Instagram"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                disabled={contentSaving}
+                className="md:col-span-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+              >
+                {contentSaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner />
+                    Enregistrement...
+                  </span>
+                ) : (
+                  "Enregistrer les contenus"
+                )}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {activeSection === "profile" && (
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="flex flex-1 flex-col rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <h2 className="text-xl font-semibold text-slate-900">
+                  Profil du Directeur General
+                </h2>
+                <button
+                  type="button"
+                  onClick={() => setDirectorEditing((prev) => !prev)}
+                  className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+                >
+                  {directorEditing ? "Fermer" : "Modifier"}
+                </button>
+              </div>
+
+              {!directorEditing && (
+                <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="h-28 w-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                    {director.photoUrl ? (
                       <img
-                        src={partner.logoUrl}
-                        alt={partner.name}
+                        src={director.photoUrl}
+                        alt="Photo DG"
                         className="h-full w-full object-contain p-1"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
-                        Logo
+                      <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+                        Photo
                       </div>
                     )}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{partner.name}</p>
-                    <p className="text-xs text-slate-500">
-                      {partner.logoUrl ? "Logo enregistré" : "Sans logo"}
+                    <p className="text-sm font-semibold text-slate-900">
+                      {director.name || "Directeur General"}
+                    </p>
+                    <p className="text-xs text-slate-600">
+                      {director.title || "Fonction"}
                     </p>
                   </div>
                 </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handlePartnerEdit(partner)}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
-                  >
-                    Modifier
-                  </button>
-                <button
-                  type="button"
-                  onClick={() => deletePartner(partner._id)}
-                  disabled={actionLoading[`partner-${partner._id}`]}
-                  className="mt-2 text-xs font-semibold text-red-600"
-                >
-                  {actionLoading[`partner-${partner._id}`] ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Spinner className="h-3 w-3 border-red-500" />
-                      Suppression...
-                    </span>
-                  ) : (
-                    "Supprimer"
-                  )}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-900">Galerie</h2>
-          <form onSubmit={handleGallerySubmit} className="mt-4 space-y-3">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Titre du projet/photo</label>
-              <input
-                name="title"
-                value={galleryForm.title}
-                onChange={handleGalleryChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Titre"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Catégorie</label>
-              <input
-                name="category"
-                value={galleryForm.category}
-                onChange={handleGalleryChange}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
-                placeholder="Catégorie"
-                required
-              />
-            </div>
-            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
-                <input
-                  type="file"
-                  accept="image/*,video/*"
-                  className="hidden"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (!file) return;
-                    setGalleryFile(file);
-                    setGalleryPreview(URL.createObjectURL(file));
-                  }}
-                />
-                Choisir un média
-              </label>
-              <p className="mt-2 text-xs text-slate-500">
-                Cliquez pour sélectionner une image ou une vidéo.
-              </p>
-            </div>
-            {galleryPreview &&
-              (galleryFile?.type.startsWith("video/") ? (
-                <video
-                  src={galleryPreview}
-                  className="h-48 w-full rounded-xl object-cover"
-                  controls
-                />
-              ) : (
-                <img
-                  src={galleryPreview}
-                  alt="Prévisualisation"
-                  className="h-48 w-full rounded-xl object-cover"
-                />
-              ))}
-            <button
-              type="submit"
-              disabled={gallerySaving}
-              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-            >
-              {gallerySaving ? (
-                <span className="inline-flex items-center gap-2">
-                  <Spinner />
-                  Ajout...
-                </span>
-              ) : (
-                "Ajouter"
               )}
-            </button>
-          </form>
-          <div className="mt-4 space-y-2 text-sm">
-            {gallery.map((item) => (
-              <div key={item._id} className="rounded-xl border border-slate-200 p-3">
-                <p className="font-semibold text-slate-900">{item.title}</p>
-                <p className="text-xs text-slate-600">{item.category}</p>
+
+              {directorEditing && (
+                <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Nom complet
+                    </label>
+                    <input
+                      name="name"
+                      value={director.name}
+                      onChange={handleDirectorChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      placeholder="Nom complet"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Titre / Fonction
+                    </label>
+                    <input
+                      name="title"
+                      value={director.title}
+                      onChange={handleDirectorChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      placeholder="Titre / Fonction"
+                      required
+                    />
+                  </div>
+                  <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (!file) return;
+                          setDirectorFile(file);
+                          setDirectorPreview(URL.createObjectURL(file));
+                        }}
+                      />
+                      Choisir une photo
+                    </label>
+                    <p className="mt-2 text-xs text-slate-500">
+                      Cliquez pour sélectionner la photo officielle.
+                    </p>
+                  </div>
+                  {(directorPreview || director.photoUrl) && (
+                    <div className="max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                      <img
+                        src={directorPreview || director.photoUrl}
+                        alt="Photo DG"
+                        className="aspect-[3/4] w-full object-contain p-2"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Biographie
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={director.bio}
+                      onChange={handleDirectorChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      rows={5}
+                      placeholder="Biographie"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                      Message du DG
+                    </label>
+                    <textarea
+                      name="message"
+                      value={director.message}
+                      onChange={handleDirectorChange}
+                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      rows={4}
+                      placeholder="Message du DG"
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={directorSaving}
+                    className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                  >
+                    {directorSaving ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Spinner />
+                        Enregistrement...
+                      </span>
+                    ) : (
+                      "Enregistrer le profil"
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+              <h2 className="text-xl font-semibold text-slate-900">Fond Accueil</h2>
+              <div className="mt-6 space-y-3">
+                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+                        setHeroBackgroundFile(file);
+                        setHeroBackgroundPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    Choisir une image
+                  </label>
+                </div>
+                {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
+                  <div className="space-y-3">
+                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                      <img
+                        src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
+                        alt="Prévisualisation fond accueil"
+                        className="h-96 w-full object-cover"
+                      />
+                    </div>
+                    {heroBackgroundFile && (
+                      <button
+                        type="button"
+                        onClick={handleHeroBackgroundSave}
+                        disabled={contentSaving}
+                        className="w-full rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white"
+                      >
+                        {contentSaving ? (
+                          <span className="inline-flex items-center gap-2">
+                            <Spinner className="h-3 w-3 border-white" />
+                            Enregistrement...
+                          </span>
+                        ) : (
+                          "Valider le fond"
+                        )}
+                      </button>
+                    )}
+                  </div>
+                )}
                 <button
                   type="button"
-                  onClick={() => deleteGalleryItem(item._id)}
-                  disabled={actionLoading[`gallery-${item._id}`]}
-                  className="mt-2 text-xs font-semibold text-red-600"
+                  onClick={handleRevertToDefaultBackground}
+                  disabled={contentSaving}
+                  className="w-full rounded-xl bg-slate-600 px-4 py-2 text-xs font-semibold text-white"
                 >
-                  {actionLoading[`gallery-${item._id}`] ? (
+                  {contentSaving ? (
                     <span className="inline-flex items-center gap-2">
-                      <Spinner className="h-3 w-3 border-red-500" />
-                      Suppression...
+                      <Spinner className="h-3 w-3 border-white" />
+                      Enregistrement...
                     </span>
                   ) : (
-                    "Supprimer"
+                    "Revenir au fond par defaut"
                   )}
                 </button>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h2 className="text-xl font-semibold text-slate-900">
-          Contenus institutionnels
-        </h2>
-        <form onSubmit={handleContentSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Message institutionnel (Accueil)</label>
-            <textarea
-              name="homeMessage"
-            value={content.homeMessage}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.homeMessage ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={3}
-              placeholder="Message institutionnel (Accueil)"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Présentation synthétique (Accueil)</label>
-            <textarea
-              name="homeAbout"
-            value={content.homeAbout}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.homeAbout ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={3}
-              placeholder="Présentation synthétique (Accueil)"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Historique résumé (Accueil)</label>
-            <textarea
-              name="homeHistory"
-            value={content.homeHistory}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.homeHistory ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={3}
-              placeholder="Historique résumé (Accueil)"
-            />
-          </div>
-          <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Chiffres clés (Accueil)
+        {activeSection === "settings" && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Parametres</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Outils de session et acces administrateur.
             </p>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <input
-                name="homeStat1Value"
-                value={content.homeStat1Value}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat1Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Valeur 1 (ex: +12)"
-              />
-              <input
-                name="homeStat1Label"
-                value={content.homeStat1Label}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat1Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Libellé 1 (ex: Services spécialisés)"
-              />
-              <input
-                name="homeStat2Value"
-                value={content.homeStat2Value}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat2Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Valeur 2 (ex: +40)"
-              />
-              <input
-                name="homeStat2Label"
-                value={content.homeStat2Label}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat2Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Libellé 2 (ex: Projets accompagnés)"
-              />
-              <input
-                name="homeStat3Value"
-                value={content.homeStat3Value}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat3Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Valeur 3 (ex: 8)"
-              />
-              <input
-                name="homeStat3Label"
-                value={content.homeStat3Label}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat3Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Libellé 3 (ex: Pays partenaires)"
-              />
-              <input
-                name="homeStat4Value"
-                value={content.homeStat4Value}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat4Value ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Valeur 4 (ex: 24/7)"
-              />
-              <input
-                name="homeStat4Label"
-                value={content.homeStat4Label}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.homeStat4Label ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Libellé 4 (ex: Suivi des actions)"
-              />
+            <div className="mt-6 space-y-3 text-sm text-slate-600">
+              <p>
+                Etat de session: {sessionStatus === "ok" ? "Active" : "Expiree"}
+              </p>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={checkAdminSession}
+                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+              >
+                Verifier la session
+              </button>
+              {sessionStatus === "expired" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = "/admin/login";
+                  }}
+                  className="rounded-full border border-red-200 px-4 py-2 text-xs font-semibold text-red-700"
+                >
+                  Se reconnecter
+                </button>
+              )}
             </div>
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Présentation détaillée (Page Présentation)</label>
-            <textarea
-              name="presentationAbout"
-            value={content.presentationAbout}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.presentationAbout ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={4}
-              placeholder="Présentation détaillée (Page Présentation)"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Vision</label>
-            <textarea
-              name="presentationVision"
-            value={content.presentationVision}
-            onChange={handleContentChange}
-            className={`w-full rounded-xl border px-4 py-3 text-sm ${
-              content.presentationVision ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={3}
-              placeholder="Vision"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Mission</label>
-            <textarea
-              name="presentationMission"
-            value={content.presentationMission}
-            onChange={handleContentChange}
-            className={`w-full rounded-xl border px-4 py-3 text-sm ${
-              content.presentationMission ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={3}
-              placeholder="Mission"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Valeurs</label>
-            <textarea
-              name="presentationValues"
-            value={content.presentationValues}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.presentationValues ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            rows={3}
-              placeholder="Valeurs"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Adresse</label>
-            <input
-              name="contactAddress"
-            value={content.contactAddress}
-            onChange={handleContentChange}
-            className={`w-full rounded-xl border px-4 py-3 text-sm ${
-              content.contactAddress ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-              placeholder="Adresse"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Téléphone</label>
-            <input
-              name="contactPhone"
-            value={content.contactPhone}
-            onChange={handleContentChange}
-            className={`w-full rounded-xl border px-4 py-3 text-sm ${
-              content.contactPhone ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-              placeholder="Téléphone"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Email</label>
-            <input
-              name="contactEmail"
-            value={content.contactEmail}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.contactEmail ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-              placeholder="Email"
-            />
-          </div>
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">URL d'iframe Google Maps</label>
-            <input
-              name="mapEmbedUrl"
-            value={content.mapEmbedUrl}
-            onChange={handleContentChange}
-            className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
-              content.mapEmbedUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-            }`}
-            placeholder="URL d’iframe Google Maps"
-          />
-          </div>
-          <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Reseaux sociaux (Contact)
-            </p>
-            <div className="mt-3 grid gap-3 md:grid-cols-2">
-              <input
-                name="socialXUrl"
-                value={content.socialXUrl}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.socialXUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Lien X (Twitter)"
-              />
-              <input
-                name="socialFacebookUrl"
-                value={content.socialFacebookUrl}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.socialFacebookUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Lien Facebook"
-              />
-              <input
-                name="socialWhatsappUrl"
-                value={content.socialWhatsappUrl}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.socialWhatsappUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Lien WhatsApp"
-              />
-              <input
-                name="socialInstagramUrl"
-                value={content.socialInstagramUrl}
-                onChange={handleContentChange}
-                className={`w-full rounded-xl border px-4 py-3 text-sm ${
-                  content.socialInstagramUrl ? "border-emerald-200 bg-emerald-50" : "border-slate-200"
-                }`}
-                placeholder="Lien Instagram"
-              />
-            </div>
-          </div>
-          <button
-            type="submit"
-            disabled={contentSaving}
-            className="md:col-span-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
-          >
-            {contentSaving ? (
-              <span className="inline-flex items-center gap-2">
-                <Spinner />
-                Enregistrement...
-              </span>
-            ) : (
-              "Enregistrer les contenus"
-            )}
-          </button>
-        </form>
-      </div>
+        )}
+      </main>
     </div>
   );
 }
