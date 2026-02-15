@@ -154,8 +154,8 @@ export default async function Home() {
       >
         <div className="absolute inset-0 bg-emerald-950/45" />
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 via-emerald-900/10 to-transparent" />
-        <div className="relative mx-auto w-full max-w-7xl px-6 py-20">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
+        <div className="relative mx-auto w-full max-w-7xl px-2 py-20">
+          <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-center">
             <div>
               <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
                 EKR Africa Agrovision Group
@@ -226,7 +226,7 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-2 py-16">
-        <div className="grid gap-10 md:grid-cols-2 md:items-start">
+        <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-start">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Présentation de la société</h2>
             <p className="mt-4 text-base text-slate-600">
@@ -289,10 +289,10 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-2 py-16">
-        <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-slate-50 p-8 shadow-md">
-          <div className="flex flex-col gap-12 md:flex-row md:items-center md:gap-24 lg:gap-28">
-            <div className="flex flex-col items-center md:items-start">
-              <div className="h-64 w-64 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-4 ring-emerald-100 transition-transform duration-500 hover:-translate-y-1">
+        <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-slate-50 p-6 sm:p-8 shadow-md overflow-hidden">
+          <div className="flex flex-col gap-8 md:gap-12 md:flex-row md:items-center">
+            <div className="flex flex-col items-center md:items-start flex-shrink-0">
+              <div className="h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-4 ring-emerald-100 transition-transform duration-500 hover:-translate-y-1">
                 {director?.photoUrl ? (
                   <img
                     src={director.photoUrl}
@@ -309,8 +309,8 @@ export default async function Home() {
                 {director?.name || "Directeur Général"}
               </p>
             </div>
-            <div className="hidden h-48 w-px self-stretch rounded-full bg-emerald-200 md:block" />
-            <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-6 shadow-sm md:pl-10 lg:pl-12">
+            <div className="hidden h-48 w-px self-stretch rounded-full bg-emerald-200 md:block flex-shrink-0" />
+            <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-5 sm:p-6 shadow-sm">
               <h2 className="text-2xl font-semibold text-slate-900">Directeur Général</h2>
               <p className="mt-2 text-sm font-semibold text-emerald-700">
                 {director?.title || "Fonction"}
@@ -330,7 +330,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-7xl px-1 py-16">
+        <div className="mx-auto w-full max-w-7xl px-6 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Activités clés</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {activities.map((activity) => (
@@ -345,14 +345,14 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-1 py-16">
+      <section className="mx-auto w-full max-w-7xl px-6 py-16">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-slate-900">Articles & Galerie</h2>
           <a href="/articles-galerie" className="text-sm font-semibold text-emerald-700">
             Tout voir
           </a>
         </div>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {latestArticles.length === 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
               Aucun article publié pour le moment.
@@ -393,7 +393,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-1 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16 overflow-hidden">
           <h2 className="text-2xl font-semibold text-slate-900">Partenaires</h2>
           <p className="mt-2 text-sm text-slate-600">
             Ils nous font confiance pour l’accompagnement des projets agricoles.

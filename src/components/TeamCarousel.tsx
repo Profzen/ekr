@@ -44,20 +44,20 @@ export default function TeamCarousel({ members }: TeamCarouselProps) {
   }, [cardWidth, hasMembers, isPaused]);
 
   return (
-    <div className="relative">
+    <div className="relative -mx-2 overflow-hidden">
       {hasMembers ? (
         <div
           ref={trackRef}
-          className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-2"
+          className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-2 px-2"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
           {members.map((member) => (
             <div
               key={member._id}
-              className="snap-start min-w-[240px] rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm"
+              className="snap-center flex-shrink-0 w-[calc(100%-2rem)] sm:w-[240px] max-w-[280px] rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm"
             >
-              <div className="mx-auto h-32 w-32 overflow-hidden rounded-full border border-slate-200 bg-slate-50">
+              <div className="mx-auto h-32 w-32 overflow-hidden rounded-full border border-slate-200 bg-slate-50 flex-shrink-0">
                 {member.photoUrl ? (
                   <img
                     src={member.photoUrl}

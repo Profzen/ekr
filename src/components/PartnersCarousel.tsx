@@ -50,27 +50,31 @@ export default function PartnersCarousel({ partners }: PartnersCarouselProps) {
   }
 
   return (
-    <div
-      ref={trackRef}
-      className="hide-scrollbar mt-6 flex gap-4 overflow-x-auto pb-2"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {partners.map((partner) => (
-        <div
-          key={partner._id}
-          className="min-w-[240px] h-60 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm flex flex-col items-center text-center"
-        >
+    <div className="-mx-2 overflow-hidden">
+      <div
+        ref={trackRef}
+        className="hide-scrollbar mt-6 flex gap-4 overflow-x-auto pb-2 px-2 snap-x snap-mandatory"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        {partners.map((partner) => (
+          <div
+            key={partner._id}
+            className="snap-center flex-shrink-0 w-[calc(100%-2rem)] sm:w-[240px] h-60 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 shadow-sm flex flex-col items-center justify-center text-center p-4 gap-3"
+          >
           {partner.logoUrl ? (
-            <img
-              src={partner.logoUrl}
-              alt={partner.name}
-              className="h-44 w-44 rounded-lg object-contain"
-            />
+            <div className="flex-1 flex items-center justify-center w-full">
+              <img
+                src={partner.logoUrl}
+                alt={partner.name}
+                className="max-h-40 max-w-full rounded-lg object-contain"
+              />
+            </div>
           ) : null}
           <span className="text-base leading-tight">{partner.name}</span>
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

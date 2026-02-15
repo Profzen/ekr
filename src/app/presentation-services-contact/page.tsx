@@ -73,7 +73,7 @@ export default async function PresentationServicesContactPage() {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Présentation · Services · Contact
           </h1>
@@ -85,41 +85,91 @@ export default async function PresentationServicesContactPage() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-7xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h2 className="text-3xl font-semibold text-slate-900">Nos services</h2>
           <p className="mt-2 text-base text-slate-600">
             Découvrez notre expertise au service de votre projet agricole.
           </p>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.length === 0 && (
               <div className="rounded-2xl border border-emerald-100 bg-white p-6 text-sm text-slate-600">
                 Aucun service enregistré pour le moment.
               </div>
             )}
-            {services.map((service) => (
-              <div
-                key={service._id}
-                className="rounded-2xl border border-emerald-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-emerald-300"
-              >
-                <h3 className="text-lg font-bold text-emerald-700">
-                  {service.title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  {service.description}
-                </p>
-              </div>
-            ))}
+            {services.map((service, index) => {
+              const iconColors = [
+                { bg: "bg-emerald-500", text: "text-white" },
+                { bg: "bg-teal-500", text: "text-white" },
+                { bg: "bg-green-500", text: "text-white" },
+                { bg: "bg-lime-500", text: "text-white" },
+                { bg: "bg-cyan-500", text: "text-white" },
+                { bg: "bg-emerald-600", text: "text-white" },
+              ];
+              const icons = [
+                // Agriculteurs - Plant/Leaf icon
+                <svg key="1" viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M12 2c-3 0-6 2-6 6 0 2.5 1.5 4.5 3.5 5.5C8.5 16 7 19 7 22h2c0-2.5 1.5-4.5 3-5.5 1.5 1 3 2.5 3 5.5h2c0-3-1.5-6-2.5-8.5 2-1 3.5-3 3.5-5.5 0-4-3-6-6-6z"/>
+                  <path d="M12 2v20"/>
+                </svg>,
+                // Fournisseurs - Box/Package icon
+                <svg key="2" viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>
+                </svg>,
+                // Prestataires - Settings/Tools icon
+                <svg key="3" viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="12" cy="12" r="3"/>
+                  <path d="M12 1v6m0 6v6M5.6 5.6l4.2 4.2m4.2 4.2l4.2 4.2M1 12h6m6 0h6M5.6 18.4l4.2-4.2m4.2-4.2l4.2-4.2"/>
+                </svg>,
+                // Acheteurs - Shopping Cart icon
+                <svg key="4" viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <circle cx="9" cy="21" r="1"/>
+                  <circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/>
+                </svg>,
+                // Conseil - Lightbulb icon
+                <svg key="5" viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M15 14c.6-1.4 1-3 1-4.5A6.5 6.5 0 0 0 9.5 3 6.5 6.5 0 0 0 3 9.5c0 1.5.4 3.1 1 4.5"/>
+                  <path d="M9 18h6M10 22h4M8 18a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3"/>
+                </svg>,
+                // Formation - Book/Education icon
+                <svg key="6" viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                  <path d="M8 7h8M8 11h8"/>
+                </svg>,
+              ];
+              const color = iconColors[index % iconColors.length];
+              const icon = icons[index % icons.length];
+              
+              return (
+                <div
+                  key={service._id}
+                  className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:shadow-lg hover:border-emerald-200 hover:-translate-y-1"
+                >
+                  <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl ${color.bg} ${color.text} shadow-md transition-transform group-hover:scale-110`}>
+                    {icon}
+                  </div>
+                  <h3 className="mt-6 text-xl font-bold text-slate-900 leading-snug">
+                    {service.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                    {service.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       <section className="mx-auto w-full max-w-7xl px-2 py-16">
-        <div className="grid gap-10 md:grid-cols-2 md:items-start">
-          <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-sm">
-            <h2 className="text-2xl font-semibold text-slate-900">
+        <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-start">
+          <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6 sm:p-8 shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">
               Présentation de la société
             </h2>
-            <p className="mt-6 text-base leading-relaxed text-slate-700">
+            <p className="mt-6 text-sm sm:text-base leading-relaxed text-slate-700">
               {content?.presentationAbout ||
                 "EKR AFRICA AGROVISION GROUP est une société spécialisée dans l’accompagnement, le conseil et le développement des activités agricoles en Afrique. Nous accompagnons les investisseurs, producteurs et institutions dans la structuration de projets à fort impact."}
             </p>
@@ -138,8 +188,8 @@ export default async function PresentationServicesContactPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
-            <h3 className="text-2xl font-semibold text-slate-900">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-sm overflow-hidden">
+            <h3 className="text-xl sm:text-2xl font-semibold text-slate-900">
               Equipe EKR AFRICA AGROVISION GROUP
             </h3>
             <p className="mt-2 text-sm text-slate-600">
@@ -152,9 +202,9 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-6 py-16">
-        <div className="grid gap-10 md:grid-cols-[1.2fr,0.8fr]">
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
+        <div className="grid gap-10 grid-cols-1 md:grid-cols-[1.2fr,0.8fr]">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Contact</p>
@@ -310,7 +360,7 @@ export default async function PresentationServicesContactPage() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Localisation</h2>
           <p className="mt-2 text-sm text-slate-600">
             {content?.contactAddress || "Adresse à préciser"}

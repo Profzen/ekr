@@ -55,7 +55,7 @@ export default async function ArticlesGaleriePage() {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-6 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Articles & Galerie
           </h1>
@@ -67,7 +67,7 @@ export default async function ArticlesGaleriePage() {
 
       <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <h2 className="text-2xl font-semibold text-slate-900">Articles</h2>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {normalizedArticles.length === 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
               Aucun article publié pour le moment.
@@ -108,12 +108,12 @@ export default async function ArticlesGaleriePage() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-7xl px-2 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16 overflow-hidden">
           <h2 className="text-2xl font-semibold text-slate-900">Galerie</h2>
           <p className="mt-2 text-sm text-slate-600">
             Photos et vidéos classées par catégories.
           </p>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {gallery.length === 0 && (
               <div className="rounded-2xl border border-emerald-100 bg-white p-5 text-sm text-slate-600">
                 Aucun média disponible pour le moment.
