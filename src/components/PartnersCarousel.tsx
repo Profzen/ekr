@@ -53,7 +53,7 @@ export default function PartnersCarousel({ partners }: PartnersCarouselProps) {
     <div className="-mx-2 overflow-hidden">
       <div
         ref={trackRef}
-        className="hide-scrollbar mt-6 flex gap-4 overflow-x-auto pb-2 px-2 snap-x snap-mandatory"
+        className="hide-scrollbar mt-6 flex gap-4 overflow-x-auto pb-2 px-3 snap-x snap-mandatory"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >

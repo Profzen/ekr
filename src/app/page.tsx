@@ -154,7 +154,7 @@ export default async function Home() {
       >
         <div className="absolute inset-0 bg-emerald-950/45" />
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 via-emerald-900/10 to-transparent" />
-        <div className="relative mx-auto w-full max-w-7xl px-2 py-20">
+        <div className="relative mx-auto w-full max-w-7xl px-3 py-20">
           <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-center">
             <div>
               <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
@@ -259,7 +259,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-2 py-16">
+        <div className="mx-auto w-full max-w-7xl px-3 py-16">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-slate-900">Services clés</h2>
             <a
@@ -393,7 +393,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-2 py-16 overflow-hidden">
+        <div className="mx-auto w-full max-w-7xl px-3 py-16 overflow-hidden">
           <h2 className="text-2xl font-semibold text-slate-900">Partenaires</h2>
           <p className="mt-2 text-sm text-slate-600">
             Ils nous font confiance pour l’accompagnement des projets agricoles.

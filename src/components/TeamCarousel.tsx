@@ -48,7 +48,7 @@ export default function TeamCarousel({ members }: TeamCarouselProps) {
       {hasMembers ? (
         <div
           ref={trackRef}
-          className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-2 px-2"
+          className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-2 px-3"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >

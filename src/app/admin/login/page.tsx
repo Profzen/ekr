@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-md px-2 py-16">
+        <div className="mx-auto w-full max-w-md px-3 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">Connexion Admin</h1>
           <p className="mt-4 text-base text-slate-600">
             Entrez le mot de passe pour accéder à l’administration.
@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-md px-2 pb-16">
+      <section className="mx-auto w-full max-w-md px-3 pb-16">
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <input

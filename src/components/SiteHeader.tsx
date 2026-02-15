@@ -14,7 +14,7 @@ export default function SiteHeader() {
 
   return (
     <header className="border-b border-slate-200 bg-white/80 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-2 py-4">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-3 py-4">
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-white font-semibold">
             E
@@ -47,7 +47,7 @@ export default function SiteHeader() {
 
       {open && (
         <div className="md:hidden">
-          <div className="mx-auto w-full max-w-7xl px-2 pb-4">
+          <div className="mx-auto w-full max-w-7xl px-3 pb-4">
             <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
               <div className="flex flex-col gap-3 text-sm font-medium text-slate-700">
                 {navItems.map((item) => (
