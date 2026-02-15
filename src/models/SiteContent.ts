@@ -2,6 +2,11 @@ import { Schema, model, models, type InferSchemaType } from "mongoose";
 
 const SiteContentSchema = new Schema(
   {
+    homeHeroIntro: {
+      type: String,
+      default:
+        "Société d’accompagnement des activités agricoles en Afrique. Nous structurons des coopératives agricoles, notamment la filière piment long et gingembre, destinées à l’exportation et à la commercialisation.",
+    },
     homeMessage: { type: String, default: "" },
     homeAbout: { type: String, default: "" },
     homeHistory: { type: String, default: "" },

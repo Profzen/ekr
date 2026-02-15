@@ -34,6 +34,7 @@ export default async function Home() {
     message?: string;
   } | null = null;
   let content: {
+    homeHeroIntro?: string;
     homeMessage?: string;
     homeAbout?: string;
     homeHistory?: string;
@@ -104,6 +105,7 @@ export default async function Home() {
 
     content = fetchedContent
       ? {
+          homeHeroIntro: fetchedContent.homeHeroIntro,
           homeMessage: fetchedContent.homeMessage,
           homeAbout: fetchedContent.homeAbout,
           homeHistory: fetchedContent.homeHistory,
@@ -162,9 +164,8 @@ export default async function Home() {
                 <span className="block text-emerald-200">Cultivating Africa’s Future</span>
               </h1>
               <p className="mt-6 text-lg text-emerald-50/90">
-                Cabinet de conseil et d’accompagnement des activités agricoles en Afrique. Nous
-                structurons des projets durables, renforçons les coopératives et optimisons les
-                filières agricoles.
+                {content?.homeHeroIntro ||
+                  "Société d’accompagnement des activités agricoles en Afrique. Nous structurons des coopératives agricoles, notamment la filière piment long et gingembre, destinées à l’exportation et à la commercialisation."}
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
                 <a
@@ -231,11 +232,11 @@ export default async function Home() {
             <h2 className="text-2xl font-semibold text-slate-900">Présentation de la société</h2>
             <p className="mt-4 text-base text-slate-600">
               {content?.homeAbout ||
-                "EKR AFRICA AGROVISION GROUP accompagne les acteurs agricoles à travers le conseil stratégique, l’expertise technique et l’ingénierie de projets. Notre mission est de contribuer au développement rural durable et à la sécurité alimentaire."}
+                "EKR AFRICA AGROVISION GROUP est une société coopérative agricole engagée dans les filières piment long et gingembre pour l’exportation et la commercialisation. Nous accompagnons producteurs et investisseurs pour structurer des projets à fort impact."}
             </p>
             <p className="mt-4 text-base text-slate-600">
               {content?.homeHistory ||
-                "Historique : créé pour répondre aux besoins d’encadrement des filières agricoles, le groupe a structuré des initiatives à fort impact en Afrique de l’Ouest."}
+                "Notre équipe réalise des diagnostics de terrain, des consultations, agit comme organisme incubateur, élabore des plans d’affaires et appuie la recherche de financement."}
             </p>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">

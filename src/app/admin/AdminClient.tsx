@@ -68,6 +68,7 @@ type DirectorProfile = {
 };
 
 type SiteContent = {
+  homeHeroIntro: string;
   homeMessage: string;
   homeAbout: string;
   homeHistory: string;
@@ -151,6 +152,7 @@ const initialDirector: DirectorProfile = {
 };
 
 const initialContent: SiteContent = {
+  homeHeroIntro: "",
   homeMessage: "",
   homeAbout: "",
   homeHistory: "",
@@ -321,6 +323,7 @@ export default function AdminClient() {
     if (result.data?.data) {
       const heroBackgroundUrl = result.data.data.homeHeroBackgroundUrl ?? "/agro2.jpg";
       setContent({
+        homeHeroIntro: result.data.data.homeHeroIntro ?? "",
         homeMessage: result.data.data.homeMessage ?? "",
         homeAbout: result.data.data.homeAbout ?? "",
         homeHistory: result.data.data.homeHistory ?? "",
@@ -1666,6 +1669,23 @@ export default function AdminClient() {
                   }`}
                   rows={3}
                   placeholder="Message institutionnel (Accueil)"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                  Texte hero (Accueil)
+                </label>
+                <textarea
+                  name="homeHeroIntro"
+                  value={content.homeHeroIntro}
+                  onChange={handleContentChange}
+                  className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                    content.homeHeroIntro
+                      ? "border-emerald-200 bg-emerald-50"
+                      : "border-slate-200"
+                  }`}
+                  rows={3}
+                  placeholder="Texte du hero (Accueil)"
                 />
               </div>
               <div className="md:col-span-2">

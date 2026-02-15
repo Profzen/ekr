@@ -41,7 +41,7 @@ export default async function RootLayout({
                 <div>
                   <p className="text-sm font-semibold text-emerald-700">EKR AFRICA AGROVISION GROUP</p>
                   <p className="mt-2 text-sm text-slate-600">
-                    Cabinet de conseil, d’accompagnement et de développement des activités agricoles en Afrique.
+                    Societe cooperative agricole d’accompagnement et de developpement des filieres agricoles.
                   </p>
                 </div>
                 <div>
