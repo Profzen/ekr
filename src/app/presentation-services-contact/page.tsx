@@ -145,17 +145,19 @@ export default async function PresentationServicesContactPage() {
               return (
                 <div
                   key={service._id}
-                  className="group rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all hover:shadow-lg hover:border-emerald-200 hover:-translate-y-1"
+                  className="group rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-lg hover:border-emerald-200 hover:-translate-y-1 flex flex-row items-start gap-4"
                 >
-                  <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl ${color.bg} ${color.text} shadow-md transition-transform group-hover:scale-110`}>
+                  <div className={`flex-shrink-0 inline-flex h-16 w-16 items-center justify-center rounded-2xl ${color.bg} ${color.text} shadow-md transition-transform group-hover:scale-110`}>
                     {icon}
                   </div>
-                  <h3 className="mt-6 text-xl font-bold text-slate-900 leading-snug">
-                    {service.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                    {service.description}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="mt-0 text-lg font-bold text-slate-900 leading-snug">
+                      {service.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                      {service.description}
+                    </p>
+                  </div>
                 </div>
               );
             })}
