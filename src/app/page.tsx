@@ -154,7 +154,7 @@ export default async function Home() {
       >
         <div className="absolute inset-0 bg-emerald-950/45" />
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 via-emerald-900/10 to-transparent" />
-        <div className="relative mx-auto w-full max-w-7xl px-1 py-20">
+        <div className="relative mx-auto w-full max-w-7xl px-6 py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
@@ -225,7 +225,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-1 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">Présentation de la société</h2>
@@ -259,7 +259,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-1 py-16">
+        <div className="mx-auto w-full max-w-7xl px-2 py-16">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-slate-900">Services clés</h2>
             <a
@@ -288,7 +288,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-1 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-slate-50 p-8 shadow-md">
           <div className="flex flex-col gap-12 md:flex-row md:items-center md:gap-24 lg:gap-28">
             <div className="flex flex-col items-center md:items-start">

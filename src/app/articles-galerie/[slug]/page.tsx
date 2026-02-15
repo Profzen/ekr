@@ -28,7 +28,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-5xl px-1 py-16">
+        <div className="mx-auto w-full max-w-5xl px-6 py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
             Article
           </p>
@@ -41,7 +41,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-5xl px-1 py-12">
+      <section className="mx-auto w-full max-w-5xl px-2 py-12">
         {article.coverImage && (
           <img
             src={article.coverImage}

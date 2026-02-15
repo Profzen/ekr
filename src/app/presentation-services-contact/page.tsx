@@ -73,7 +73,7 @@ export default async function PresentationServicesContactPage() {
   return (
     <div className="bg-white">
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-1 py-16">
+        <div className="mx-auto w-full max-w-7xl px-6 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Présentation · Services · Contact
           </h1>
@@ -85,7 +85,7 @@ export default async function PresentationServicesContactPage() {
       </section>
 
       <section className="bg-emerald-50">
-        <div className="mx-auto w-full max-w-7xl px-1 py-16">
+        <div className="mx-auto w-full max-w-7xl px-6 py-16">
           <h2 className="text-3xl font-semibold text-slate-900">Nos services</h2>
           <p className="mt-2 text-base text-slate-600">
             Découvrez notre expertise au service de votre projet agricole.
@@ -113,7 +113,7 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-1 py-16">
+      <section className="mx-auto w-full max-w-7xl px-2 py-16">
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">
@@ -152,7 +152,7 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-1 py-16">
+      <section className="mx-auto w-full max-w-7xl px-6 py-16">
         <div className="grid gap-10 md:grid-cols-[1.2fr,0.8fr]">
           <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-8 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -310,7 +310,7 @@ export default async function PresentationServicesContactPage() {
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto w-full max-w-7xl px-1 py-16">
+        <div className="mx-auto w-full max-w-7xl px-6 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Localisation</h2>
           <p className="mt-2 text-sm text-slate-600">
             {content?.contactAddress || "Adresse à préciser"}
