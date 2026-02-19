@@ -73,7 +73,7 @@ export default async function PresentationServicesContactPage() {
 
   return (
     <div className="bg-white">
-      <section className="bg-slate-50">
+      <section className="bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto w-full max-w-7xl px-3 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Présentation · Services · Contact
@@ -85,7 +85,7 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="bg-emerald-50">
+      <section className="bg-gradient-to-b from-emerald-50/70 to-white">
         <div className="mx-auto w-full max-w-7xl px-3 py-16">
           <h2 className="text-3xl font-semibold text-slate-900">Nos services</h2>
           <p className="mt-2 text-base text-slate-600">
@@ -102,7 +102,7 @@ export default async function PresentationServicesContactPage() {
 
       <section className="mx-auto w-full max-w-7xl px-3 py-16">
         <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-stretch">
-          <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6 sm:p-8 shadow-sm flex flex-col">
+          <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6 sm:p-8 shadow-sm transition duration-300 hover:shadow-md flex flex-col">
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">
               Présentation de la société
             </h2>
@@ -125,7 +125,7 @@ export default async function PresentationServicesContactPage() {
               </div>
             </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-sm overflow-hidden flex flex-col">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-sm transition duration-300 hover:shadow-md overflow-hidden flex flex-col">
             <h3 className="text-xl sm:text-2xl font-semibold text-slate-900">
               Equipe EKR AFRICA AGROVISION GROUP
             </h3>
@@ -141,7 +141,7 @@ export default async function PresentationServicesContactPage() {
 
       <section className="mx-auto w-full max-w-7xl px-3 py-16">
         <div className="grid gap-10 grid-cols-1 md:grid-cols-[1.2fr,0.8fr]">
-          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-sm transition duration-300 hover:shadow-md">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Contact</p>
@@ -160,7 +160,7 @@ export default async function PresentationServicesContactPage() {
               </div>
             </div>
             <div className="mt-6 grid gap-4">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 transition duration-300 hover:border-emerald-200">
                 <div className="flex items-start gap-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
                     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -174,7 +174,7 @@ export default async function PresentationServicesContactPage() {
                   </div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 transition duration-300 hover:border-emerald-200">
                 <div className="flex items-start gap-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
                     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -187,7 +187,7 @@ export default async function PresentationServicesContactPage() {
                   </div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 transition duration-300 hover:border-emerald-200">
                 <div className="flex items-start gap-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
                     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -258,7 +258,7 @@ export default async function PresentationServicesContactPage() {
               </p>
             </div>
           </div>
-          <div className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-sm">
+          <div className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-8 shadow-sm transition duration-300 hover:shadow-md">
             <h3 className="text-xl font-semibold text-slate-900">
               Formulaire de contact
             </h3>
@@ -296,7 +296,7 @@ export default async function PresentationServicesContactPage() {
         </div>
       </section>
 
-      <section className="bg-slate-50">
+      <section className="bg-gradient-to-b from-slate-50 to-slate-100/70">
         <div className="mx-auto w-full max-w-7xl px-3 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Localisation</h2>
           <p className="mt-2 text-sm text-slate-600">

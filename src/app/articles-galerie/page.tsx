@@ -54,7 +54,7 @@ export default async function ArticlesGaleriePage() {
 
   return (
     <div className="bg-white">
-      <section className="bg-slate-50">
+      <section className="bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto w-full max-w-7xl px-3 py-16">
           <h1 className="text-3xl font-semibold text-slate-900">
             Articles & Galerie
@@ -69,14 +69,14 @@ export default async function ArticlesGaleriePage() {
         <h2 className="text-2xl font-semibold text-slate-900">Articles</h2>
         <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {normalizedArticles.length === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
               Aucun article publié pour le moment.
             </div>
           )}
           {normalizedArticles.map((article) => (
             <article
               key={article._id}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
             >
               {article.coverImage ? (
                 <img
@@ -107,7 +107,7 @@ export default async function ArticlesGaleriePage() {
         </div>
       </section>
 
-      <section className="bg-emerald-50">
+      <section className="bg-gradient-to-b from-emerald-50/70 to-slate-50">
         <div className="mx-auto w-full max-w-7xl px-3 py-16 overflow-hidden">
           <h2 className="text-2xl font-semibold text-slate-900">Galerie</h2>
           <p className="mt-2 text-sm text-slate-600">
@@ -122,7 +122,7 @@ export default async function ArticlesGaleriePage() {
             {gallery.map((item) => (
               <div
                 key={item._id}
-                className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
               >
                 {item.imageUrl.includes("/video/upload/") ||
                 item.imageUrl.endsWith(".mp4") ||

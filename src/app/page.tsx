@@ -259,27 +259,27 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-slate-50">
+      <section className="bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto w-full max-w-7xl px-3 py-16">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-slate-900">Services clés</h2>
             <a
               href="/presentation-services-contact"
-              className="text-sm font-semibold text-emerald-700"
+              className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
             >
               Voir tous les services
             </a>
           </div>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.length === 0 && (
-              <div className="rounded-2xl border border-emerald-100 bg-white p-5 text-sm text-slate-600">
+              <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 text-sm text-slate-600 shadow-sm">
                 Aucun service enregistré pour le moment.
               </div>
             )}
             {services.map((service) => (
               <div
                 key={service._id}
-                className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
               >
                 <p className="text-base font-semibold text-slate-900">{service.title}</p>
                 <p className="mt-2 text-sm text-slate-600">{service.description}</p>
@@ -311,7 +311,7 @@ export default async function Home() {
               </p>
             </div>
             <div className="hidden h-48 w-px self-stretch rounded-full bg-emerald-200 md:block flex-shrink-0" />
-            <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-5 sm:p-6 shadow-sm">
+            <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-5 sm:p-6 shadow-sm transition duration-300 hover:shadow-md">
               <h2 className="text-2xl font-semibold text-slate-900">Directeur Général</h2>
               <p className="mt-2 text-sm font-semibold text-emerald-700">
                 {director?.title || "Fonction"}
@@ -330,14 +330,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-emerald-50">
+      <section className="bg-gradient-to-b from-emerald-50/70 via-stone-50 to-white">
         <div className="mx-auto w-full max-w-7xl px-6 py-16">
           <h2 className="text-2xl font-semibold text-slate-900">Activités clés</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Nos interventions prioritaires pour la performance durable des filières.
+          </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {activities.map((activity) => (
               <div
                 key={activity}
-                className="rounded-2xl border border-emerald-100 bg-white p-4 text-sm text-slate-600"
+                className="rounded-2xl border border-emerald-100 bg-white/95 p-4 text-sm text-slate-700 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
               >
                 {activity}
               </div>
@@ -346,23 +349,25 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-6 py-16">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-slate-900">Articles & Galerie</h2>
-          <a href="/articles-galerie" className="text-sm font-semibold text-emerald-700">
-            Tout voir
-          </a>
-        </div>
-        <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+      <section className="bg-gradient-to-b from-white via-emerald-50/45 to-stone-50/70">
+        <div className="mx-auto w-full max-w-7xl px-6 py-16">
+          <div className="rounded-3xl border border-emerald-100/80 bg-white/80 p-5 shadow-sm sm:p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold text-slate-900">Articles & Galerie</h2>
+              <a href="/articles-galerie" className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800">
+                Tout voir
+              </a>
+            </div>
+            <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           {latestArticles.length === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
               Aucun article publié pour le moment.
             </div>
           )}
           {latestArticles.map((article) => (
             <article
               key={article._id}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md"
             >
               {article.coverImage ? (
                 <img
@@ -383,17 +388,19 @@ export default async function Home() {
               {article.slug && (
                 <a
                   href={`/articles-galerie/${article.slug}`}
-                  className="mt-3 inline-block text-xs font-semibold text-emerald-700"
+                  className="mt-3 inline-block text-xs font-semibold text-emerald-700 transition hover:text-emerald-800"
                 >
                   Lire l’article
                 </a>
               )}
             </article>
           ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="bg-slate-50">
+      <section className="bg-gradient-to-b from-slate-50 to-slate-100/70">
         <div className="mx-auto w-full max-w-7xl px-3 py-16 overflow-hidden">
           <h2 className="text-2xl font-semibold text-slate-900">Partenaires</h2>
           <p className="mt-2 text-sm text-slate-600">

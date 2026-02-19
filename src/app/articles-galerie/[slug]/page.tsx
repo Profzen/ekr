@@ -27,7 +27,7 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
 
   return (
     <div className="bg-white">
-      <section className="bg-slate-50">
+      <section className="bg-gradient-to-b from-slate-50 to-white">
         <div className="mx-auto w-full max-w-5xl px-3 py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">
             Article
@@ -46,12 +46,14 @@ export default async function ArticleDetailPage({ params }: ArticlePageProps) {
           <img
             src={article.coverImage}
             alt={article.title}
-            className="mb-8 h-64 w-full rounded-3xl object-cover"
+            className="mb-8 h-64 w-full rounded-3xl border border-slate-200 object-cover shadow-sm"
           />
         )}
-        <p className="text-base text-slate-700 whitespace-pre-line">
-          {article.content}
-        </p>
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <p className="whitespace-pre-line text-base leading-7 text-slate-700">
+            {article.content}
+          </p>
+        </div>
       </section>
     </div>
   );
