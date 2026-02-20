@@ -24,7 +24,7 @@ export function Partners({ partners }: PartnersProps) {
     speed: 500,
     slidesToShow: desktopSlides,
     slidesToScroll: 1,
-    autoplay: totalPartners > 1,
+    autoplay: totalPartners > desktopSlides,
     autoplaySpeed: 2000,
     pauseOnHover: true,
     responsive: [
@@ -34,11 +34,21 @@ export function Partners({ partners }: PartnersProps) {
       },
       {
         breakpoint: 600,
-        settings: { slidesToShow: mobileSlides },
+        settings: {
+          slidesToShow: mobileSlides,
+          infinite: totalPartners > mobileSlides,
+          autoplay: totalPartners > mobileSlides,
+          autoplaySpeed: 2000,
+        },
       },
       {
         breakpoint: 480,
-        settings: { slidesToShow: 1 },
+        settings: {
+          slidesToShow: mobileSlides,
+          infinite: totalPartners > mobileSlides,
+          autoplay: totalPartners > mobileSlides,
+          autoplaySpeed: 2000,
+        },
       },
     ],
   };
