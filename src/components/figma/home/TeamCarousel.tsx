@@ -18,36 +18,37 @@ type TeamCarouselProps = {
 export function TeamCarousel({ members }: TeamCarouselProps) {
   const totalMembers = members.length;
   const desktopSlides = totalMembers >= 3 ? 3 : Math.max(totalMembers, 1);
-  const tabletSlides = totalMembers >= 2 ? 2 : 1;
   const isSingleMember = totalMembers === 1;
-  const [isMobile, setIsMobile] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState<number>(1280);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const onResize = () => setViewportWidth(window.innerWidth);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  const isMobile = viewportWidth < 640;
+  const slidesToShow =
+    viewportWidth < 640
+      ? 1
+      : viewportWidth < 1024
+        ? Math.min(2, Math.max(totalMembers, 1))
+        : desktopSlides;
+
+  const autoplay = isMobile ? totalMembers > 1 : totalMembers > slidesToShow;
+  const infinite = isMobile ? totalMembers > 1 : totalMembers > slidesToShow;
+  const sliderKey = `${slidesToShow}-${totalMembers}`;
 
   const settings = {
     dots: false,
-    infinite: totalMembers > 1 || isMobile,
+    infinite,
     speed: 500,
-    slidesToShow: desktopSlides,
+    slidesToShow,
     slidesToScroll: 1,
-    autoplay: totalMembers > 1 || isMobile,
+    autoplay,
     autoplaySpeed: 2000,
     pauseOnHover: true,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: { slidesToShow: tabletSlides },
-      },
-      {
-        breakpoint: 640,
-        settings: { slidesToShow: 1, autoplay: true, infinite: true },
-      },
-    ],
   };
 
   return (
@@ -61,7 +62,7 @@ export function TeamCarousel({ members }: TeamCarouselProps) {
           </p>
       </div>
 
-      <Slider {...settings} className="team-carousel">
+      <Slider key={sliderKey} {...settings} className="team-carousel">
           {members.map((member) => (
             <div key={member.id} className="px-3">
               <div className={`relative group ${isSingleMember ? "mx-auto max-w-[340px]" : ""}`}>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Slider from "react-slick";
 
 type Partner = {
@@ -14,43 +15,34 @@ type PartnersProps = {
 
 export function Partners({ partners }: PartnersProps) {
   const totalPartners = partners.length;
-  const desktopSlides = totalPartners >= 4 ? 4 : Math.max(totalPartners, 1);
-  const tabletSlides = totalPartners >= 3 ? 3 : Math.max(totalPartners, 1);
-  const mobileSlides = totalPartners >= 2 ? 2 : 1;
+  const [viewportWidth, setViewportWidth] = useState<number>(1280);
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const slidesToShow =
+    viewportWidth < 768
+      ? Math.min(2, Math.max(totalPartners, 1))
+      : viewportWidth < 1024
+        ? Math.min(3, Math.max(totalPartners, 1))
+        : Math.min(4, Math.max(totalPartners, 1));
+
+  const shouldAutoplay = totalPartners > slidesToShow;
+  const sliderKey = `${slidesToShow}-${totalPartners}`;
 
   const settings = {
     dots: true,
-    infinite: totalPartners > desktopSlides,
+    infinite: shouldAutoplay,
     speed: 500,
-    slidesToShow: desktopSlides,
+    slidesToShow,
     slidesToScroll: 1,
-    autoplay: totalPartners > desktopSlides,
+    autoplay: shouldAutoplay,
     autoplaySpeed: 2000,
     pauseOnHover: true,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: { slidesToShow: tabletSlides },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: mobileSlides,
-          infinite: totalPartners > mobileSlides,
-          autoplay: totalPartners > mobileSlides,
-          autoplaySpeed: 2000,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: mobileSlides,
-          infinite: totalPartners > mobileSlides,
-          autoplay: totalPartners > mobileSlides,
-          autoplaySpeed: 2000,
-        },
-      },
-    ],
   };
 
   return (
@@ -58,10 +50,10 @@ export function Partners({ partners }: PartnersProps) {
       <div className="container mx-auto px-4 md:px-5 lg:px-6 max-w-[1500px] text-center">
         <h2 className="text-3xl font-bold mb-12 text-foreground">Nos Partenaires de Confiance</h2>
 
-        <Slider {...settings} className="partners-slider">
+        <Slider key={sliderKey} {...settings} className="partners-slider">
           {partners.map((partner) => (
-            <div key={partner.id} className="px-3 py-6 outline-none">
-              <div className="mx-auto flex max-w-[220px] items-center justify-center h-24 bg-white rounded-xl shadow-sm border border-border/50 hover:shadow-md transition-shadow p-3 group">
+            <div key={partner.id} className="px-2 md:px-3 py-6 outline-none">
+              <div className="mx-auto flex w-full max-w-[240px] items-center justify-center h-24 bg-white rounded-xl shadow-sm border border-border/50 hover:shadow-md transition-shadow p-3 group">
                 {partner.logoUrl ? (
                   <img
                     src={partner.logoUrl}
