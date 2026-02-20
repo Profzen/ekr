@@ -142,7 +142,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   }
 
   return (
-    <article className="pt-24 min-h-screen bg-background pb-24">
+    <article className="pt-16 md:pt-24 min-h-screen bg-background pb-24">
       <div className="relative h-[60vh] w-full overflow-hidden">
         <img src={sharedReadingBanner} alt="Bannière actualités" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />

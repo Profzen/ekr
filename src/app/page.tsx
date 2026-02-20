@@ -355,7 +355,7 @@ export default async function Home() {
   }));
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen pt-16 md:pt-0 bg-background text-foreground font-sans">
       <Hero
         title={content?.heroTitle || figmaContent.hero.title}
         subtitle={content?.heroSubtitle || figmaContent.hero.subtitle}

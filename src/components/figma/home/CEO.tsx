@@ -14,9 +14,9 @@ export function CEO({ name, title, bio, quote, imageUrl }: CEOProps) {
       <div className="absolute top-0 right-0 w-1/3 h-full bg-accent/5 -skew-x-12 translate-x-1/2 z-0" />
 
       <div className="container mx-auto px-4 md:px-5 lg:px-6 max-w-[1500px] relative z-10">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-7">
-            <div className="w-full lg:w-[52%] relative">
-            <div className="relative h-[260px] md:h-[320px] lg:h-[340px] rounded-2xl overflow-hidden shadow-lg bg-muted/20">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-2">
+            <div className="w-full lg:w-[52%] relative lg:translate-x-12">
+            <div className="relative mx-auto lg:mx-0 w-full max-w-[340px] md:max-w-[380px] lg:max-w-[420px] aspect-square rounded-2xl overflow-hidden shadow-lg bg-muted/20">
               <img
                 src={imageUrl}
                 alt={name}
@@ -33,7 +33,7 @@ export function CEO({ name, title, bio, quote, imageUrl }: CEOProps) {
             <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-dots-pattern opacity-20" />
           </div>
 
-            <div className="w-full lg:w-[48%] space-y-6">
+            <div className="w-full lg:w-[48%] space-y-6 lg:-translate-x-6">
             <div className="relative">
               <Quote className="absolute -top-4 -left-4 text-accent/20 w-20 h-20 transform -scale-x-100" />
               <blockquote className="text-lg md:text-2xl font-serif italic text-foreground leading-relaxed relative z-10">

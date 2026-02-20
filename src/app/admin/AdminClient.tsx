@@ -134,6 +134,7 @@ type FormState = {
   coverImage: string;
   category: string;
   status: "draft" | "published";
+  publishedAt: string;
 };
 
 const initialState: FormState = {
@@ -143,6 +144,7 @@ const initialState: FormState = {
   coverImage: "",
   category: "Actualités",
   status: "draft",
+  publishedAt: new Date().toISOString().split('T')[0],
 };
 
 const initialService = {
@@ -543,6 +545,9 @@ export default function AdminClient() {
 
   const handleEdit = (article: Article) => {
     setEditingId(article._id);
+    const publishedAtValue = article.publishedAt
+      ? new Date(article.publishedAt).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0];
     setForm({
       title: article.title,
       excerpt: article.excerpt,
@@ -550,6 +555,7 @@ export default function AdminClient() {
       coverImage: article.coverImage ?? "",
       category: article.category ?? "Actualités",
       status: article.status ?? "draft",
+      publishedAt: publishedAtValue,
     });
     setArticlePreview(article.coverImage ?? "");
     setArticleFile(null);
@@ -1209,6 +1215,18 @@ export default function AdminClient() {
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Catégorie"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Date de publication
+                    </label>
+                    <input
+                      type="date"
+                      name="publishedAt"
+                      value={form.publishedAt}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                     />
                   </div>
                   <div>

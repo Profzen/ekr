@@ -113,7 +113,7 @@ export default async function ArticlesPage() {
   });
 
   return (
-    <div className="pt-24 min-h-screen bg-background pb-24">
+    <div className="pt-16 md:pt-24 min-h-screen bg-background pb-24">
       <section className="py-32 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] relative z-10">

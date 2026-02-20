@@ -81,7 +81,7 @@ const figmaTeam = [
 ];
 
 export default async function PresentationPage() {
-  let services: Array<{ _id: string; title: string; description: string }> = [];
+  let services: Array<{ _id: string; title: string; description: string; imageUrl?: string }> = [];
   let team: Array<{ _id: string; name: string; role: string; photoUrl?: string }> = [];
   let content: {
     presentationAbout?: string;
@@ -121,6 +121,7 @@ export default async function PresentationPage() {
       _id: service._id.toString(),
       title: service.title,
       description: service.description,
+      imageUrl: service.imageUrl,
     }));
 
     team = fetchedTeam.map((member) => ({
@@ -159,14 +160,29 @@ export default async function PresentationPage() {
     content = null;
   }
 
-  const resolvedServices = (services.length ? services : figmaServices).map((service, index) => {
+  const defaultServices = figmaServices.map((service) => ({
+    id: service.id,
+    title: service.title,
+    description: service.description,
+    imageUrl: service.imageUrl,
+  }));
+
+  const dbServices = services.map((service, index) => {
     const fallback = figmaServices[index % figmaServices.length];
     return {
-      id: "_id" in service ? service._id : fallback.id,
+      id: service._id,
       title: service.title,
       description: service.description,
-      imageUrl: fallback.imageUrl,
+      imageUrl: service.imageUrl || fallback.imageUrl,
     };
+  });
+
+  const seenServiceTitles = new Set<string>();
+  const resolvedServices = [...dbServices, ...defaultServices].filter((service) => {
+    const key = service.title.trim().toLowerCase();
+    if (seenServiceTitles.has(key)) return false;
+    seenServiceTitles.add(key);
+    return true;
   });
 
   const resolvedTeam = (team.length ? team : figmaTeam).map((member, index) => {
@@ -180,7 +196,7 @@ export default async function PresentationPage() {
   });
 
   return (
-    <div className="pt-24 bg-background min-h-screen">
+    <div className="pt-16 md:pt-24 bg-background min-h-screen">
       <section className="py-32 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] relative z-10">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { Linkedin, Mail } from "lucide-react";
 
@@ -19,14 +20,22 @@ export function TeamCarousel({ members }: TeamCarouselProps) {
   const desktopSlides = totalMembers >= 3 ? 3 : Math.max(totalMembers, 1);
   const tabletSlides = totalMembers >= 2 ? 2 : 1;
   const isSingleMember = totalMembers === 1;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const settings = {
     dots: false,
-    infinite: totalMembers > desktopSlides,
+    infinite: totalMembers > 1 || isMobile,
     speed: 500,
     slidesToShow: desktopSlides,
     slidesToScroll: 1,
-    autoplay: totalMembers > 1,
+    autoplay: totalMembers > 1 || isMobile,
     autoplaySpeed: 2000,
     pauseOnHover: true,
     responsive: [
@@ -36,7 +45,7 @@ export function TeamCarousel({ members }: TeamCarouselProps) {
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 1 },
+        settings: { slidesToShow: 1, autoplay: true, infinite: true },
       },
     ],
   };
