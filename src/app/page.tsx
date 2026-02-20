@@ -3,20 +3,161 @@ import ArticleModel from "@/models/Article";
 import ServiceModel from "@/models/Service";
 import PartnerModel from "@/models/Partner";
 import DirectorProfileModel from "@/models/DirectorProfile";
+import ActivityModel from "@/models/Activity";
 import SiteContentModel from "@/models/SiteContent";
-import PartnersCarousel from "@/components/PartnersCarousel";
+import { Hero } from "@/components/figma/home/Hero";
+import { Stats } from "@/components/figma/home/Stats";
+import { Intro } from "@/components/figma/home/Intro";
+import { Services } from "@/components/figma/home/Services";
+import { CEO } from "@/components/figma/home/CEO";
+import { Activities } from "@/components/figma/home/Activities";
+import { ArticlesPreview } from "@/components/figma/home/ArticlesPreview";
+import { Partners } from "@/components/figma/home/Partners";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
-  const activities = [
-    "Optimisation des pratiques culturales",
-    "Évaluation de projets agricoles",
-    "Programmes d’irrigation durable",
-    "Incubation et suivi de coopératives",
-  ];
+const figmaContent = {
+  hero: {
+    title: "L'Excellence Agricole au Service du Développement",
+    subtitle:
+      "EKR Africa Agrovision Group : Une coopérative visionnaire dédiée à la valorisation des filières piment long et gingembre, de la production à l'exportation.",
+    ctaPrimary: "Découvrir nos services",
+    ctaSecondary: "Nous contacter",
+    image:
+      "https://images.unsplash.com/photo-1688240818501-2881b90f1b2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  intro: {
+    title: "Une Vision Durable pour l'Agriculture Africaine",
+    text:
+      "Nous croyons en une agriculture qui respecte la terre et valorise l'humain. EKR Africa Agrovision Group s'engage à structurer les filières agricoles, garantir la qualité de nos produits et accompagner les porteurs de projets innovants.",
+    stats: [
+      { id: 1, value: "150+", label: "Producteurs Partenaires" },
+      { id: 2, value: "500T", label: "Volume Exporté Annuel" },
+      { id: 3, value: "12", label: "Pays de Destination" },
+      { id: 4, value: "95%", label: "Satisfaction Client" },
+    ],
+  },
+  mission: {
+    title: "Notre Mission",
+    text:
+      "Transformer le potentiel agricole africain en réussite économique durable par l'excellence opérationnelle et l'innovation sociale.",
+  },
+  vision: {
+    title: "Notre Vision",
+    text:
+      "Devenir la référence panafricaine dans l'exportation de produits agricoles premium et l'incubation de talents.",
+  },
+  values: {
+    title: "Nos Valeurs",
+    list: ["Intégrité", "Excellence", "Responsabilité", "Innovation"],
+  },
+  ceo: {
+    name: "Jean-Marc Kabore",
+    title: "Directeur Général",
+    bio:
+      "Fort de 20 ans d'expérience dans l'agrobusiness international, Jean-Marc pilote la stratégie de croissance d'EKR avec une vision humaniste et rigoureuse.",
+    quote: "L'agriculture est le socle de notre avenir. La valoriser, c'est construire l'Afrique de demain.",
+    image:
+      "https://images.unsplash.com/photo-1758519289200-384c7ef2d163?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+};
 
-  let services: Array<{ _id: string; title: string; description: string }> = [];
+const figmaServices = [
+  {
+    id: "1",
+    title: "Production & Collecte",
+    description:
+      "Encadrement technique des producteurs et collecte rigoureuse de piment long et gingembre pour garantir une qualité premium.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1762245289207-cf35224bb727?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    id: "2",
+    title: "Exportation Internationale",
+    description:
+      "Logistique maîtrisée et conformité aux normes internationales pour l'exportation vers l'Europe, l'Asie et l'Amérique.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1596434220574-9af8bf9a0891?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    id: "3",
+    title: "Transformation Agroalimentaire",
+    description:
+      "Valorisation des matières premières par des processus de séchage et de transformation respectant les standards d'hygiène.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1717769071502-e9b5d06c5fc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    id: "4",
+    title: "Incubation de Projets",
+    description:
+      "Accompagnement, formation et financement de jeunes agri-preneurs pour développer l'écosystème local.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1677126577258-1a82fdf1a976?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+];
+
+const figmaArticles = [
+  {
+    id: "1",
+    title: "La demande mondiale de gingembre en hausse",
+    date: "12 Octobre 2023",
+    excerpt:
+      "Analyse des tendances du marché et opportunités pour les producteurs africains dans la filière gingembre.",
+    category: "Marché",
+    imageUrl:
+      "https://images.unsplash.com/photo-1717769071502-e9b5d06c5fc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    id: "2",
+    title: "EKR lance son programme d'incubation 2024",
+    date: "05 Novembre 2023",
+    excerpt:
+      "Un appel à candidature pour soutenir 50 nouveaux projets agricoles innovants en Côte d'Ivoire.",
+    category: "Institutionnel",
+    imageUrl:
+      "https://images.unsplash.com/photo-1677126577258-1a82fdf1a976?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    id: "3",
+    title: "Les bienfaits du Piment Long",
+    date: "20 Janvier 2024",
+    excerpt: "Au-delà de son goût, le piment long possède des vertus médicinales reconnues.",
+    category: "Produit",
+    imageUrl:
+      "https://images.unsplash.com/photo-1762245289207-cf35224bb727?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+  {
+    id: "4",
+    title: "Structuration des filières : cap sur 2026",
+    date: "08 Février 2026",
+    excerpt:
+      "Retour sur les actions menées pour renforcer la qualité, la traçabilité et l'accès au marché pour les producteurs partenaires.",
+    category: "Coopérative",
+    imageUrl:
+      "https://images.unsplash.com/photo-1596434220574-9af8bf9a0891?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+  },
+];
+
+const figmaPartners = [
+  { id: "1", name: "AgriTech Solutions" },
+  { id: "2", name: "Global Logistics" },
+  { id: "3", name: "BioCert International" },
+  { id: "4", name: "Banque Agricole" },
+  { id: "5", name: "Coopérative Sud" },
+];
+
+const formatDate = (value?: Date | null) =>
+  value
+    ? new Date(value).toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
+export default async function Home() {
+  let services: Array<{ _id: string; title: string; description: string; imageUrl?: string }> = [];
   let partners: Array<{ _id: string; name: string; logoUrl?: string }> = [];
   let articles: Array<{
     _id: string;
@@ -24,7 +165,14 @@ export default async function Home() {
     excerpt: string;
     coverImage?: string;
     slug?: string;
+    category?: string;
     publishedAt?: Date | null;
+  }> = [];
+  let activities: Array<{
+    _id: string;
+    title: string;
+    description: string;
+    icon: string;
   }> = [];
   let director: {
     name?: string;
@@ -34,10 +182,11 @@ export default async function Home() {
     message?: string;
   } | null = null;
   let content: {
+    heroTitle?: string;
+    heroSubtitle?: string;
+    introTitle?: string;
+    introText?: string;
     homeHeroIntro?: string;
-    homeMessage?: string;
-    homeAbout?: string;
-    homeHistory?: string;
     homeHeroBackgroundUrl?: string;
     homeStat1Value?: string;
     homeStat1Label?: string;
@@ -47,6 +196,7 @@ export default async function Home() {
     homeStat3Label?: string;
     homeStat4Value?: string;
     homeStat4Label?: string;
+    homeAbout?: string;
     presentationVision?: string;
     presentationMission?: string;
     presentationValues?: string;
@@ -55,7 +205,7 @@ export default async function Home() {
   try {
     await connectToDatabase();
 
-    const [fetchedServices, fetchedPartners, fetchedArticles, fetchedDirector, fetchedContent] =
+    const [fetchedServices, fetchedPartners, fetchedArticles, fetchedActivities, fetchedDirector, fetchedContent] =
       await Promise.all([
         ServiceModel.find({ isActive: true })
           .sort({ order: 1, createdAt: -1 })
@@ -66,7 +216,10 @@ export default async function Home() {
           .lean(),
         ArticleModel.find({ status: "published" })
           .sort({ publishedAt: -1, createdAt: -1 })
-          .limit(3)
+          .limit(4)
+          .lean(),
+        ActivityModel.find({ isActive: true })
+          .sort({ order: 1, createdAt: -1 })
           .lean(),
         DirectorProfileModel.findOne().lean(),
         SiteContentModel.findOne().lean(),
@@ -76,6 +229,7 @@ export default async function Home() {
       _id: service._id.toString(),
       title: service.title,
       description: service.description,
+      imageUrl: service.imageUrl,
     }));
 
     partners = fetchedPartners.map((partner) => ({
@@ -90,7 +244,15 @@ export default async function Home() {
       excerpt: article.excerpt,
       coverImage: article.coverImage,
       slug: article.slug,
+      category: article.category,
       publishedAt: article.publishedAt,
+    }));
+
+    activities = fetchedActivities.map((activity) => ({
+      _id: activity._id.toString(),
+      title: activity.title,
+      description: activity.description,
+      icon: activity.icon,
     }));
 
     director = fetchedDirector
@@ -105,10 +267,11 @@ export default async function Home() {
 
     content = fetchedContent
       ? {
+          heroTitle: fetchedContent.heroTitle,
+          heroSubtitle: fetchedContent.heroSubtitle,
+          introTitle: fetchedContent.introTitle,
+          introText: fetchedContent.introText,
           homeHeroIntro: fetchedContent.homeHeroIntro,
-          homeMessage: fetchedContent.homeMessage,
-          homeAbout: fetchedContent.homeAbout,
-          homeHistory: fetchedContent.homeHistory,
           homeHeroBackgroundUrl: fetchedContent.homeHeroBackgroundUrl,
           homeStat1Value: fetchedContent.homeStat1Value,
           homeStat1Label: fetchedContent.homeStat1Label,
@@ -118,6 +281,7 @@ export default async function Home() {
           homeStat3Label: fetchedContent.homeStat3Label,
           homeStat4Value: fetchedContent.homeStat4Value,
           homeStat4Label: fetchedContent.homeStat4Label,
+          homeAbout: fetchedContent.homeAbout,
           presentationVision: fetchedContent.presentationVision,
           presentationMission: fetchedContent.presentationMission,
           presentationValues: fetchedContent.presentationValues,
@@ -127,288 +291,123 @@ export default async function Home() {
     services = [];
     partners = [];
     articles = [];
+    activities = [];
     director = null;
     content = null;
   }
 
-  const latestArticles = articles.map((article) => ({
-    _id: article._id,
-    title: article.title,
-    excerpt: article.excerpt,
-    coverImage: article.coverImage,
-    slug: article.slug,
-    date: article.publishedAt
-      ? new Date(article.publishedAt).toLocaleDateString("fr-FR", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        })
-      : "",
+  const resolvedServices = Array.from({ length: 4 }).map((_, index) => {
+    const service = services[index];
+    const fallback = figmaServices[index % figmaServices.length];
+    return {
+      id: service?._id ?? fallback.id,
+      title: service?.title ?? fallback.title,
+      description: service?.description ?? fallback.description,
+      imageUrl: service?.imageUrl || fallback.imageUrl,
+    };
+  });
+
+  const resolvedArticles = Array.from({ length: 4 }).map((_, index) => {
+    const article = articles[index];
+    const fallback = figmaArticles[index % figmaArticles.length];
+    return {
+      id: article?.slug ?? article?._id ?? fallback.id,
+      title: article?.title ?? fallback.title,
+      excerpt: article?.excerpt ?? fallback.excerpt,
+      category: article?.category ?? fallback.category,
+      imageUrl: article?.coverImage ?? fallback.imageUrl,
+      date: article?.publishedAt ? formatDate(article.publishedAt) : fallback.date,
+    };
+  });
+
+  const normalizedDefaultPartners = figmaPartners.map((partner) => ({
+    id: partner.id,
+    name: partner.name,
+    logoUrl: undefined as string | undefined,
+  }));
+
+  const normalizedDbPartners = partners.map((partner) => ({
+    id: partner._id,
+    name: partner.name,
+    logoUrl: partner.logoUrl,
+  }));
+
+  const seenPartnerNames = new Set<string>();
+  const resolvedPartners = [...normalizedDbPartners, ...normalizedDefaultPartners].filter((partner) => {
+    const key = partner.name.trim().toLowerCase();
+    if (seenPartnerNames.has(key)) return false;
+    seenPartnerNames.add(key);
+    return true;
+  });
+
+  const figmaActivities = [
+    { id: "1", title: "Culture", icon: "Sprout", description: "" },
+    { id: "2", title: "Transformation", icon: "Box", description: "" },
+    { id: "3", title: "Logistique", icon: "Truck", description: "" },
+    { id: "4", title: "Formation", icon: "Users", description: "" },
+  ];
+
+  const resolvedActivities = (activities.length > 0 ? activities : figmaActivities).map((activity, index) => ({
+    id: "_id" in activity ? activity._id : figmaActivities[index % figmaActivities.length].id,
+    title: activity.title,
+    icon: activity.icon,
+    description: activity.description,
   }));
 
   return (
-    <div className="bg-white">
-      <section
-        className="relative overflow-hidden bg-slate-900 bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${content?.homeHeroBackgroundUrl || "/agro2.jpg"})`,
-        }}
-      >
-        <div className="absolute inset-0 bg-emerald-950/45" />
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 via-emerald-900/10 to-transparent" />
-        <div className="relative mx-auto w-full max-w-7xl px-3 py-20">
-          <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-center">
-            <div>
-              <h1 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
-                EKR Africa Agrovision Group
-                <span className="block text-emerald-200">Cultivating Africa’s Future</span>
-              </h1>
-              <p className="mt-6 text-lg text-emerald-50/90">
-                {content?.homeHeroIntro ||
-                  "Société d’accompagnement des activités agricoles en Afrique. Nous structurons des coopératives agricoles, notamment la filière piment long et gingembre, destinées à l’exportation et à la commercialisation."}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <a
-                  href="/presentation-services-contact"
-                  className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-emerald-700"
-                >
-                  Découvrir nos services
-                </a>
-                <a
-                  href="/articles-galerie"
-                  className="rounded-full border border-emerald-200 px-6 py-3 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50"
-                >
-                  Voir les actualités
-                </a>
-              </div>
-            </div>
-            <div className="rounded-3xl border border-emerald-100 bg-white p-8 shadow-sm">
-              <p className="mt-2 text-base text-slate-600">
-                {content?.homeMessage ||
-                  "« Nous accompagnons les producteurs, partenaires et investisseurs dans la mise en œuvre de solutions agricoles innovantes pour une Afrique prospère. »"}
-              </p>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">
-                    {content?.homeStat1Value || "+12"}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    {content?.homeStat1Label || "Services spécialisés"}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">
-                    {content?.homeStat2Value || "+40"}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    {content?.homeStat2Label || "Projets accompagnés"}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">
-                    {content?.homeStat3Value || "8"}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    {content?.homeStat3Label || "Pays partenaires"}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-emerald-50 p-4">
-                  <p className="text-2xl font-semibold text-emerald-700">
-                    {content?.homeStat4Value || "24/7"}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    {content?.homeStat4Label || "Suivi des actions"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-7xl px-2 py-16">
-        <div className="grid gap-10 grid-cols-1 md:grid-cols-2 md:items-start">
-          <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Présentation de la société</h2>
-            <p className="mt-4 text-base text-slate-600">
-              {content?.homeAbout ||
-                "EKR AFRICA AGROVISION GROUP est une société coopérative agricole engagée dans les filières piment long et gingembre pour l’exportation et la commercialisation. Nous accompagnons producteurs et investisseurs pour structurer des projets à fort impact."}
-            </p>
-            <p className="mt-4 text-base text-slate-600">
-              {content?.homeHistory ||
-                "Notre équipe réalise des diagnostics de terrain, des consultations, agit comme organisme incubateur, élabore des plans d’affaires et appuie la recherche de financement."}
-            </p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-            <h3 className="text-lg font-semibold text-slate-900">Vision, mission & valeurs</h3>
-            <ul className="mt-4 space-y-3 text-sm text-slate-600">
-              <li>
-                Vision : {content?.presentationVision ||
-                  "une agriculture africaine moderne, productive et inclusive."}
-              </li>
-              <li>
-                Mission : {content?.presentationMission ||
-                  "structurer, accompagner et financer les projets agricoles."}
-              </li>
-              <li>
-                Valeurs : {content?.presentationValues ||
-                  "intégrité, innovation, proximité, durabilité."}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-to-b from-slate-50 to-white">
-        <div className="mx-auto w-full max-w-7xl px-3 py-16">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-slate-900">Services clés</h2>
-            <a
-              href="/presentation-services-contact"
-              className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
-            >
-              Voir tous les services
-            </a>
-          </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.length === 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white/90 p-5 text-sm text-slate-600 shadow-sm">
-                Aucun service enregistré pour le moment.
-              </div>
-            )}
-            {services.map((service) => (
-              <div
-                key={service._id}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-md"
-              >
-                <p className="text-base font-semibold text-slate-900">{service.title}</p>
-                <p className="mt-2 text-sm text-slate-600">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-7xl px-2 py-16">
-        <div className="rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50 to-slate-50 p-6 sm:p-8 shadow-md overflow-hidden">
-          <div className="flex flex-col gap-8 md:gap-12 md:flex-row md:items-center">
-            <div className="flex flex-col items-center md:items-start flex-shrink-0">
-              <div className="h-48 w-48 sm:h-56 sm:w-56 md:h-64 md:w-64 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ring-4 ring-emerald-100 transition-transform duration-500 hover:-translate-y-1">
-                {director?.photoUrl ? (
-                  <img
-                    src={director.photoUrl}
-                    alt={director.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
-                    Photo DG
-                  </div>
-                )}
-              </div>
-              <p className="mt-5 text-base font-semibold text-slate-900">
-                {director?.name || "Directeur Général"}
-              </p>
-            </div>
-            <div className="hidden h-48 w-px self-stretch rounded-full bg-emerald-200 md:block flex-shrink-0" />
-            <div className="flex-1 rounded-3xl border border-emerald-100 bg-white/90 p-5 sm:p-6 shadow-sm transition duration-300 hover:shadow-md">
-              <h2 className="text-2xl font-semibold text-slate-900">Directeur Général</h2>
-              <p className="mt-2 text-sm font-semibold text-emerald-700">
-                {director?.title || "Fonction"}
-              </p>
-              <p className="mt-4 text-sm text-slate-700">
-                {director?.bio ||
-                  "Photo officielle et biographie complète seront disponibles ici. Le Directeur Général porte la vision stratégique du groupe et supervise les projets d'impact."}
-              </p>
-              <div className="my-4 h-px w-28 rounded-full bg-emerald-200" />
-              <p className="text-sm text-slate-700">
-                {director?.message ||
-                  "« Ensemble, nous bâtissons une agriculture résiliente au service des communautés rurales. »"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-to-b from-emerald-50/70 via-stone-50 to-white">
-        <div className="mx-auto w-full max-w-7xl px-6 py-16">
-          <h2 className="text-2xl font-semibold text-slate-900">Activités clés</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Nos interventions prioritaires pour la performance durable des filières.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {activities.map((activity) => (
-              <div
-                key={activity}
-                className="rounded-2xl border border-emerald-100 bg-white/95 p-4 text-sm text-slate-700 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md"
-              >
-                {activity}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-to-b from-white via-emerald-50/45 to-stone-50/70">
-        <div className="mx-auto w-full max-w-7xl px-6 py-16">
-          <div className="rounded-3xl border border-emerald-100/80 bg-white/80 p-5 shadow-sm sm:p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-slate-900">Articles & Galerie</h2>
-              <a href="/articles-galerie" className="text-sm font-semibold text-emerald-700 transition hover:text-emerald-800">
-                Tout voir
-              </a>
-            </div>
-            <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          {latestArticles.length === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
-              Aucun article publié pour le moment.
-            </div>
-          )}
-          {latestArticles.map((article) => (
-            <article
-              key={article._id}
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md"
-            >
-              {article.coverImage ? (
-                <img
-                  src={article.coverImage}
-                  alt={article.title}
-                  className="h-36 w-full rounded-xl object-cover"
-                />
-              ) : (
-                <div className="h-36 rounded-xl bg-slate-100"></div>
-              )}
-              {article.date && (
-                <p className="mt-4 text-xs text-emerald-700">{article.date}</p>
-              )}
-              <h3 className="mt-2 text-base font-semibold text-slate-900">
-                {article.title}
-              </h3>
-              <p className="mt-2 text-sm text-slate-600">{article.excerpt}</p>
-              {article.slug && (
-                <a
-                  href={`/articles-galerie/${article.slug}`}
-                  className="mt-3 inline-block text-xs font-semibold text-emerald-700 transition hover:text-emerald-800"
-                >
-                  Lire l’article
-                </a>
-              )}
-            </article>
-          ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-to-b from-slate-50 to-slate-100/70">
-        <div className="mx-auto w-full max-w-7xl px-3 py-16 overflow-hidden">
-          <h2 className="text-2xl font-semibold text-slate-900">Partenaires</h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Ils nous font confiance pour l’accompagnement des projets agricoles.
-          </p>
-          <PartnersCarousel partners={partners} />
-        </div>
-      </section>
+    <div className="flex flex-col min-h-screen">
+      <Hero
+        title={content?.heroTitle || figmaContent.hero.title}
+        subtitle={content?.heroSubtitle || figmaContent.hero.subtitle}
+        ctaPrimary={figmaContent.hero.ctaPrimary}
+        ctaSecondary={figmaContent.hero.ctaSecondary}
+        imageUrl={content?.homeHeroBackgroundUrl || figmaContent.hero.image}
+      />
+      <Stats
+        stats={[
+          {
+            id: 1,
+            value: content?.homeStat1Value || figmaContent.intro.stats[0].value,
+            label: content?.homeStat1Label || figmaContent.intro.stats[0].label,
+          },
+          {
+            id: 2,
+            value: content?.homeStat2Value || figmaContent.intro.stats[1].value,
+            label: content?.homeStat2Label || figmaContent.intro.stats[1].label,
+          },
+          {
+            id: 3,
+            value: content?.homeStat3Value || figmaContent.intro.stats[2].value,
+            label: content?.homeStat3Label || figmaContent.intro.stats[2].label,
+          },
+          {
+            id: 4,
+            value: content?.homeStat4Value || figmaContent.intro.stats[3].value,
+            label: content?.homeStat4Label || figmaContent.intro.stats[3].label,
+          },
+        ]}
+      />
+      <Intro
+        title={content?.introTitle || figmaContent.intro.title}
+        text={content?.introText || figmaContent.intro.text}
+        missionTitle={figmaContent.mission.title}
+        missionText={content?.presentationMission || figmaContent.mission.text}
+        visionTitle={figmaContent.vision.title}
+        visionText={content?.presentationVision || figmaContent.vision.text}
+        valuesTitle={figmaContent.values.title}
+        valuesText={content?.presentationValues || figmaContent.values.list.join(", ")}
+      />
+      <Services services={resolvedServices} />
+      <CEO
+        name={director?.name || figmaContent.ceo.name}
+        title={director?.title || figmaContent.ceo.title}
+        bio={director?.bio || figmaContent.ceo.bio}
+        quote={director?.message || figmaContent.ceo.quote}
+        imageUrl={director?.photoUrl || figmaContent.ceo.image}
+      />
+      <Activities activities={resolvedActivities} />
+      <ArticlesPreview articles={resolvedArticles} />
+      <Partners partners={resolvedPartners} />
     </div>
   );
 }

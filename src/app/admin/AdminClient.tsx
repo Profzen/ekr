@@ -1,6 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
+import {
+  LayoutDashboard,
+  FileText,
+  Users,
+  Briefcase,
+  Settings,
+  Image as ImageIcon,
+  LogOut,
+} from "lucide-react";
 
 type Article = {
   _id: string;
@@ -18,6 +27,7 @@ type Service = {
   _id: string;
   title: string;
   description: string;
+  imageUrl?: string;
   isActive: boolean;
   order?: number;
 };
@@ -48,9 +58,19 @@ type GalleryItem = {
   order?: number;
 };
 
+type Activity = {
+  _id: string;
+  title: string;
+  description: string;
+  icon: string;
+  isActive: boolean;
+  order?: number;
+};
+
 type AdminSectionKey =
   | "articles"
   | "services"
+  | "activities"
   | "partners"
   | "team"
   | "gallery"
@@ -68,6 +88,10 @@ type DirectorProfile = {
 };
 
 type SiteContent = {
+  heroTitle: string;
+  heroSubtitle: string;
+  introTitle: string;
+  introText: string;
   homeHeroIntro: string;
   homeMessage: string;
   homeAbout: string;
@@ -85,10 +109,18 @@ type SiteContent = {
   presentationVision: string;
   presentationMission: string;
   presentationValues: string;
+  presentationHistoryTitle: string;
+  presentationHistoryParagraph1: string;
+  presentationHistoryParagraph2: string;
+  presentationHistoryStatYear: string;
+  presentationHistoryStatYearLabel: string;
+  presentationHistoryStatJobs: string;
+  presentationHistoryStatJobsLabel: string;
   contactAddress: string;
   contactPhone: string;
   contactEmail: string;
   mapEmbedUrl: string;
+  socialLinkedinUrl: string;
   socialXUrl: string;
   socialFacebookUrl: string;
   socialWhatsappUrl: string;
@@ -116,6 +148,15 @@ const initialState: FormState = {
 const initialService = {
   title: "",
   description: "",
+  imageUrl: "",
+  isActive: true,
+  order: 0,
+};
+
+const initialActivity = {
+  title: "",
+  description: "",
+  icon: "",
   isActive: true,
   order: 0,
 };
@@ -152,6 +193,10 @@ const initialDirector: DirectorProfile = {
 };
 
 const initialContent: SiteContent = {
+  heroTitle: "",
+  heroSubtitle: "",
+  introTitle: "",
+  introText: "",
   homeHeroIntro: "",
   homeMessage: "",
   homeAbout: "",
@@ -169,10 +214,18 @@ const initialContent: SiteContent = {
   presentationVision: "",
   presentationMission: "",
   presentationValues: "",
+  presentationHistoryTitle: "Notre Histoire",
+  presentationHistoryParagraph1: "",
+  presentationHistoryParagraph2: "",
+  presentationHistoryStatYear: "2018",
+  presentationHistoryStatYearLabel: "Année de création",
+  presentationHistoryStatJobs: "500+",
+  presentationHistoryStatJobsLabel: "Emplois indirects",
   contactAddress: "",
   contactPhone: "",
   contactEmail: "",
   mapEmbedUrl: "",
+  socialLinkedinUrl: "",
   socialXUrl: "",
   socialFacebookUrl: "",
   socialWhatsappUrl: "",
@@ -182,6 +235,7 @@ const initialContent: SiteContent = {
 export default function AdminClient() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
@@ -190,11 +244,14 @@ export default function AdminClient() {
   const [form, setForm] = useState<FormState>(initialState);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [serviceForm, setServiceForm] = useState(initialService);
+  const [activityForm, setActivityForm] = useState(initialActivity);
   const [partnerForm, setPartnerForm] = useState(initialPartner);
   const [teamForm, setTeamForm] = useState(initialTeam);
   const [galleryForm, setGalleryForm] = useState(initialGallery);
   const [articleFile, setArticleFile] = useState<File | null>(null);
   const [articlePreview, setArticlePreview] = useState<string>("");
+  const [serviceFile, setServiceFile] = useState<File | null>(null);
+  const [servicePreview, setServicePreview] = useState<string>("");
   const [partnerFile, setPartnerFile] = useState<File | null>(null);
   const [partnerPreview, setPartnerPreview] = useState<string>("");
   const [teamFile, setTeamFile] = useState<File | null>(null);
@@ -207,6 +264,7 @@ export default function AdminClient() {
   const [heroBackgroundPreview, setHeroBackgroundPreview] = useState<string>("");
   const [articleSaving, setArticleSaving] = useState(false);
   const [serviceSaving, setServiceSaving] = useState(false);
+  const [activitySaving, setActivitySaving] = useState(false);
   const [partnerSaving, setPartnerSaving] = useState(false);
   const [teamSaving, setTeamSaving] = useState(false);
   const [gallerySaving, setGallerySaving] = useState(false);
@@ -220,8 +278,7 @@ export default function AdminClient() {
   const [directorEditing, setDirectorEditing] = useState(false);
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
   const [teamEditingId, setTeamEditingId] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState<AdminSectionKey>("articles");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeSection, setActiveSection] = useState<AdminSectionKey>("content");
   const [sessionStatus, setSessionStatus] = useState<"ok" | "expired" | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const articleFormRef = useRef<HTMLFormElement | null>(null);
@@ -290,6 +347,11 @@ export default function AdminClient() {
     setServices(result.data?.data ?? []);
   };
 
+  const loadActivities = async () => {
+    const result = await fetchJsonSafe("/api/activities", { cache: "no-store" });
+    setActivities(result.data?.data ?? []);
+  };
+
   const loadPartners = async () => {
     const result = await fetchJsonSafe("/api/partners", { cache: "no-store" });
     setPartners(result.data?.data ?? []);
@@ -323,6 +385,10 @@ export default function AdminClient() {
     if (result.data?.data) {
       const heroBackgroundUrl = result.data.data.homeHeroBackgroundUrl ?? "/agro2.jpg";
       setContent({
+        heroTitle: result.data.data.heroTitle ?? "",
+        heroSubtitle: result.data.data.heroSubtitle ?? "",
+        introTitle: result.data.data.introTitle ?? "",
+        introText: result.data.data.introText ?? "",
         homeHeroIntro: result.data.data.homeHeroIntro ?? "",
         homeMessage: result.data.data.homeMessage ?? "",
         homeAbout: result.data.data.homeAbout ?? "",
@@ -340,10 +406,20 @@ export default function AdminClient() {
         presentationVision: result.data.data.presentationVision ?? "",
         presentationMission: result.data.data.presentationMission ?? "",
         presentationValues: result.data.data.presentationValues ?? "",
+        presentationHistoryTitle: result.data.data.presentationHistoryTitle ?? "Notre Histoire",
+        presentationHistoryParagraph1: result.data.data.presentationHistoryParagraph1 ?? "",
+        presentationHistoryParagraph2: result.data.data.presentationHistoryParagraph2 ?? "",
+        presentationHistoryStatYear: result.data.data.presentationHistoryStatYear ?? "2018",
+        presentationHistoryStatYearLabel:
+          result.data.data.presentationHistoryStatYearLabel ?? "Année de création",
+        presentationHistoryStatJobs: result.data.data.presentationHistoryStatJobs ?? "500+",
+        presentationHistoryStatJobsLabel:
+          result.data.data.presentationHistoryStatJobsLabel ?? "Emplois indirects",
         contactAddress: result.data.data.contactAddress ?? "",
         contactPhone: result.data.data.contactPhone ?? "",
         contactEmail: result.data.data.contactEmail ?? "",
         mapEmbedUrl: result.data.data.mapEmbedUrl ?? "",
+        socialLinkedinUrl: result.data.data.socialLinkedinUrl ?? "",
         socialXUrl: result.data.data.socialXUrl ?? "",
         socialFacebookUrl: result.data.data.socialFacebookUrl ?? "",
         socialWhatsappUrl: result.data.data.socialWhatsappUrl ?? "",
@@ -365,6 +441,7 @@ export default function AdminClient() {
   useEffect(() => {
     loadArticles();
     loadServices();
+    loadActivities();
     loadPartners();
     loadTeam();
     loadGallery();
@@ -385,6 +462,13 @@ export default function AdminClient() {
   ) => {
     const { name, value } = event.target;
     setServiceForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleActivityChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    setActivityForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePartnerChange = (
@@ -506,19 +590,48 @@ export default function AdminClient() {
     setError(null);
     setSuccess(null);
     try {
+      const imageUrl = serviceFile
+        ? await uploadFile(serviceFile)
+        : serviceForm.imageUrl;
       const res = await fetch("/api/services", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(serviceForm),
+        body: JSON.stringify({ ...serviceForm, imageUrl }),
       });
       await ensureOk(res, "Enregistrement impossible.");
       setServiceForm(initialService);
+      setServiceFile(null);
+      setServicePreview("");
       await loadServices();
       showSuccess("Service enregistré.");
     } catch (err) {
       setError("Impossible d'enregistrer le service.");
     } finally {
       setServiceSaving(false);
+    }
+  };
+
+  const handleActivitySubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setActivitySaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await fetch("/api/activities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(activityForm),
+      });
+      await ensureOk(res, "Enregistrement impossible.");
+      setActivityForm(initialActivity);
+      await loadActivities();
+      showSuccess("Activité enregistrée.");
+    } catch (err) {
+      setError("Impossible d'enregistrer l'activité.");
+    } finally {
+      setActivitySaving(false);
     }
   };
 
@@ -660,6 +773,16 @@ export default function AdminClient() {
     await loadServices();
     setActionLoading((prev) => ({ ...prev, [`service-${id}`]: false }));
     showSuccess("Service supprimé.");
+  };
+
+  const deleteActivity = async (id: string) => {
+    if (!confirm("Supprimer cette activité ?")) return;
+    setActionLoading((prev) => ({ ...prev, [`activity-${id}`]: true }));
+    const res = await fetch(`/api/activities/${id}`, { method: "DELETE" });
+    await ensureOk(res, "Suppression impossible.");
+    await loadActivities();
+    setActionLoading((prev) => ({ ...prev, [`activity-${id}`]: false }));
+    showSuccess("Activité supprimée.");
   };
 
   const deletePartner = async (id: string) => {
@@ -833,15 +956,21 @@ export default function AdminClient() {
   const isVideo = (url: string) =>
     url.includes("/video/upload/") || url.endsWith(".mp4") || url.endsWith(".mov");
 
-  const menuItems: Array<{ key: AdminSectionKey; label: string; description: string }> = [
-    { key: "articles", label: "Articles", description: "Creer et gerer les articles" },
-    { key: "services", label: "Services", description: "Mettre a jour les services" },
-    { key: "partners", label: "Partenaires", description: "Logos et partenaires" },
-    { key: "team", label: "Equipe", description: "Gestion de l'equipe" },
-    { key: "gallery", label: "Galerie", description: "Photos et videos" },
-    { key: "content", label: "Contenus institutionnels", description: "Textes et stats" },
-    { key: "profile", label: "Profil + Fond", description: "DG et fond d'accueil" },
-    { key: "settings", label: "Parametres", description: "Session et acces" },
+  const menuItems: Array<{
+    key: AdminSectionKey;
+    label: string;
+    description: string;
+    icon: ComponentType<{ size?: number }>;
+  }> = [
+    { key: "content", label: "General", description: "Textes et stats", icon: LayoutDashboard },
+    { key: "services", label: "Services", description: "Mettre a jour les services", icon: Briefcase },
+    { key: "activities", label: "Activités", description: "Gestion des activites", icon: Briefcase },
+    { key: "articles", label: "Articles", description: "Creer et gerer les articles", icon: FileText },
+    { key: "team", label: "Equipe", description: "Gestion de l'equipe", icon: Users },
+    { key: "partners", label: "Partenaires", description: "Logos et partenaires", icon: Users },
+    { key: "gallery", label: "Galerie", description: "Photos et videos", icon: ImageIcon },
+    { key: "profile", label: "Profil + Fond", description: "DG et fond d'accueil", icon: Settings },
+    { key: "settings", label: "Parametres", description: "Session et acces", icon: Settings },
   ];
 
   const sectionTitle: Record<AdminSectionKey, { title: string; subtitle: string }> = {
@@ -852,6 +981,10 @@ export default function AdminClient() {
     services: {
       title: "Gestion des services",
       subtitle: "Mettez a jour les services proposes.",
+    },
+    activities: {
+      title: "Gestion des activités",
+      subtitle: "Organisez les principales activités de l'entreprise.",
     },
     partners: {
       title: "Gestion des partenaires",
@@ -880,108 +1013,70 @@ export default function AdminClient() {
   };
 
   return (
-    <div className="flex gap-6">
-      <aside
-        className={`flex h-[calc(100vh-4rem)] flex-col rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${
-          sidebarOpen ? "w-64" : "w-16"
-        }`}
-      >
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
-              EKR
-            </div>
-            {sidebarOpen && (
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Administration</p>
-                <p className="text-xs text-slate-500">Tableau de bord</p>
-              </div>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => setSidebarOpen((prev) => !prev)}
-            className="rounded-full border border-slate-200 px-2 py-1 text-xs font-semibold text-slate-600"
-            aria-label="Afficher ou masquer la navigation"
-          >
-            {sidebarOpen ? "<<" : ">>"}
-          </button>
+    <div className="min-h-screen bg-muted/20 flex">
+      <aside className="w-64 bg-card border-r border-border h-screen flex flex-col fixed left-0 top-0 overflow-y-auto hidden md:flex">
+        <div className="p-6 border-b border-border">
+          <h2 className="text-xl font-bold text-primary">EKR Admin</h2>
+          <p className="text-xs text-muted-foreground mt-1">v1.0.0</p>
         </div>
-        <nav className="mt-6 flex-1 space-y-2">
-          {menuItems.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => setActiveSection(item.key)}
-              className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left text-sm font-semibold transition ${
-                activeSection === item.key
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <span className="h-2 w-2 rounded-full bg-current" aria-hidden="true" />
-              {sidebarOpen && (
-                <span>
-                  <span className="block">{item.label}</span>
-                  <span className="block text-xs font-normal text-slate-400">
-                    {item.description}
-                  </span>
-                </span>
-              )}
-            </button>
-          ))}
+
+        <nav className="flex-grow p-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => setActiveSection(item.key)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${
+                  activeSection === item.key
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                <Icon size={18} />
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
-        <div className="mt-6">
+
+        <div className="p-4 border-t border-border">
           <button
             type="button"
             onClick={handleLogout}
             disabled={logoutLoading}
-            aria-label="Se deconnecter"
-            className={`flex w-full items-center justify-center rounded-2xl border border-slate-200 text-xs font-semibold text-slate-600 ${
-              sidebarOpen ? "px-4 py-2" : "h-10 px-2"
-            }`}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors text-sm font-medium"
           >
             {logoutLoading ? (
               <span className="inline-flex items-center gap-2">
-                <Spinner className="h-3 w-3 border-slate-600" />
-                {sidebarOpen ? "Déconnexion..." : null}
+                <Spinner className="h-3 w-3 border-destructive" />
+                Deconnexion...
               </span>
-            ) : sidebarOpen ? (
-              "Se déconnecter"
             ) : (
-              <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M16 17l5-5-5-5" />
-                <path d="M21 12H9" />
-                <path d="M12 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h7" />
-              </svg>
+              <>
+                <LogOut size={18} />
+                Deconnexion
+              </>
             )}
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 space-y-8">
+      <main className="flex-1 md:ml-64 p-8 overflow-y-auto h-screen space-y-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">
+            <h1 className="text-2xl font-semibold text-foreground">
               {sectionTitle[activeSection].title}
             </h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-muted-foreground">
               {sectionTitle[activeSection].subtitle}
             </p>
           </div>
           <button
             type="button"
             onClick={checkAdminSession}
-            className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+            className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground"
           >
             Verifier la session
           </button>
@@ -990,7 +1085,7 @@ export default function AdminClient() {
           <div
             className={`rounded-2xl border px-4 py-3 text-xs font-semibold ${
               sessionStatus === "ok"
-                ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                ? "border-emerald-200 bg-muted/20 text-primary"
                 : "border-red-200 bg-red-50 text-red-700"
             }`}
           >
@@ -1006,7 +1101,7 @@ export default function AdminClient() {
                   onClick={() => {
                     window.location.href = "/admin/login";
                   }}
-                  className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-semibold text-red-700"
+                  className="rounded-full border border-red-200 bg-card px-3 py-1 text-xs font-semibold text-red-700"
                 >
                   Se reconnecter
                 </button>
@@ -1015,8 +1110,8 @@ export default function AdminClient() {
           </div>
         )}
         {(success || error) && (
-          <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-xl -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-base shadow-xl">
-            {success && <p className="text-emerald-700">{success}</p>}
+          <div className="fixed left-1/2 top-6 z-50 w-[90%] max-w-xl -translate-x-1/2 rounded-2xl border border-border bg-card px-6 py-4 text-base shadow-xl">
+            {success && <p className="text-primary">{success}</p>}
             {error && <p className="text-red-600">{error}</p>}
           </div>
         )}
@@ -1024,41 +1119,41 @@ export default function AdminClient() {
         {activeSection === "articles" && (
           <div className="space-y-8">
             <div className="grid gap-10 lg:grid-cols-2">
-              <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-                <h2 className="text-xl font-semibold text-slate-900">Créer un article</h2>
-                <p className="mt-2 text-sm text-slate-600">
+              <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground">Créer un article</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
                   Les articles publiés apparaîtront sur le site public.
                 </p>
 
                 <form ref={articleFormRef} onSubmit={handleSubmit} className="mt-6 space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Titre de l'article
                     </label>
                     <input
                       name="title"
                       value={form.title}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Titre"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Résumé court
                     </label>
                     <input
                       name="excerpt"
                       value={form.excerpt}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Résumé court"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Contenu détaillé
                     </label>
                     <textarea
@@ -1066,14 +1161,17 @@ export default function AdminClient() {
                       value={form.content}
                       onChange={handleChange}
                       rows={5}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Contenu détaillé"
                       required
                     />
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Astuce : utilisez <span className="font-semibold">**texte**</span> pour afficher du gras.
+                    </p>
                   </div>
                   <div className="space-y-2">
-                    <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                    <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
                         <input
                           type="file"
                           accept="image/*"
@@ -1087,12 +1185,12 @@ export default function AdminClient() {
                         />
                         Choisir une image
                       </label>
-                      <p className="mt-2 text-xs text-slate-500">
+                      <p className="mt-2 text-xs text-muted-foreground">
                         Cliquez pour sélectionner l’image de couverture.
                       </p>
                     </div>
                     {(articlePreview || form.coverImage) && (
-                      <div className="overflow-hidden rounded-xl bg-slate-100">
+                      <div className="overflow-hidden rounded-xl bg-muted/20">
                         <img
                           src={articlePreview || form.coverImage}
                           alt="Prévisualisation"
@@ -1102,26 +1200,26 @@ export default function AdminClient() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Catégorie
                     </label>
                     <input
                       name="category"
                       value={form.category}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Catégorie"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Statut
                     </label>
                     <select
                       name="status"
                       value={form.status}
                       onChange={handleChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                     >
                       <option value="draft">Brouillon</option>
                       <option value="published">Publié</option>
@@ -1131,7 +1229,7 @@ export default function AdminClient() {
                   <button
                     type="submit"
                     disabled={loading || articleSaving}
-                    className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                    className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
                   >
                     {loading || articleSaving ? (
                       <span className="inline-flex items-center gap-2">
@@ -1146,35 +1244,35 @@ export default function AdminClient() {
                   </button>
                 </form>
               </div>
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h2 className="text-xl font-semibold text-slate-900">Articles existants</h2>
+            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+              <h2 className="text-xl font-semibold text-foreground">Articles existants</h2>
               <div className="mt-6 space-y-4">
                 {articles.length === 0 && (
-                  <p className="text-sm text-slate-500">Aucun article enregistré.</p>
+                  <p className="text-sm text-muted-foreground">Aucun article enregistré.</p>
                 )}
                 {articles.map((article) => (
-                  <div key={article._id} className="rounded-2xl border border-slate-200 p-4">
+                  <div key={article._id} className="rounded-2xl border border-border p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-sm font-semibold text-slate-900">{article.title}</p>
-                        <p className="mt-1 text-xs text-slate-500">{article.category}</p>
+                        <p className="text-sm font-semibold text-foreground">{article.title}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{article.category}</p>
                       </div>
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-semibold ${
                           article.status === "published"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-slate-100 text-slate-600"
+                            ? "bg-emerald-100 text-primary"
+                            : "bg-muted/20 text-muted-foreground"
                         }`}
                       >
                         {article.status === "published" ? "Publié" : "Brouillon"}
                       </span>
                     </div>
-                    <p className="mt-3 text-xs text-slate-600">{article.excerpt}</p>
+                    <p className="mt-3 text-xs text-muted-foreground">{article.excerpt}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => handleEdit(article)}
-                        className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                        className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground"
                       >
                         Modifier
                       </button>
@@ -1182,7 +1280,7 @@ export default function AdminClient() {
                         type="button"
                         onClick={() => togglePublish(article)}
                         disabled={actionLoading[`publish-${article._id}`]}
-                        className="rounded-full border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700"
+                        className="rounded-full border border-emerald-200 px-3 py-1 text-xs font-semibold text-primary"
                       >
                         {actionLoading[`publish-${article._id}`] ? (
                           <span className="inline-flex items-center gap-2">
@@ -1220,40 +1318,65 @@ export default function AdminClient() {
         )}
 
         {activeSection === "services" && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Services</h2>
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">Services</h2>
             <form onSubmit={handleServiceSubmit} className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Titre du service
                 </label>
                 <input
                   name="title"
                   value={serviceForm.title}
                   onChange={handleServiceChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   placeholder="Titre du service"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Description
                 </label>
                 <textarea
                   name="description"
                   value={serviceForm.description}
                   onChange={handleServiceChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   rows={3}
                   placeholder="Description"
                   required
                 />
               </div>
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                  <ImageIcon size={16} />
+                  Choisir une image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setServiceFile(file);
+                        const reader = new FileReader();
+                        reader.onloadend = () => setServicePreview(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                </label>
+                {servicePreview && (
+                  <div className="mt-3 relative inline-block">
+                    <img src={servicePreview} alt="Aperçu" className="h-12 w-12 rounded-lg object-cover" />
+                  </div>
+                )}
+              </div>
               <button
                 type="submit"
                 disabled={serviceSaving}
-                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
               >
                 {serviceSaving ? (
                   <span className="inline-flex items-center gap-2">
@@ -1267,9 +1390,9 @@ export default function AdminClient() {
             </form>
             <div className="mt-4 space-y-2 text-sm">
               {services.map((service) => (
-                <div key={service._id} className="rounded-xl border border-slate-200 p-3">
-                  <p className="font-semibold text-slate-900">{service.title}</p>
-                  <p className="text-xs text-slate-600">{service.description}</p>
+                <div key={service._id} className="rounded-xl border border-border p-3">
+                  <p className="font-semibold text-foreground">{service.title}</p>
+                  <p className="text-xs text-muted-foreground">{service.description}</p>
                   <button
                     type="button"
                     onClick={() => deleteService(service._id)}
@@ -1291,38 +1414,121 @@ export default function AdminClient() {
           </div>
         )}
 
+        {activeSection === "activities" && (
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">Activités</h2>
+            <form onSubmit={handleActivitySubmit} className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  Titre de l'activité
+                </label>
+                <input
+                  name="title"
+                  value={activityForm.title}
+                  onChange={handleActivityChange}
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+                  placeholder="Titre de l'activité"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={activityForm.description}
+                  onChange={handleActivityChange}
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+                  rows={3}
+                  placeholder="Description"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                  Icon (Sprout, Ship, Leaf, TrendingUp)
+                </label>
+                <input
+                  name="icon"
+                  value={activityForm.icon}
+                  onChange={handleActivityChange}
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+                  placeholder="Sprout"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={activitySaving}
+                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
+              >
+                {activitySaving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner />
+                    Ajout...
+                  </span>
+                ) : (
+                  "Ajouter"
+                )}
+              </button>
+            </form>
+            <div className="mt-4 space-y-2 text-sm">
+              {activities.map((activity) => (
+                <div key={activity._id} className="rounded-xl border border-border p-3">
+                  <p className="font-semibold text-foreground">{activity.title}</p>
+                  <p className="text-xs text-muted-foreground">{activity.description}</p>
+                  <button
+                    type="button"
+                    onClick={() => deleteActivity(activity._id)}
+                    disabled={actionLoading[`activity-${activity._id}`]}
+                    className="mt-2 text-xs font-semibold text-red-600"
+                  >
+                    {actionLoading[`activity-${activity._id}`] ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Spinner className="h-3 w-3 border-red-500" />
+                        Suppression...
+                      </span>
+                    ) : (
+                      "Supprimer"
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {activeSection === "team" && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Equipe</h2>
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">Equipe</h2>
             <form onSubmit={handleTeamSubmit} className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Nom et prenom
                 </label>
                 <input
                   name="name"
                   value={teamForm.name}
                   onChange={handleTeamChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   placeholder="Nom et prenom"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Poste
                 </label>
                 <input
                   name="role"
                   value={teamForm.role}
                   onChange={handleTeamChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   placeholder="Poste"
                   required
                 />
               </div>
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
                   <input
                     type="file"
                     accept="image/*"
@@ -1336,12 +1542,12 @@ export default function AdminClient() {
                   />
                   Choisir une photo
                 </label>
-                <p className="mt-2 text-xs text-slate-500">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Cliquez pour selectionner une photo.
                 </p>
               </div>
               {teamPreview && (
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <div className="overflow-hidden rounded-xl border border-border bg-card">
                   <img
                     src={teamPreview}
                     alt="Previsualisation"
@@ -1352,7 +1558,7 @@ export default function AdminClient() {
               <button
                 type="submit"
                 disabled={teamSaving}
-                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
               >
                 {teamSaving ? (
                   <span className="inline-flex items-center gap-2">
@@ -1365,7 +1571,7 @@ export default function AdminClient() {
                 <button
                   type="button"
                   onClick={handleTeamCancel}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-semibold text-muted-foreground"
                 >
                   Annuler
                 </button>
@@ -1373,9 +1579,9 @@ export default function AdminClient() {
             </form>
             <div className="mt-4 space-y-2 text-sm">
               {team.map((member) => (
-                <div key={member._id} className="rounded-xl border border-slate-200 p-3">
+                <div key={member._id} className="rounded-xl border border-border p-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
+                    <div className="h-12 w-12 overflow-hidden rounded-full border border-border bg-card">
                       {member.photoUrl ? (
                         <img
                           src={member.photoUrl}
@@ -1383,21 +1589,21 @@ export default function AdminClient() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
+                        <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
                           Photo
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">{member.name}</p>
-                      <p className="text-xs text-slate-500">{member.role}</p>
+                      <p className="font-semibold text-foreground">{member.name}</p>
+                      <p className="text-xs text-muted-foreground">{member.role}</p>
                     </div>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => handleTeamEdit(member)}
-                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                      className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground"
                     >
                       Modifier
                     </button>
@@ -1424,24 +1630,24 @@ export default function AdminClient() {
         )}
 
         {activeSection === "partners" && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Partenaires</h2>
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">Partenaires</h2>
             <form onSubmit={handlePartnerSubmit} className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Nom du partenaire
                 </label>
                 <input
                   name="name"
                   value={partnerForm.name}
                   onChange={handlePartnerChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   placeholder="Nom du partenaire"
                   required
                 />
               </div>
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
                   <input
                     type="file"
                     accept="image/*"
@@ -1455,12 +1661,12 @@ export default function AdminClient() {
                   />
                   Choisir un logo
                 </label>
-                <p className="mt-2 text-xs text-slate-500">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Cliquez pour sélectionner le logo.
                 </p>
               </div>
               {partnerPreview && (
-                <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <div className="overflow-hidden rounded-xl border border-border bg-card">
                   <img
                     src={partnerPreview}
                     alt="Prévisualisation logo"
@@ -1471,7 +1677,7 @@ export default function AdminClient() {
               <button
                 type="submit"
                 disabled={partnerSaving}
-                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
               >
                 {partnerSaving ? (
                   <span className="inline-flex items-center gap-2">
@@ -1484,7 +1690,7 @@ export default function AdminClient() {
                 <button
                   type="button"
                   onClick={handlePartnerCancel}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-600"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm font-semibold text-muted-foreground"
                 >
                   Annuler
                 </button>
@@ -1492,9 +1698,9 @@ export default function AdminClient() {
             </form>
             <div className="mt-4 space-y-2 text-sm">
               {partners.map((partner) => (
-                <div key={partner._id} className="rounded-xl border border-slate-200 p-3">
+                <div key={partner._id} className="rounded-xl border border-border p-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 overflow-hidden rounded-full border border-slate-200 bg-white">
+                    <div className="h-12 w-12 overflow-hidden rounded-full border border-border bg-card">
                       {partner.logoUrl ? (
                         <img
                           src={partner.logoUrl}
@@ -1502,14 +1708,14 @@ export default function AdminClient() {
                           className="h-full w-full object-contain p-1"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">
+                        <div className="flex h-full w-full items-center justify-center text-[10px] text-muted-foreground">
                           Logo
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900">{partner.name}</p>
-                      <p className="text-xs text-slate-500">
+                      <p className="font-semibold text-foreground">{partner.name}</p>
+                      <p className="text-xs text-muted-foreground">
                         {partner.logoUrl ? "Logo enregistré" : "Sans logo"}
                       </p>
                     </div>
@@ -1518,7 +1724,7 @@ export default function AdminClient() {
                     <button
                       type="button"
                       onClick={() => handlePartnerEdit(partner)}
-                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700"
+                      className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground"
                     >
                       Modifier
                     </button>
@@ -1545,37 +1751,37 @@ export default function AdminClient() {
         )}
 
         {activeSection === "gallery" && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Galerie</h2>
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">Galerie</h2>
             <form onSubmit={handleGallerySubmit} className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Titre du projet/photo
                 </label>
                 <input
                   name="title"
                   value={galleryForm.title}
                   onChange={handleGalleryChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   placeholder="Titre"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Catégorie
                 </label>
                 <input
                   name="category"
                   value={galleryForm.category}
                   onChange={handleGalleryChange}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                  className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                   placeholder="Catégorie"
                   required
                 />
               </div>
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+              <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
                   <input
                     type="file"
                     accept="image/*,video/*"
@@ -1589,7 +1795,7 @@ export default function AdminClient() {
                   />
                   Choisir un média
                 </label>
-                <p className="mt-2 text-xs text-slate-500">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Cliquez pour sélectionner une image ou une vidéo.
                 </p>
               </div>
@@ -1610,7 +1816,7 @@ export default function AdminClient() {
               <button
                 type="submit"
                 disabled={gallerySaving}
-                className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
               >
                 {gallerySaving ? (
                   <span className="inline-flex items-center gap-2">
@@ -1624,9 +1830,9 @@ export default function AdminClient() {
             </form>
             <div className="mt-4 space-y-2 text-sm">
               {gallery.map((item) => (
-                <div key={item._id} className="rounded-xl border border-slate-200 p-3">
-                  <p className="font-semibold text-slate-900">{item.title}</p>
-                  <p className="text-xs text-slate-600">{item.category}</p>
+                <div key={item._id} className="rounded-xl border border-border p-3">
+                  <p className="font-semibold text-foreground">{item.title}</p>
+                  <p className="text-xs text-muted-foreground">{item.category}</p>
                   <button
                     type="button"
                     onClick={() => deleteGalleryItem(item._id)}
@@ -1649,13 +1855,75 @@ export default function AdminClient() {
         )}
 
         {activeSection === "content" && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">
               Contenus institutionnels
             </h2>
             <form onSubmit={handleContentSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-border bg-muted/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+                  Section Hero (Accueil)
+                </p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <textarea
+                    name="heroTitle"
+                    value={content.heroTitle}
+                    onChange={handleContentChange}
+                    className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.heroTitle
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
+                    }`}
+                    rows={2}
+                    placeholder="Titre principal du Hero (ex: L'Excellence Agricole au Service du Développement)"
+                  />
+                  <textarea
+                    name="heroSubtitle"
+                    value={content.heroSubtitle}
+                    onChange={handleContentChange}
+                    className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.heroSubtitle
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
+                    }`}
+                    rows={3}
+                    placeholder="Sous-titre du Hero (ex: EKR Africa Agrovision Group : Une coopérative visionnaire...)"
+                  />
+                </div>
+              </div>
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-border bg-muted/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+                  Section Intro (À Propos de Nous)
+                </p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <textarea
+                    name="introTitle"
+                    value={content.introTitle}
+                    onChange={handleContentChange}
+                    className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.introTitle
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
+                    }`}
+                    rows={2}
+                    placeholder="Titre de la section Intro (ex: Une Vision Durable pour l'Agriculture Africaine)"
+                  />
+                  <textarea
+                    name="introText"
+                    value={content.introText}
+                    onChange={handleContentChange}
+                    className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.introText
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
+                    }`}
+                    rows={4}
+                    placeholder="Texte de la section Intro (ex: Nous croyons en une agriculture qui respecte la terre...)"
+                  />
+                </div>
+              </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Message institutionnel (Accueil)
                 </label>
                 <textarea
@@ -1664,15 +1932,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.homeMessage
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Message institutionnel (Accueil)"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Texte hero (Accueil)
                 </label>
                 <textarea
@@ -1681,15 +1949,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.homeHeroIntro
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Texte du hero (Accueil)"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Présentation synthétique (Accueil)
                 </label>
                 <textarea
@@ -1698,15 +1966,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.homeAbout
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Présentation synthétique (Accueil)"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Historique résumé (Accueil)
                 </label>
                 <textarea
@@ -1715,15 +1983,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.homeHistory
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Historique résumé (Accueil)"
                 />
               </div>
-              <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-border bg-muted/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Chiffres clés (Accueil)
                 </p>
                 <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -1733,8 +2001,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat1Value
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Valeur 1 (ex: +12)"
                   />
@@ -1744,8 +2012,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat1Label
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Libellé 1 (ex: Services spécialisés)"
                   />
@@ -1755,8 +2023,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat2Value
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Valeur 2 (ex: +40)"
                   />
@@ -1766,8 +2034,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat2Label
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Libellé 2 (ex: Projets accompagnés)"
                   />
@@ -1777,8 +2045,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat3Value
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Valeur 3 (ex: 8)"
                   />
@@ -1788,8 +2056,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat3Label
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Libellé 3 (ex: Pays partenaires)"
                   />
@@ -1799,8 +2067,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat4Value
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Valeur 4 (ex: 24/7)"
                   />
@@ -1810,15 +2078,15 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.homeStat4Label
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Libellé 4 (ex: Suivi des actions)"
                   />
                 </div>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Présentation détaillée (Page Présentation)
                 </label>
                 <textarea
@@ -1827,15 +2095,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.presentationAbout
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={4}
                   placeholder="Présentation détaillée (Page Présentation)"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Vision
                 </label>
                 <textarea
@@ -1844,15 +2112,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`w-full rounded-xl border px-4 py-3 text-sm ${
                     content.presentationVision
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Vision"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Mission
                 </label>
                 <textarea
@@ -1861,15 +2129,15 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`w-full rounded-xl border px-4 py-3 text-sm ${
                     content.presentationMission
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Mission"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Valeurs
                 </label>
                 <textarea
@@ -1878,15 +2146,73 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.presentationValues
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   rows={3}
                   placeholder="Valeurs"
                 />
               </div>
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-border bg-muted/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+                  Histoire (Page Présentation)
+                </p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <input
+                    name="presentationHistoryTitle"
+                    value={content.presentationHistoryTitle}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm"
+                    placeholder="Titre (ex: Notre Histoire)"
+                  />
+                  <input
+                    name="presentationHistoryStatYear"
+                    value={content.presentationHistoryStatYear}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm"
+                    placeholder="Stat année (ex: 2018)"
+                  />
+                  <input
+                    name="presentationHistoryStatYearLabel"
+                    value={content.presentationHistoryStatYearLabel}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm"
+                    placeholder="Label année"
+                  />
+                  <input
+                    name="presentationHistoryStatJobs"
+                    value={content.presentationHistoryStatJobs}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm"
+                    placeholder="Stat emplois (ex: 500+)"
+                  />
+                  <input
+                    name="presentationHistoryStatJobsLabel"
+                    value={content.presentationHistoryStatJobsLabel}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm md:col-span-2"
+                    placeholder="Label emplois"
+                  />
+                  <textarea
+                    name="presentationHistoryParagraph1"
+                    value={content.presentationHistoryParagraph1}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm md:col-span-2"
+                    rows={3}
+                    placeholder="Paragraphe 1"
+                  />
+                  <textarea
+                    name="presentationHistoryParagraph2"
+                    value={content.presentationHistoryParagraph2}
+                    onChange={handleContentChange}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm md:col-span-2"
+                    rows={3}
+                    placeholder="Paragraphe 2"
+                  />
+                </div>
+              </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Adresse
                 </label>
                 <input
@@ -1895,14 +2221,14 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`w-full rounded-xl border px-4 py-3 text-sm ${
                     content.contactAddress
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   placeholder="Adresse"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Téléphone
                 </label>
                 <input
@@ -1911,14 +2237,14 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`w-full rounded-xl border px-4 py-3 text-sm ${
                     content.contactPhone
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   placeholder="Téléphone"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   Email
                 </label>
                 <input
@@ -1927,14 +2253,14 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.contactEmail
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   placeholder="Email"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                   URL d'iframe Google Maps
                 </label>
                 <input
@@ -1943,25 +2269,36 @@ export default function AdminClient() {
                   onChange={handleContentChange}
                   className={`md:col-span-2 w-full rounded-xl border px-4 py-3 text-sm ${
                     content.mapEmbedUrl
-                      ? "border-emerald-200 bg-emerald-50"
-                      : "border-slate-200"
+                      ? "border-emerald-200 bg-muted/20"
+                      : "border-border"
                   }`}
                   placeholder="URL d’iframe Google Maps"
                 />
               </div>
-              <div className="md:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="md:col-span-2 mt-2 rounded-2xl border border-border bg-muted/20 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Reseaux sociaux (Contact)
                 </p>
                 <div className="mt-3 grid gap-3 md:grid-cols-2">
+                  <input
+                    name="socialLinkedinUrl"
+                    value={content.socialLinkedinUrl}
+                    onChange={handleContentChange}
+                    className={`w-full rounded-xl border px-4 py-3 text-sm ${
+                      content.socialLinkedinUrl
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
+                    }`}
+                    placeholder="Lien LinkedIn"
+                  />
                   <input
                     name="socialXUrl"
                     value={content.socialXUrl}
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.socialXUrl
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Lien X (Twitter)"
                   />
@@ -1971,8 +2308,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.socialFacebookUrl
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Lien Facebook"
                   />
@@ -1982,8 +2319,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.socialWhatsappUrl
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Lien WhatsApp"
                   />
@@ -1993,8 +2330,8 @@ export default function AdminClient() {
                     onChange={handleContentChange}
                     className={`w-full rounded-xl border px-4 py-3 text-sm ${
                       content.socialInstagramUrl
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-slate-200"
+                        ? "border-emerald-200 bg-muted/20"
+                        : "border-border"
                     }`}
                     placeholder="Lien Instagram"
                   />
@@ -2003,7 +2340,7 @@ export default function AdminClient() {
               <button
                 type="submit"
                 disabled={contentSaving}
-                className="md:col-span-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                className="md:col-span-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
               >
                 {contentSaving ? (
                   <span className="inline-flex items-center gap-2">
@@ -2020,23 +2357,23 @@ export default function AdminClient() {
 
         {activeSection === "profile" && (
           <div className="grid gap-8 lg:grid-cols-2">
-            <div className="flex flex-1 flex-col rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="flex flex-1 flex-col rounded-3xl border border-border bg-card p-8 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <h2 className="text-xl font-semibold text-slate-900">
+                <h2 className="text-xl font-semibold text-foreground">
                   Profil du Directeur General
                 </h2>
                 <button
                   type="button"
                   onClick={() => setDirectorEditing((prev) => !prev)}
-                  className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+                  className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground"
                 >
                   {directorEditing ? "Fermer" : "Modifier"}
                 </button>
               </div>
 
               {!directorEditing && (
-                <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="h-28 w-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-border bg-muted/20 p-4">
+                  <div className="h-28 w-20 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
                     {director.photoUrl ? (
                       <img
                         src={director.photoUrl}
@@ -2044,16 +2381,16 @@ export default function AdminClient() {
                         className="h-full w-full object-contain p-1"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">
+                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
                         Photo
                       </div>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-foreground">
                       {director.name || "Directeur General"}
                     </p>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-muted-foreground">
                       {director.title || "Fonction"}
                     </p>
                   </div>
@@ -2063,33 +2400,33 @@ export default function AdminClient() {
               {directorEditing && (
                 <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Nom complet
                     </label>
                     <input
                       name="name"
                       value={director.name}
                       onChange={handleDirectorChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Nom complet"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Titre / Fonction
                     </label>
                     <input
                       name="title"
                       value={director.title}
                       onChange={handleDirectorChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       placeholder="Titre / Fonction"
                       required
                     />
                   </div>
-                  <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
                       <input
                         type="file"
                         accept="image/*"
@@ -2103,12 +2440,12 @@ export default function AdminClient() {
                       />
                       Choisir une photo
                     </label>
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-muted-foreground">
                       Cliquez pour sélectionner la photo officielle.
                     </p>
                   </div>
                   {(directorPreview || director.photoUrl) && (
-                    <div className="max-w-[260px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div className="max-w-[260px] overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
                       <img
                         src={directorPreview || director.photoUrl}
                         alt="Photo DG"
@@ -2117,28 +2454,28 @@ export default function AdminClient() {
                     </div>
                   )}
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Biographie
                     </label>
                     <textarea
                       name="bio"
                       value={director.bio}
                       onChange={handleDirectorChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       rows={5}
                       placeholder="Biographie"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Message du DG
                     </label>
                     <textarea
                       name="message"
                       value={director.message}
                       onChange={handleDirectorChange}
-                      className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm"
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
                       rows={4}
                       placeholder="Message du DG"
                       required
@@ -2147,7 +2484,7 @@ export default function AdminClient() {
                   <button
                     type="submit"
                     disabled={directorSaving}
-                    className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white"
+                    className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
                   >
                     {directorSaving ? (
                       <span className="inline-flex items-center gap-2">
@@ -2161,11 +2498,11 @@ export default function AdminClient() {
                 </form>
               )}
             </div>
-            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h2 className="text-xl font-semibold text-slate-900">Fond Accueil</h2>
+            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+              <h2 className="text-xl font-semibold text-foreground">Fond Accueil</h2>
               <div className="mt-6 space-y-3">
-                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white">
+                <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
                     <input
                       type="file"
                       accept="image/*"
@@ -2182,7 +2519,7 @@ export default function AdminClient() {
                 </div>
                 {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
                   <div className="space-y-3">
-                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <div className="overflow-hidden rounded-xl border border-border bg-card">
                       <img
                         src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
                         alt="Prévisualisation fond accueil"
@@ -2194,7 +2531,7 @@ export default function AdminClient() {
                         type="button"
                         onClick={handleHeroBackgroundSave}
                         disabled={contentSaving}
-                        className="w-full rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white"
+                        className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
                       >
                         {contentSaving ? (
                           <span className="inline-flex items-center gap-2">
@@ -2212,7 +2549,7 @@ export default function AdminClient() {
                   type="button"
                   onClick={handleRevertToDefaultBackground}
                   disabled={contentSaving}
-                  className="w-full rounded-xl bg-slate-600 px-4 py-2 text-xs font-semibold text-white"
+                  className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
                 >
                   {contentSaving ? (
                     <span className="inline-flex items-center gap-2">
@@ -2229,12 +2566,12 @@ export default function AdminClient() {
         )}
 
         {activeSection === "settings" && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-900">Parametres</h2>
-            <p className="mt-2 text-sm text-slate-600">
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-foreground">Parametres</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
               Outils de session et acces administrateur.
             </p>
-            <div className="mt-6 space-y-3 text-sm text-slate-600">
+            <div className="mt-6 space-y-3 text-sm text-muted-foreground">
               <p>
                 Etat de session: {sessionStatus === "ok" ? "Active" : "Expiree"}
               </p>
@@ -2243,7 +2580,7 @@ export default function AdminClient() {
               <button
                 type="button"
                 onClick={checkAdminSession}
-                className="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600"
+                className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground"
               >
                 Verifier la session
               </button>

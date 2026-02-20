@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
-import ServiceModel from "@/models/Service";
+import ActivityModel from "@/models/Activity";
 import { isAdminAuthenticated } from "@/lib/adminAuth";
 
 export async function GET() {
   await connectToDatabase();
-  const services = await ServiceModel.find()
+  const activities = await ActivityModel.find()
     .sort({ order: 1, createdAt: -1 })
     .lean();
-  return NextResponse.json({ data: services });
+  return NextResponse.json({ data: activities });
 }
 
 export async function POST(request: Request) {
@@ -16,23 +16,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await request.json();
-  const { title, description, imageUrl, isActive, order } = body ?? {};
+  const { title, description, icon, isActive, order } = body ?? {};
 
-  if (!title || !description) {
+  if (!title) {
     return NextResponse.json(
-      { error: "Title and description are required." },
+      { error: "Title is required." },
       { status: 400 }
     );
   }
 
   await connectToDatabase();
-  const service = await ServiceModel.create({
+  const activity = await ActivityModel.create({
     title,
-    description,
-    imageUrl: imageUrl ?? "",
+    description: description ?? "",
+    icon: icon ?? "",
     isActive: isActive ?? true,
     order: order ?? 0,
   });
 
-  return NextResponse.json({ data: service }, { status: 201 });
+  return NextResponse.json({ data: activity }, { status: 201 });
 }

@@ -4,6 +4,7 @@ const ServiceSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
+    imageUrl: { type: String, default: "" },
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 },
   },
