@@ -51,8 +51,7 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
 
-const sharedReadingBanner =
-  "https://images.unsplash.com/photo-1688240818501-2881b90f1b2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600";
+const sharedReadingBanner = "/article.jpeg";
 
 const renderContentWithBold = (content: string) => {
   const paragraphs = content
@@ -187,61 +186,23 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] py-12">
-        <div className="bg-white -mt-24 relative z-10 p-8 md:p-10 rounded-2xl shadow-xl border border-border/50">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl py-12">
+        <div className="bg-white -mt-24 relative z-10 p-6 md:p-8 rounded-2xl shadow-xl border border-border/50">
           <ArticleActions title={article.title} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-4">
+          <div className="space-y-8">
+            <div className="overflow-hidden rounded-xl border border-border/40 shadow-md">
               <img
                 src={article.image}
                 alt={article.title}
-                className="w-full h-auto rounded-xl shadow-md border border-border/40"
+                className="w-full h-auto object-cover"
               />
             </div>
 
-            <div className="lg:col-span-8 prose prose-lg prose-green max-w-none text-foreground leading-relaxed">
-            <p className="lead font-medium text-xl text-muted-foreground mb-8">{article.excerpt}</p>
-
-            {renderContentWithBold(article.content)}
-
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-
-            <h2 className="text-2xl font-bold mt-12 mb-6 text-primary">Une approche durable</h2>
-
-            <p>
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-
-            <blockquote className="border-l-4 border-accent pl-6 italic text-xl text-foreground my-8 bg-muted/30 p-4 rounded-r-lg">
-              "L'innovation est au cœur de notre stratégie pour valoriser les filières agricoles locales."
-            </blockquote>
-
-            <p>
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-              totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-            </p>
-
-            <figure className="my-12">
-              <img
-                src="https://images.unsplash.com/photo-1688240818501-2881b90f1b2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
-                alt="Illustration article"
-                className="w-full h-auto rounded-xl shadow-lg"
-              />
-              <figcaption className="text-center text-sm text-muted-foreground mt-4 italic">
-                La production locale en plein essor
-              </figcaption>
-            </figure>
-
-            <h3>Conclusion</h3>
-            <p>
-              Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-            </p>
-          </div>
+            <div className="prose prose-lg prose-green max-w-none text-foreground leading-relaxed">
+              <p className="lead whitespace-pre-line font-medium text-xl text-muted-foreground mb-8">{article.excerpt}</p>
+              {renderContentWithBold(article.content)}
+            </div>
           </div>
 
           <div className="mt-12 pt-8 border-t border-border/50">

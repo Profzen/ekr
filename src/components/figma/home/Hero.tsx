@@ -18,10 +18,10 @@ export function Hero({ title, subtitle, ctaPrimary, ctaSecondary, imageUrl }: He
       </div>
 
       <div className="relative z-10 container mx-auto px-4 md:px-8 lg:px-12 text-center text-white max-w-7xl">
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <h1 className="whitespace-pre-line text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-700">
           {title}
         </h1>
-        <p className="text-lg md:text-xl lg:text-2xl mb-10 opacity-90 leading-relaxed font-light max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+        <p className="whitespace-pre-line text-lg md:text-xl lg:text-2xl mb-10 opacity-90 leading-relaxed font-light max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
           {subtitle}
         </p>
 

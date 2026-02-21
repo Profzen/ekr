@@ -25,8 +25,8 @@ export function CEO({ name, title, bio, quote, imageUrl }: CEOProps) {
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
 
               <div className="absolute bottom-5 left-5 text-white">
-                <h3 className="text-2xl md:text-3xl font-bold">{name}</h3>
-                <p className="text-secondary font-medium tracking-wide">{title}</p>
+                <h3 className="whitespace-pre-line text-2xl md:text-3xl font-bold">{name}</h3>
+                <p className="whitespace-pre-line text-secondary font-medium tracking-wide">{title}</p>
               </div>
             </div>
 
@@ -36,13 +36,13 @@ export function CEO({ name, title, bio, quote, imageUrl }: CEOProps) {
             <div className="w-full lg:w-[48%] space-y-6 lg:-translate-x-6">
             <div className="relative">
               <Quote className="absolute -top-4 -left-4 text-accent/20 w-20 h-20 transform -scale-x-100" />
-              <blockquote className="text-lg md:text-2xl font-serif italic text-foreground leading-relaxed relative z-10">
+              <blockquote className="whitespace-pre-line text-lg md:text-2xl font-serif italic text-foreground leading-relaxed relative z-10">
                 "{quote}"
               </blockquote>
             </div>
 
             <div className="space-y-6 text-muted-foreground text-lg leading-relaxed">
-              <p>{bio}</p>
+              <p className="whitespace-pre-line">{bio}</p>
               <p>
                 Sous sa direction, EKR Africa Agrovision Group s'est imposé comme un acteur incontournable,
                 tissant des liens solides entre les producteurs locaux et les marchés internationaux.

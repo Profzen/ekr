@@ -52,10 +52,10 @@ export function Services({ services }: ServicesProps) {
                 </div>
 
                 <div className="p-8 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="whitespace-pre-line text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
                     {service.title}
                   </h3>
-                  <p className="text-muted-foreground mb-6 flex-grow leading-relaxed">
+                  <p className="whitespace-pre-line text-muted-foreground mb-6 flex-grow leading-relaxed">
                     {service.description}
                   </p>
 

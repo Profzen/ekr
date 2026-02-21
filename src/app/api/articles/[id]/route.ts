@@ -70,10 +70,6 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (article.coverImage) {
-    await deleteCloudinaryByUrl(article.coverImage);
-  }
-
   return NextResponse.json({ data: article });
 }
 
@@ -90,6 +86,10 @@ export async function DELETE(
 
   if (!article) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (article.coverImage) {
+    await deleteCloudinaryByUrl(article.coverImage);
   }
 
   return NextResponse.json({ data: article });

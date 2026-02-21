@@ -9,6 +9,8 @@ import {
   Settings,
   Image as ImageIcon,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 
 type Article = {
@@ -281,6 +283,7 @@ export default function AdminClient() {
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
   const [teamEditingId, setTeamEditingId] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<AdminSectionKey>("content");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sessionStatus, setSessionStatus] = useState<"ok" | "expired" | null>(null);
   const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const articleFormRef = useRef<HTMLFormElement | null>(null);
@@ -1018,8 +1021,13 @@ export default function AdminClient() {
     },
   };
 
+  const handleSectionChange = (section: AdminSectionKey) => {
+    setActiveSection(section);
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <div className="min-h-screen bg-muted/20 flex">
+    <div className="min-h-screen bg-muted/20 md:flex">
       <aside className="w-64 bg-card border-r border-border h-screen flex flex-col fixed left-0 top-0 overflow-y-auto hidden md:flex">
         <div className="p-6 border-b border-border">
           <h2 className="text-xl font-bold text-primary">EKR Admin</h2>
@@ -1033,7 +1041,7 @@ export default function AdminClient() {
               <button
                 key={item.key}
                 type="button"
-                onClick={() => setActiveSection(item.key)}
+                onClick={() => handleSectionChange(item.key)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${
                   activeSection === item.key
                     ? "bg-primary text-primary-foreground shadow-md"
@@ -1069,7 +1077,70 @@ export default function AdminClient() {
         </div>
       </aside>
 
-      <main className="flex-1 md:ml-64 p-8 overflow-y-auto h-screen space-y-8">
+      <div className="flex-1 min-w-0 md:ml-64">
+        <div className="sticky top-0 z-40 border-b border-border bg-card/95 px-2 py-3 backdrop-blur sm:px-3 md:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Administration</p>
+              <p className="text-xs text-muted-foreground">{sectionTitle[activeSection].title}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium text-foreground"
+              aria-expanded={mobileMenuOpen}
+              aria-label="Ouvrir le menu des sections"
+            >
+              {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
+              Sections
+            </button>
+          </div>
+        </div>
+
+        {mobileMenuOpen && (
+          <div className="border-b border-border bg-card p-3 md:hidden">
+            <nav className="space-y-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => handleSectionChange(item.key)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${
+                      activeSection === item.key
+                        ? "bg-primary text-primary-foreground shadow-md"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    <Icon size={18} />
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={logoutLoading}
+              className="mt-3 w-full flex items-center justify-center gap-2 rounded-lg border border-destructive/30 px-4 py-3 text-sm font-medium text-destructive"
+            >
+              {logoutLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner className="h-3 w-3 border-destructive" />
+                  Deconnexion...
+                </span>
+              ) : (
+                <>
+                  <LogOut size={16} />
+                  Deconnexion
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        <main className="px-2 py-4 sm:px-3 md:p-8 space-y-6 md:space-y-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold text-foreground">
@@ -1125,7 +1196,7 @@ export default function AdminClient() {
         {activeSection === "articles" && (
           <div className="space-y-8">
             <div className="grid gap-10 lg:grid-cols-2">
-              <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
                 <h2 className="text-xl font-semibold text-foreground">Créer un article</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Les articles publiés apparaîtront sur le site public.
@@ -1262,7 +1333,7 @@ export default function AdminClient() {
                   </button>
                 </form>
               </div>
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
               <h2 className="text-xl font-semibold text-foreground">Articles existants</h2>
               <div className="mt-6 space-y-4">
                 {articles.length === 0 && (
@@ -1336,7 +1407,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "services" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">Services</h2>
             <form onSubmit={handleServiceSubmit} className="mt-4 space-y-3">
               <div>
@@ -1433,7 +1504,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "activities" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">Activités</h2>
             <form onSubmit={handleActivitySubmit} className="mt-4 space-y-3">
               <div>
@@ -1516,7 +1587,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "team" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">Equipe</h2>
             <form onSubmit={handleTeamSubmit} className="mt-4 space-y-3">
               <div>
@@ -1648,7 +1719,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "partners" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">Partenaires</h2>
             <form onSubmit={handlePartnerSubmit} className="mt-4 space-y-3">
               <div>
@@ -1769,7 +1840,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "gallery" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">Galerie</h2>
             <form onSubmit={handleGallerySubmit} className="mt-4 space-y-3">
               <div>
@@ -1873,7 +1944,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "content" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">
               Contenus institutionnels
             </h2>
@@ -2375,7 +2446,7 @@ export default function AdminClient() {
 
         {activeSection === "profile" && (
           <div className="grid gap-8 lg:grid-cols-2">
-            <div className="flex flex-1 flex-col rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <div className="flex flex-1 flex-col rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <h2 className="text-xl font-semibold text-foreground">
                   Profil du Directeur General
@@ -2516,7 +2587,7 @@ export default function AdminClient() {
                 </form>
               )}
             </div>
-            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+            <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
               <h2 className="text-xl font-semibold text-foreground">Fond Accueil</h2>
               <div className="mt-6 space-y-3">
                 <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
@@ -2584,7 +2655,7 @@ export default function AdminClient() {
         )}
 
         {activeSection === "settings" && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+          <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
             <h2 className="text-xl font-semibold text-foreground">Parametres</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Outils de session et acces administrateur.
@@ -2616,7 +2687,8 @@ export default function AdminClient() {
             </div>
           </div>
         )}
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

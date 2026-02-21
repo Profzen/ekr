@@ -65,11 +65,11 @@ export function ArticlesPreview({ articles }: ArticlesPreviewProps) {
                   </span>
                 </div>
 
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                <h3 className="whitespace-pre-line text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
                   {article.title}
                 </h3>
 
-                <p className="text-muted-foreground text-sm line-clamp-3 mb-6 flex-grow leading-relaxed">
+                <p className="whitespace-pre-line text-muted-foreground text-sm line-clamp-3 mb-6 flex-grow leading-relaxed">
                   {article.excerpt}
                 </p>
 

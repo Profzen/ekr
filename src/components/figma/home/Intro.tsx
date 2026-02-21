@@ -53,11 +53,11 @@ export function Intro({
               <span>À Propos de Nous</span>
             </div>
 
-            <h2 className="text-3xl md:text-5xl font-bold leading-tight text-foreground">
+            <h2 className="whitespace-pre-line text-3xl md:text-5xl font-bold leading-tight text-foreground">
               {title}
             </h2>
 
-            <p className="text-lg text-muted-foreground leading-relaxed">{text}</p>
+            <p className="whitespace-pre-line text-lg text-muted-foreground leading-relaxed">{text}</p>
 
             <blockquote className="pl-6 border-l-4 border-accent italic text-foreground font-medium text-xl">
               "Cultiver l'excellence pour nourrir l'avenir."
@@ -78,8 +78,8 @@ export function Intro({
                     <card.icon size={24} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-3">{card.title}</h3>
-                    <p className="opacity-90 leading-relaxed text-sm md:text-base">{card.text}</p>
+                    <h3 className="whitespace-pre-line text-xl font-bold mb-3">{card.title}</h3>
+                    <p className="whitespace-pre-line opacity-90 leading-relaxed text-sm md:text-base">{card.text}</p>
                   </div>
                 </div>
               </div>
