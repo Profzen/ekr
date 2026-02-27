@@ -30,12 +30,12 @@ export function Footer({
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="space-y-4">
             <img
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="EKR Africa Agrovision Group"
               className="h-16 w-auto rounded-2xl object-contain"
             />
             <p className="text-sm opacity-80 leading-relaxed">
-              Une coopérative visionnaire dédiée à la valorisation des filières agricoles africaines.
+                Une société dédiée à la valorisation des filières agricoles africaines.
               Excellence, durabilité et innovation.
             </p>
             <div className="flex gap-4 pt-4">

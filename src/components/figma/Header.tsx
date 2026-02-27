@@ -42,9 +42,9 @@ export function Header() {
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <img
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="EKR Africa Agrovision Group"
-              className="h-10 w-auto rounded-2xl object-contain"
+              className="h-10 w-20 rounded-2xl object-contain"
             />
           </Link>
 
@@ -99,9 +99,9 @@ export function Header() {
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <img
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="EKR Africa Agrovision Group"
-              className="h-16 w-auto rounded-2xl object-contain"
+              className="h-16 w-32 rounded-2xl object-contain"
             />
           </Link>
 
