@@ -32,7 +32,7 @@ export function Footer({
             <img
               src="/logo.png"
               alt="EKR Africa Agrovision Group"
-              className="h-16 w-auto rounded-2xl object-contain"
+                className="h-16 w-auto rounded-2xl object-contain scale-[2]"
             />
             <p className="text-sm opacity-80 leading-relaxed">
                 Une société dédiée à la valorisation des filières agricoles africaines.

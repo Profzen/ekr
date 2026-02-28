@@ -101,7 +101,7 @@ export function Header() {
             <img
               src="/logo.png"
               alt="EKR Africa Agrovision Group"
-              className="h-16 w-32 rounded-2xl object-contain"
+              className="h-16 w-32 rounded-2xl object-contain scale-[2]"
             />
           </Link>
 
