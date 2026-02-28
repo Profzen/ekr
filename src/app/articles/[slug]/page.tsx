@@ -1,6 +1,7 @@
 import connectToDatabase from "@/lib/db";
 import ArticleModel from "@/models/Article";
 import Link from "next/link";
+import SiteContentModel from "@/models/SiteContent";
 import { isValidObjectId } from "mongoose";
 import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
 import { ArticleActions } from "@/components/figma/articles/ArticleActions";
@@ -52,6 +53,15 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, "");
 
 const sharedReadingBanner = "/article.jpeg";
+async function getReadingBannerUrl() {
+  try {
+    await connectToDatabase();
+    const content = await SiteContentModel.findOne().lean();
+    return content?.articleBannerUrl || sharedReadingBanner;
+  } catch {
+    return sharedReadingBanner;
+  }
+}
 
 const renderContentWithBold = (content: string) => {
   const paragraphs = content
@@ -75,6 +85,7 @@ const renderContentWithBold = (content: string) => {
 };
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const readingBannerUrl = await getReadingBannerUrl();
   const { slug } = await params;
   let article: {
     title: string;
@@ -143,7 +154,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   return (
     <article className="pt-16 md:pt-24 min-h-screen bg-background pb-24">
       <div className="relative h-[60vh] w-full overflow-hidden">
-        <img src={sharedReadingBanner} alt="Bannière actualités" className="w-full h-full object-cover" />
+        <img src={readingBannerUrl} alt="Bannière actualités" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
 
         <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 text-white">

@@ -7,6 +7,7 @@ const ArticleSchema = new Schema(
     excerpt: { type: String, required: true, trim: true },
     content: { type: String, required: true },
     coverImage: { type: String, default: "" },
+    bannerImage: { type: String, default: "" },
     category: { type: String, default: "Actualités" },
     status: {
       type: String,

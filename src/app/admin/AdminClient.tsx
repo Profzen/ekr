@@ -127,6 +127,7 @@ type SiteContent = {
   socialFacebookUrl: string;
   socialWhatsappUrl: string;
   socialInstagramUrl: string;
+  articleBannerUrl?: string;
 };
 
 type FormState = {
@@ -237,6 +238,50 @@ const initialContent: SiteContent = {
 };
 
 export default function AdminClient() {
+    // Gestion bannière lecture article
+    // Ajout de la déclaration du state content pour la persistance du contenu global
+    const [content, setContent] = useState<SiteContent>(initialContent);
+    const [articleBannerFile, setArticleBannerFile] = useState<File | null>(null);
+    const [articleBannerPreview, setArticleBannerPreview] = useState<string>("");
+    const [articleBannerSaving, setArticleBannerSaving] = useState(false);
+    const [articleBannerUrl, setArticleBannerUrl] = useState<string>("");
+    // ...autres useState...
+    // ...existing code...
+    useEffect(() => {
+      setArticleBannerUrl(content.articleBannerUrl || "");
+      // Si aucun fichier local, l'aperçu doit TOUJOURS afficher la bannière persistée (même si vide)
+      if (!articleBannerFile) {
+        setArticleBannerPreview(content.articleBannerUrl || "");
+      }
+    }, [content.articleBannerUrl, articleBannerFile]);
+
+    const handleArticleBannerSave = async () => {
+      setArticleBannerSaving(true);
+      setError(null);
+      setSuccess(null);
+      try {
+        let bannerUrl = articleBannerUrl;
+        if (articleBannerFile) {
+          bannerUrl = await uploadFile(articleBannerFile);
+        }
+        // Sauvegarde en base via /api/content
+        const res = await fetch("/api/content", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...content, articleBannerUrl: bannerUrl }),
+        });
+        await ensureOk(res, "Erreur lors de l'enregistrement de la bannière.");
+        setArticleBannerUrl(bannerUrl);
+        setArticleBannerFile(null);
+        setArticleBannerPreview("");
+        await loadContent();
+        showSuccess("Bannière de lecture enregistrée.");
+      } catch (err) {
+        setError("Impossible d'enregistrer la bannière.");
+      } finally {
+        setArticleBannerSaving(false);
+      }
+    }
   const [articles, setArticles] = useState<Article[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -244,7 +289,7 @@ export default function AdminClient() {
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [director, setDirector] = useState<DirectorProfile>(initialDirector);
-  const [content, setContent] = useState<SiteContent>(initialContent);
+  // ...existing code...
   const [form, setForm] = useState<FormState>(initialState);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [serviceForm, setServiceForm] = useState(initialService);
@@ -254,6 +299,8 @@ export default function AdminClient() {
   const [galleryForm, setGalleryForm] = useState(initialGallery);
   const [articleFile, setArticleFile] = useState<File | null>(null);
   const [articlePreview, setArticlePreview] = useState<string>("");
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [bannerPreview, setBannerPreview] = useState<string>("");
   const [serviceFile, setServiceFile] = useState<File | null>(null);
   const [servicePreview, setServicePreview] = useState<string>("");
   const [partnerFile, setPartnerFile] = useState<File | null>(null);
@@ -389,6 +436,7 @@ export default function AdminClient() {
     const result = await fetchJsonSafe("/api/content", { cache: "no-store" });
     if (result.data?.data) {
       const heroBackgroundUrl = result.data.data.homeHeroBackgroundUrl ?? "/agro2.jpg";
+      const articleBannerUrl = result.data.data.articleBannerUrl ?? "";
       setContent({
         heroTitle: result.data.data.heroTitle ?? "",
         heroSubtitle: result.data.data.heroSubtitle ?? "",
@@ -429,8 +477,12 @@ export default function AdminClient() {
         socialFacebookUrl: result.data.data.socialFacebookUrl ?? "",
         socialWhatsappUrl: result.data.data.socialWhatsappUrl ?? "",
         socialInstagramUrl: result.data.data.socialInstagramUrl ?? "",
+        articleBannerUrl,
       });
       setHeroBackgroundPreview(heroBackgroundUrl);
+      // Synchronise l'aperçu de la bannière dès le chargement du contenu
+      setArticleBannerUrl(articleBannerUrl);
+      setArticleBannerPreview(articleBannerUrl);
     }
   };
 
@@ -556,12 +608,15 @@ export default function AdminClient() {
       excerpt: article.excerpt,
       content: article.content,
       coverImage: article.coverImage ?? "",
+      // bannerImage removed, use articleBannerUrl if needed
       category: article.category ?? "Actualités",
       status: article.status ?? "draft",
       publishedAt: publishedAtValue,
     });
     setArticlePreview(article.coverImage ?? "");
     setArticleFile(null);
+    setBannerPreview("");
+    setBannerFile(null);
     if (articleFormRef.current) {
       articleFormRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -662,12 +717,14 @@ export default function AdminClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...partnerForm, logoUrl }),
       });
+          // bannerImage removed, use articleBannerUrl if needed
       await ensureOk(res, "Enregistrement impossible.");
       setPartnerForm(initialPartner);
       setPartnerFile(null);
       setPartnerPreview("");
       setPartnerEditingId(null);
       await loadPartners();
+      await loadContent();
       showSuccess(partnerEditingId ? "Partenaire mis à jour." : "Partenaire enregistré.");
     } catch (err) {
       setError("Impossible d'enregistrer le partenaire.");
@@ -1195,9 +1252,79 @@ export default function AdminClient() {
 
         {activeSection === "articles" && (
           <div className="space-y-8">
+            {/* Gestion indépendante de la bannière de lecture d'article */}
+            <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+              <h2 className="text-xl font-semibold text-foreground">Bannière de lecture d'article</h2>
+              <div className="mt-6 space-y-3">
+                <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+                        setArticleBannerFile(file);
+                        setArticleBannerPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                    Choisir une bannière
+                  </label>
+                </div>
+                {(articleBannerPreview || articleBannerUrl) && (
+                  <div className="space-y-3">
+                    <div className="overflow-hidden rounded-xl border border-border bg-card">
+                      <img
+                        src={articleBannerPreview || articleBannerUrl}
+                        alt="Prévisualisation bannière lecture"
+                        className="h-96 w-full object-cover"
+                      />
+                    </div>
+                    {articleBannerFile && (
+                      <button
+                        type="button"
+                        onClick={handleArticleBannerSave}
+                        disabled={articleBannerSaving}
+                        className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
+                      >
+                        {articleBannerSaving ? (
+                          <span className="inline-flex items-center gap-2">
+                            <Spinner className="h-3 w-3 border-white" />
+                            Enregistrement...
+                          </span>
+                        ) : (
+                          "Enregistrer la bannière"
+                        )}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="grid gap-10 lg:grid-cols-2">
               <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
                 <h2 className="text-xl font-semibold text-foreground">Créer un article</h2>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-foreground mb-1">Image de bannière (lecture d'article)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={e => {
+                      const file = e.target.files?.[0] || null;
+                      setBannerFile(file);
+                      setBannerPreview(file ? URL.createObjectURL(file) : "");
+                    }}
+                    className="block w-full text-sm border rounded p-2"
+                  />
+                  {bannerPreview && (
+                    <img
+                      src={bannerPreview}
+                      alt="Bannière de l'article"
+                      className="mt-2 rounded-lg object-cover w-full max-h-40 border"
+                    />
+                  )}
+                </div>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Les articles publiés apparaîtront sur le site public.
                 </p>
@@ -1788,7 +1915,7 @@ export default function AdminClient() {
             <div className="mt-4 space-y-2 text-sm">
               {partners.map((partner) => (
                 <div key={partner._id} className="rounded-xl border border-border p-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-center gap-2">
                     <div className="h-12 w-12 overflow-hidden rounded-full border border-border bg-card">
                       {partner.logoUrl ? (
                         <img
@@ -1802,12 +1929,7 @@ export default function AdminClient() {
                         </div>
                       )}
                     </div>
-                    <div>
-                      <p className="font-semibold text-foreground">{partner.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {partner.logoUrl ? "Logo enregistré" : "Sans logo"}
-                      </p>
-                    </div>
+                    <p className="font-semibold text-foreground text-center mt-1">{partner.name}</p>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     <button

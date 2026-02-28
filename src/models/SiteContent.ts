@@ -34,6 +34,7 @@ const SiteContentSchema = new Schema(
     homeAbout: { type: String, default: "" },
     homeHistory: { type: String, default: "" },
     homeHeroBackgroundUrl: { type: String, default: "/agro2.jpg" },
+    articleBannerUrl: { type: String, default: "" },
     homeStat1Value: { type: String, default: "+12" },
     homeStat1Label: { type: String, default: "Services spécialisés" },
     homeStat2Value: { type: String, default: "+40" },
