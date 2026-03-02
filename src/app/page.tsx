@@ -387,6 +387,13 @@ export default async function Home() {
           },
         ]}
       />
+      <CEO
+        name={director?.name || figmaContent.ceo.name}
+        title={director?.title || figmaContent.ceo.title}
+        bio={director?.bio || figmaContent.ceo.bio}
+        quote={director?.message || figmaContent.ceo.quote}
+        imageUrl={director?.photoUrl || figmaContent.ceo.image}
+      />
       <Intro
         title={content?.introTitle || figmaContent.intro.title}
         text={content?.introText || figmaContent.intro.text}
@@ -398,13 +405,6 @@ export default async function Home() {
         valuesText={content?.presentationValues || figmaContent.values.list.join(", ")}
       />
       <Services services={resolvedServices} />
-      <CEO
-        name={director?.name || figmaContent.ceo.name}
-        title={director?.title || figmaContent.ceo.title}
-        bio={director?.bio || figmaContent.ceo.bio}
-        quote={director?.message || figmaContent.ceo.quote}
-        imageUrl={director?.photoUrl || figmaContent.ceo.image}
-      />
       <Activities activities={resolvedActivities} />
       <ArticlesPreview articles={resolvedArticles} />
       <Partners partners={resolvedPartners} />
