@@ -26,7 +26,7 @@ export function CEO({ name, title, bio, quote, imageUrl }: CEOProps) {
 
               <div className="absolute bottom-5 left-5 text-white">
                 <h3 className="whitespace-pre-line text-2xl md:text-3xl font-bold">{name}</h3>
-                <p className="whitespace-pre-line text-secondary font-medium tracking-wide">{title}</p>
+                <p className="whitespace-pre-line text-lg md:text-xl text-white font-semibold tracking-wide">{title}</p>
               </div>
             </div>
 

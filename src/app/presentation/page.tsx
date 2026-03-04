@@ -197,24 +197,30 @@ export default async function PresentationPage() {
 
   return (
     <div className="pt-16 md:pt-24 bg-background min-h-screen">
-      <section className="py-32 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15 relative overflow-hidden">
+      <section className="py-14 md:py-16 bg-gradient-to-b from-primary/10 via-background to-background relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+        <div className="absolute top-0 left-1/2 h-full w-px bg-border/50" />
+
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] relative z-10">
-          <div className="text-center max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
-            <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight text-foreground">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 border border-border/60 rounded-[2rem] overflow-hidden bg-background/90 backdrop-blur-sm shadow-sm">
+            <div className="p-8 md:p-12 lg:p-14 space-y-7 animate-in fade-in slide-in-from-left-8 duration-700 flex flex-col justify-center">
+              <h1 className="ml-1 md:ml-2 text-3xl md:text-4xl xl:text-5xl font-bold leading-[1.2] text-foreground">
                 {content?.presentationVision || figmaContent.intro.title}
               </h1>
-              <div className="flex justify-center">
-                <div className="h-1 w-24 bg-gradient-to-r from-primary via-accent to-primary rounded-full" />
-              </div>
+
+              <div className="h-1.5 w-28 bg-gradient-to-r from-primary via-accent to-primary rounded-full" />
             </div>
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light max-w-3xl mx-auto">
-              {content?.presentationAbout || figmaContent.intro.text}
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto opacity-90">
-              Chaque projet, chaque producteur partenaire fait partie de notre écosystème d'excellence au service de l'agriculture africaine.
-            </p>
+
+            <div className="p-8 md:p-12 lg:p-14 bg-primary/5 animate-in fade-in slide-in-from-right-8 duration-700 delay-150">
+              <blockquote className="relative w-full mb-6">
+                <p className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
+                  « Chaque projet, chaque producteur partenaire fait partie de notre écosystème d'excellence au service de l'agriculture africaine. »
+                </p>
+              </blockquote>
+              <p className="mt-10 text-lg md:text-xl text-muted-foreground leading-relaxed">
+                Fournir un accompagnement technique et économique de qualité aux acteurs agricoles locaux, structurer et professionnaliser les filières agricoles à haute valeur ajoutée, développer une agriculture durable, rentable et conforme aux standards d’exportation.
+              </p>
+            </div>
           </div>
         </div>
       </section>
