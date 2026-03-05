@@ -44,7 +44,7 @@ export function Header() {
             <img
               src="/logo.png"
               alt="EKR Africa Agrovision Group"
-              className="h-10 w-20 rounded-2xl object-contain"
+              className="h-10 w-20 rounded-2xl object-contain scale-[3]"
             />
           </Link>
 
@@ -101,7 +101,7 @@ export function Header() {
             <img
               src="/logo.png"
               alt="EKR Africa Agrovision Group"
-              className="h-16 w-32 rounded-2xl object-contain scale-[2]"
+              className="h-16 w-32 rounded-2xl object-contain scale-[3]"
             />
           </Link>
 
