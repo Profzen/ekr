@@ -69,8 +69,39 @@ type Activity = {
   order?: number;
 };
 
+type Product = {
+  _id: string;
+  productName: string;
+  form: string;
+  description: string;
+  cultivatedVarieties?: string;
+  packagingDetails?: string;
+  labelingDetails?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  order?: number;
+};
+
+type ProductVariety = {
+  _id: string;
+  productName: string;
+  form: string;
+  varietyName: string;
+  slug: string;
+  shortDescription?: string;
+  detailedDescription?: string;
+  cultivatedZone?: string;
+  qualitySpecs?: string;
+  packagingDetails?: string;
+  labelingDetails?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  order?: number;
+};
+
 type AdminSectionKey =
   | "articles"
+  | "products"
   | "services"
   | "activities"
   | "partners"
@@ -162,6 +193,34 @@ const initialActivity = {
   title: "",
   description: "",
   icon: "",
+  isActive: true,
+  order: 0,
+};
+
+const initialProduct = {
+  productName: "Gingembre",
+  form: "Frais",
+  description: "",
+  cultivatedVarieties: "",
+  packagingDetails: "",
+  labelingDetails: "",
+  imageUrl: "",
+  isActive: true,
+  order: 0,
+};
+
+const initialVariety = {
+  productName: "Gingembre",
+  form: "Frais",
+  varietyName: "",
+  slug: "",
+  shortDescription: "",
+  detailedDescription: "",
+  cultivatedZone: "",
+  qualitySpecs: "",
+  packagingDetails: "",
+  labelingDetails: "",
+  imageUrl: "",
   isActive: true,
   order: 0,
 };
@@ -284,6 +343,8 @@ export default function AdminClient() {
     }
   const [articles, setArticles] = useState<Article[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [varieties, setVarieties] = useState<ProductVariety[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -293,6 +354,8 @@ export default function AdminClient() {
   const [form, setForm] = useState<FormState>(initialState);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [serviceForm, setServiceForm] = useState(initialService);
+  const [productForm, setProductForm] = useState(initialProduct);
+  const [varietyForm, setVarietyForm] = useState(initialVariety);
   const [activityForm, setActivityForm] = useState(initialActivity);
   const [partnerForm, setPartnerForm] = useState(initialPartner);
   const [teamForm, setTeamForm] = useState(initialTeam);
@@ -303,6 +366,10 @@ export default function AdminClient() {
   const [bannerPreview, setBannerPreview] = useState<string>("");
   const [serviceFile, setServiceFile] = useState<File | null>(null);
   const [servicePreview, setServicePreview] = useState<string>("");
+  const [productFile, setProductFile] = useState<File | null>(null);
+  const [productPreview, setProductPreview] = useState<string>("");
+  const [varietyFile, setVarietyFile] = useState<File | null>(null);
+  const [varietyPreview, setVarietyPreview] = useState<string>("");
   const [partnerFile, setPartnerFile] = useState<File | null>(null);
   const [partnerPreview, setPartnerPreview] = useState<string>("");
   const [teamFile, setTeamFile] = useState<File | null>(null);
@@ -315,6 +382,8 @@ export default function AdminClient() {
   const [heroBackgroundPreview, setHeroBackgroundPreview] = useState<string>("");
   const [articleSaving, setArticleSaving] = useState(false);
   const [serviceSaving, setServiceSaving] = useState(false);
+  const [productSaving, setProductSaving] = useState(false);
+  const [varietySaving, setVarietySaving] = useState(false);
   const [activitySaving, setActivitySaving] = useState(false);
   const [partnerSaving, setPartnerSaving] = useState(false);
   const [teamSaving, setTeamSaving] = useState(false);
@@ -328,6 +397,8 @@ export default function AdminClient() {
   const [success, setSuccess] = useState<string | null>(null);
   const [directorEditing, setDirectorEditing] = useState(false);
   const [partnerEditingId, setPartnerEditingId] = useState<string | null>(null);
+  const [productEditingId, setProductEditingId] = useState<string | null>(null);
+  const [varietyEditingId, setVarietyEditingId] = useState<string | null>(null);
   const [teamEditingId, setTeamEditingId] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<AdminSectionKey>("content");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -397,6 +468,18 @@ export default function AdminClient() {
   const loadServices = async () => {
     const result = await fetchJsonSafe("/api/services", { cache: "no-store" });
     setServices(result.data?.data ?? []);
+  };
+
+  const loadProducts = async () => {
+    const result = await fetchJsonSafe("/api/products", { cache: "no-store" });
+    setProducts(result.data?.data ?? []);
+  };
+
+  const loadVarieties = async () => {
+    const result = await fetchJsonSafe("/api/product-varieties", {
+      cache: "no-store",
+    });
+    setVarieties(result.data?.data ?? []);
   };
 
   const loadActivities = async () => {
@@ -498,6 +581,8 @@ export default function AdminClient() {
   useEffect(() => {
     loadArticles();
     loadServices();
+    loadProducts();
+    loadVarieties();
     loadActivities();
     loadPartners();
     loadTeam();
@@ -526,6 +611,30 @@ export default function AdminClient() {
   ) => {
     const { name, value } = event.target;
     setActivityForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleProductChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    if (event.target instanceof HTMLInputElement && event.target.type === "checkbox") {
+      const input = event.target as HTMLInputElement;
+      setProductForm((prev) => ({ ...prev, [name]: input.checked }));
+      return;
+    }
+    setProductForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleVarietyChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    if (event.target instanceof HTMLInputElement && event.target.type === "checkbox") {
+      const input = event.target as HTMLInputElement;
+      setVarietyForm((prev) => ({ ...prev, [name]: input.checked }));
+      return;
+    }
+    setVarietyForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePartnerChange = (
@@ -673,6 +782,151 @@ export default function AdminClient() {
     } finally {
       setServiceSaving(false);
     }
+  };
+
+  const handleProductSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setProductSaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const imageUrl = productFile
+        ? await uploadFile(productFile)
+        : productForm.imageUrl;
+      const url = productEditingId ? `/api/products/${productEditingId}` : "/api/products";
+      const method = productEditingId ? "PUT" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...productForm, imageUrl, order: Number(productForm.order ?? 0) }),
+      });
+      await ensureOk(res, "Enregistrement impossible.");
+      setProductForm(initialProduct);
+      setProductFile(null);
+      setProductPreview("");
+      setProductEditingId(null);
+      await loadProducts();
+      showSuccess(productEditingId ? "Produit mis à jour." : "Produit enregistré.");
+    } catch (err) {
+      setError("Impossible d'enregistrer le produit.");
+    } finally {
+      setProductSaving(false);
+    }
+  };
+
+  const handleProductEdit = (product: Product) => {
+    setProductEditingId(product._id);
+    setProductForm({
+      productName: product.productName,
+      form: product.form,
+      description: product.description,
+      cultivatedVarieties: product.cultivatedVarieties ?? "",
+      packagingDetails: product.packagingDetails ?? "",
+      labelingDetails: product.labelingDetails ?? "",
+      imageUrl: product.imageUrl ?? "",
+      isActive: product.isActive,
+      order: product.order ?? 0,
+    });
+    setProductFile(null);
+    setProductPreview(product.imageUrl ?? "");
+  };
+
+  const handleProductCancel = () => {
+    setProductEditingId(null);
+    setProductForm(initialProduct);
+    setProductFile(null);
+    setProductPreview("");
+  };
+
+  const deleteProduct = async (id: string) => {
+    if (!confirm("Supprimer ce produit ?")) return;
+    setActionLoading((prev) => ({ ...prev, [`product-${id}`]: true }));
+    const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+    await ensureOk(res, "Suppression impossible.");
+    await loadProducts();
+    setActionLoading((prev) => ({ ...prev, [`product-${id}`]: false }));
+    showSuccess("Produit supprimé.");
+  };
+
+  const handleVarietySubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setVarietySaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const imageUrl = varietyFile
+        ? await uploadFile(varietyFile)
+        : varietyForm.imageUrl;
+      const url = varietyEditingId
+        ? `/api/product-varieties/${varietyEditingId}`
+        : "/api/product-varieties";
+      const method = varietyEditingId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...varietyForm,
+          imageUrl,
+          order: Number(varietyForm.order ?? 0),
+        }),
+      });
+
+      await ensureOk(res, "Enregistrement impossible.");
+      setVarietyForm(initialVariety);
+      setVarietyFile(null);
+      setVarietyPreview("");
+      setVarietyEditingId(null);
+      await loadVarieties();
+      showSuccess(varietyEditingId ? "Variété mise à jour." : "Variété enregistrée.");
+    } catch (err) {
+      setError("Impossible d'enregistrer la variété.");
+    } finally {
+      setVarietySaving(false);
+    }
+  };
+
+  const handleVarietyEdit = (variety: ProductVariety) => {
+    setVarietyEditingId(variety._id);
+    setVarietyForm({
+      productName: variety.productName,
+      form: variety.form,
+      varietyName: variety.varietyName,
+      slug: variety.slug,
+      shortDescription: variety.shortDescription ?? "",
+      detailedDescription: variety.detailedDescription ?? "",
+      cultivatedZone: variety.cultivatedZone ?? "",
+      qualitySpecs: variety.qualitySpecs ?? "",
+      packagingDetails: variety.packagingDetails ?? "",
+      labelingDetails: variety.labelingDetails ?? "",
+      imageUrl: variety.imageUrl ?? "",
+      isActive: variety.isActive,
+      order: variety.order ?? 0,
+    });
+    setVarietyFile(null);
+    setVarietyPreview(variety.imageUrl ?? "");
+  };
+
+  const handleVarietyCancel = () => {
+    setVarietyEditingId(null);
+    setVarietyForm(initialVariety);
+    setVarietyFile(null);
+    setVarietyPreview("");
+  };
+
+  const deleteVariety = async (id: string) => {
+    if (!confirm("Supprimer cette variété ?")) return;
+    setActionLoading((prev) => ({ ...prev, [`variety-${id}`]: true }));
+    const res = await fetch(`/api/product-varieties/${id}`, { method: "DELETE" });
+    await ensureOk(res, "Suppression impossible.");
+    await loadVarieties();
+    setActionLoading((prev) => ({ ...prev, [`variety-${id}`]: false }));
+    showSuccess("Variété supprimée.");
   };
 
   const handleActivitySubmit = async (
@@ -1029,6 +1283,7 @@ export default function AdminClient() {
     icon: ComponentType<{ size?: number }>;
   }> = [
     { key: "content", label: "General", description: "Textes et stats", icon: LayoutDashboard },
+    { key: "products", label: "Produits", description: "Gingembre et piment long", icon: Briefcase },
     { key: "services", label: "Services", description: "Mettre a jour les services", icon: Briefcase },
     { key: "activities", label: "Activités", description: "Gestion des activites", icon: Briefcase },
     { key: "articles", label: "Articles", description: "Creer et gerer les articles", icon: FileText },
@@ -1043,6 +1298,10 @@ export default function AdminClient() {
     articles: {
       title: "Gestion des articles",
       subtitle: "Creer, modifier et publier vos articles.",
+    },
+    products: {
+      title: "Gestion des produits",
+      subtitle: "Produits et variétés détaillées (pages cliquables).",
     },
     services: {
       title: "Gestion des services",
@@ -1530,6 +1789,531 @@ export default function AdminClient() {
               </div>
             </div>
           </div>
+          </div>
+        )}
+
+        {activeSection === "products" && (
+          <div className="space-y-10">
+            <div className="grid gap-10 lg:grid-cols-2">
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground">
+                  {productEditingId ? "Modifier un produit" : "Ajouter un produit"}
+                </h2>
+
+                <form onSubmit={handleProductSubmit} className="mt-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Produit
+                      </label>
+                      <select
+                        name="productName"
+                        value={productForm.productName}
+                        onChange={handleProductChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      >
+                        <option value="Gingembre">Gingembre</option>
+                        <option value="Piment long">Piment long</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Forme
+                      </label>
+                      <select
+                        name="form"
+                        value={productForm.form}
+                        onChange={handleProductChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      >
+                        <option value="Frais">Frais</option>
+                        <option value="Séché">Séché</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      value={productForm.description}
+                      onChange={handleProductChange}
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      placeholder="Présentation du produit"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Variétés cultivées
+                    </label>
+                    <textarea
+                      name="cultivatedVarieties"
+                      value={productForm.cultivatedVarieties}
+                      onChange={handleProductChange}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      placeholder="Résumé global (la page détail variété contient plus d'infos)"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Conditionnement
+                    </label>
+                    <textarea
+                      name="packagingDetails"
+                      value={productForm.packagingDetails}
+                      onChange={handleProductChange}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      placeholder="Détails du conditionnement"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Étiquetage
+                    </label>
+                    <textarea
+                      name="labelingDetails"
+                      value={productForm.labelingDetails}
+                      onChange={handleProductChange}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      placeholder="Détails de l'étiquetage"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Ordre
+                      </label>
+                      <input
+                        type="number"
+                        name="order"
+                        value={productForm.order}
+                        onChange={handleProductChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      />
+                    </div>
+                    <label className="flex items-center gap-2 mt-7 text-sm text-foreground">
+                      <input
+                        type="checkbox"
+                        name="isActive"
+                        checked={productForm.isActive}
+                        onChange={handleProductChange}
+                      />
+                      Produit actif
+                    </label>
+                  </div>
+
+                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0] || null;
+                          setProductFile(file);
+                          setProductPreview(file ? URL.createObjectURL(file) : productForm.imageUrl || "");
+                        }}
+                      />
+                      Choisir une image
+                    </label>
+                  </div>
+
+                  {(productPreview || productForm.imageUrl) && (
+                    <div className="overflow-hidden rounded-xl bg-muted/20">
+                      <img
+                        src={productPreview || productForm.imageUrl}
+                        alt="Prévisualisation produit"
+                        className="h-48 w-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      disabled={productSaving}
+                      className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
+                    >
+                      {productSaving ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner />
+                          Enregistrement...
+                        </span>
+                      ) : productEditingId ? (
+                        "Mettre à jour"
+                      ) : (
+                        "Ajouter"
+                      )}
+                    </button>
+                    {productEditingId && (
+                      <button
+                        type="button"
+                        onClick={handleProductCancel}
+                        className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground"
+                      >
+                        Annuler
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground">Produits existants</h2>
+                <div className="mt-6 space-y-4">
+                  {products.length === 0 && (
+                    <p className="text-sm text-muted-foreground">Aucun produit enregistré.</p>
+                  )}
+                  {products.map((product) => (
+                    <div key={product._id} className="rounded-2xl border border-border p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            {product.productName} - {product.form}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">Ordre : {product.order ?? 0}</p>
+                        </div>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            product.isActive
+                              ? "bg-emerald-100 text-primary"
+                              : "bg-muted/20 text-muted-foreground"
+                          }`}
+                        >
+                          {product.isActive ? "Actif" : "Inactif"}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-xs text-muted-foreground">{product.description}</p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleProductEdit(product)}
+                          className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteProduct(product._id)}
+                          disabled={actionLoading[`product-${product._id}`]}
+                          className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600"
+                        >
+                          {actionLoading[`product-${product._id}`] ? (
+                            <span className="inline-flex items-center gap-2">
+                              <Spinner className="h-3 w-3 border-red-500" />
+                              Suppression...
+                            </span>
+                          ) : (
+                            "Supprimer"
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-10 lg:grid-cols-2">
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground">
+                  {varietyEditingId ? "Modifier une variété" : "Ajouter une variété"}
+                </h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Chaque variété créée ici devient cliquable sur la page publique Produits.
+                </p>
+
+                <form onSubmit={handleVarietySubmit} className="mt-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Produit
+                      </label>
+                      <select
+                        name="productName"
+                        value={varietyForm.productName}
+                        onChange={handleVarietyChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      >
+                        <option value="Gingembre">Gingembre</option>
+                        <option value="Piment long">Piment long</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Forme
+                      </label>
+                      <select
+                        name="form"
+                        value={varietyForm.form}
+                        onChange={handleVarietyChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      >
+                        <option value="Frais">Frais</option>
+                        <option value="Séché">Séché</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Nom de la variété
+                      </label>
+                      <input
+                        name="varietyName"
+                        value={varietyForm.varietyName}
+                        onChange={handleVarietyChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                        placeholder="Ex: Gingembre local"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Slug (optionnel)
+                      </label>
+                      <input
+                        name="slug"
+                        value={varietyForm.slug}
+                        onChange={handleVarietyChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                        placeholder="gingembre-local"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Description courte
+                    </label>
+                    <textarea
+                      name="shortDescription"
+                      value={varietyForm.shortDescription}
+                      onChange={handleVarietyChange}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Description détaillée
+                    </label>
+                    <textarea
+                      name="detailedDescription"
+                      value={varietyForm.detailedDescription}
+                      onChange={handleVarietyChange}
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Zone de culture
+                      </label>
+                      <textarea
+                        name="cultivatedZone"
+                        value={varietyForm.cultivatedZone}
+                        onChange={handleVarietyChange}
+                        rows={2}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Spécifications qualité
+                      </label>
+                      <textarea
+                        name="qualitySpecs"
+                        value={varietyForm.qualitySpecs}
+                        onChange={handleVarietyChange}
+                        rows={2}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Conditionnement
+                      </label>
+                      <textarea
+                        name="packagingDetails"
+                        value={varietyForm.packagingDetails}
+                        onChange={handleVarietyChange}
+                        rows={2}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Étiquetage
+                      </label>
+                      <textarea
+                        name="labelingDetails"
+                        value={varietyForm.labelingDetails}
+                        onChange={handleVarietyChange}
+                        rows={2}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Ordre
+                      </label>
+                      <input
+                        type="number"
+                        name="order"
+                        value={varietyForm.order}
+                        onChange={handleVarietyChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border outline-none text-sm"
+                      />
+                    </div>
+                    <label className="flex items-center gap-2 mt-7 text-sm text-foreground">
+                      <input
+                        type="checkbox"
+                        name="isActive"
+                        checked={varietyForm.isActive}
+                        onChange={handleVarietyChange}
+                      />
+                      Variété active
+                    </label>
+                  </div>
+
+                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0] || null;
+                          setVarietyFile(file);
+                          setVarietyPreview(file ? URL.createObjectURL(file) : varietyForm.imageUrl || "");
+                        }}
+                      />
+                      Choisir une image
+                    </label>
+                  </div>
+
+                  {(varietyPreview || varietyForm.imageUrl) && (
+                    <div className="overflow-hidden rounded-xl bg-muted/20">
+                      <img
+                        src={varietyPreview || varietyForm.imageUrl}
+                        alt="Prévisualisation variété"
+                        className="h-48 w-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="submit"
+                      disabled={varietySaving}
+                      className="flex-1 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white"
+                    >
+                      {varietySaving ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner />
+                          Enregistrement...
+                        </span>
+                      ) : varietyEditingId ? (
+                        "Mettre à jour"
+                      ) : (
+                        "Ajouter"
+                      )}
+                    </button>
+                    {varietyEditingId && (
+                      <button
+                        type="button"
+                        onClick={handleVarietyCancel}
+                        className="rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground"
+                      >
+                        Annuler
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground">Variétés existantes</h2>
+                <div className="mt-6 space-y-4">
+                  {varieties.length === 0 && (
+                    <p className="text-sm text-muted-foreground">Aucune variété enregistrée.</p>
+                  )}
+                  {varieties.map((variety) => (
+                    <div key={variety._id} className="rounded-2xl border border-border p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">
+                            {variety.varietyName}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {variety.productName} - {variety.form}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">Slug : {variety.slug}</p>
+                        </div>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            variety.isActive
+                              ? "bg-emerald-100 text-primary"
+                              : "bg-muted/20 text-muted-foreground"
+                          }`}
+                        >
+                          {variety.isActive ? "Actif" : "Inactif"}
+                        </span>
+                      </div>
+                      {variety.shortDescription && (
+                        <p className="mt-3 text-xs text-muted-foreground">{variety.shortDescription}</p>
+                      )}
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleVarietyEdit(variety)}
+                          className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-foreground"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteVariety(variety._id)}
+                          disabled={actionLoading[`variety-${variety._id}`]}
+                          className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600"
+                        >
+                          {actionLoading[`variety-${variety._id}`] ? (
+                            <span className="inline-flex items-center gap-2">
+                              <Spinner className="h-3 w-3 border-red-500" />
+                              Suppression...
+                            </span>
+                          ) : (
+                            "Supprimer"
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
