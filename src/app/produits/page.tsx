@@ -1,7 +1,6 @@
 import connectToDatabase from "@/lib/db";
 import ProductModel from "@/models/Product";
-import ProductVarietyModel from "@/models/ProductVariety";
-import Link from "next/link";
+import { ProductCardLink } from "@/components/products/ProductCardLink";
 
 export const dynamic = "force-dynamic";
 
@@ -73,54 +72,11 @@ type ProductView = {
   productName: string;
   form: string;
   description: string;
-  cultivatedVarieties: string;
-  packagingDetails: string;
-  labelingDetails: string;
   imageUrl: string;
 };
 
-type VarietyView = {
-  id: string;
-  slug: string;
-  productName: string;
-  form: string;
-  varietyName: string;
-};
-
-const fallbackVarieties: VarietyView[] = [
-  {
-    id: "v1",
-    slug: "gingembre-local",
-    productName: "Gingembre",
-    form: "Frais",
-    varietyName: "Gingembre local",
-  },
-  {
-    id: "v2",
-    slug: "gingembre-sechage-export",
-    productName: "Gingembre",
-    form: "Séché",
-    varietyName: "Gingembre séchage export",
-  },
-  {
-    id: "v3",
-    slug: "piment-long-local",
-    productName: "Piment long",
-    form: "Frais",
-    varietyName: "Piment long local",
-  },
-  {
-    id: "v4",
-    slug: "piment-long-sechage",
-    productName: "Piment long",
-    form: "Séché",
-    varietyName: "Piment long séchage",
-  },
-];
-
 export default async function ProductsPage() {
   let products: ProductView[] = [];
-  let varieties: VarietyView[] = [];
 
   try {
     await connectToDatabase();
@@ -133,45 +89,13 @@ export default async function ProductsPage() {
       productName: item.productName || "Produit",
       form: item.form || "Forme",
       description: item.description || "",
-      cultivatedVarieties: item.cultivatedVarieties || "",
-      packagingDetails: item.packagingDetails || "",
-      labelingDetails: item.labelingDetails || "",
       imageUrl: item.imageUrl || "",
-    }));
-
-    const varietyRecords = await ProductVarietyModel.find({ isActive: true })
-      .sort({ order: 1, createdAt: -1 })
-      .lean();
-
-    varieties = varietyRecords.map((item) => ({
-      id: item._id.toString(),
-      slug: item.slug,
-      productName: item.productName || "",
-      form: item.form || "",
-      varietyName: item.varietyName || "",
     }));
   } catch {
     products = [];
-    varieties = [];
   }
 
   const resolvedProducts = products.length > 0 ? products : fallbackProducts;
-  const resolvedVarieties = varieties.length > 0 ? varieties : fallbackVarieties;
-
-  const keyFor = (productName: string, form: string) =>
-    `${productName.toLowerCase()}::${form.toLowerCase()}`;
-
-  const varietiesByProductForm = resolvedVarieties.reduce<Record<string, VarietyView[]>>(
-    (acc, variety) => {
-      const key = keyFor(variety.productName, variety.form);
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(variety);
-      return acc;
-    },
-    {}
-  );
 
   return (
     <div className="pt-16 md:pt-24 bg-background min-h-screen">
@@ -193,75 +117,16 @@ export default async function ProductsPage() {
       </section>
 
       <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {resolvedProducts.map((product) => (
-            <article
+            <ProductCardLink
               key={product.id}
-              className="overflow-hidden rounded-3xl border border-border bg-card shadow-sm"
-            >
-              <div className="border-b border-border bg-muted/20">
-                <div className="relative h-56 w-full overflow-hidden">
-                  <img
-                    src={product.imageUrl || "/agro2.jpg"}
-                    alt={`${product.productName} ${product.form}`}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-5 p-5 md:p-6">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wide">
-                    {product.productName}
-                  </span>
-                  <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                    {product.form}
-                  </span>
-                </div>
-
-                <p className="text-sm md:text-base text-foreground leading-relaxed">
-                  {product.description}
-                </p>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-primary">Variétés</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {(varietiesByProductForm[keyFor(product.productName, product.form)] || []).map(
-                      (variety) => (
-                        <Link
-                          key={variety.id}
-                          href={`/produits/varietes/${variety.slug}`}
-                          className="rounded-full border border-border bg-muted/20 px-3 py-1 text-xs font-semibold text-foreground hover:bg-muted"
-                        >
-                          {variety.varietyName}
-                        </Link>
-                      )
-                    )}
-                    {(!varietiesByProductForm[keyFor(product.productName, product.form)] ||
-                      varietiesByProductForm[keyFor(product.productName, product.form)].length === 0) && (
-                      <span className="rounded-full border border-border bg-muted/20 px-3 py-1 text-xs text-muted-foreground">
-                        Aucune variété publiée
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="rounded-2xl border border-border bg-muted/20 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-primary">Conditionnement</p>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                      {product.packagingDetails || "Non renseigné."}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-border bg-muted/20 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-primary">Étiquetage</p>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                      {product.labelingDetails || "Non renseigné."}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </article>
+              href={`/produits/${product.id}`}
+              title={product.productName}
+              form={product.form}
+              description={product.description}
+              imageUrl={product.imageUrl || "/agro2.jpg"}
+            />
           ))}
         </div>
       </section>

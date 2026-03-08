@@ -195,6 +195,13 @@ export default async function PresentationPage() {
     };
   });
 
+  const visionText = content?.presentationVision || figmaContent.intro.title;
+  const quoteEndIndex = visionText.indexOf("»");
+  const heroFirstSegment =
+    quoteEndIndex >= 0 ? visionText.slice(0, quoteEndIndex + 1).trim() : visionText;
+  const heroRemainingSegment =
+    quoteEndIndex >= 0 ? visionText.slice(quoteEndIndex + 1).trim() : "";
+
   return (
     <div className="pt-16 md:pt-24 bg-background min-h-screen">
       <section className="py-14 md:py-16 bg-gradient-to-b from-primary/10 via-background to-background relative overflow-hidden">
@@ -204,8 +211,9 @@ export default async function PresentationPage() {
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 border border-border/60 rounded-[2rem] overflow-hidden bg-background/90 backdrop-blur-sm shadow-sm">
             <div className="p-8 md:p-12 lg:p-14 space-y-7 animate-in fade-in slide-in-from-left-8 duration-700 flex flex-col justify-center">
-              <h1 className="ml-1 md:ml-2 text-3xl md:text-4xl xl:text-5xl font-bold leading-[1.2] text-foreground">
-                {content?.presentationVision || figmaContent.intro.title}
+              <h1 className="ml-1 md:ml-2 text-[2rem] md:text-4xl xl:text-5xl font-bold leading-[1.15] text-foreground">
+                <span className="whitespace-nowrap">{heroFirstSegment}</span>
+                {heroRemainingSegment ? ` ${heroRemainingSegment}` : ""}
               </h1>
 
               <div className="h-1.5 w-28 bg-gradient-to-r from-primary via-accent to-primary rounded-full" />
