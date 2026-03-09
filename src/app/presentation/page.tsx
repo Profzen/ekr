@@ -211,12 +211,14 @@ export default async function PresentationPage() {
         <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1500px] relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-0 border border-border/60 rounded-[2rem] overflow-hidden bg-background/90 backdrop-blur-sm shadow-sm">
             <div className="p-8 md:p-12 lg:p-14 space-y-7 animate-in fade-in slide-in-from-left-8 duration-700 flex flex-col justify-center">
-              <h1 className="ml-1 md:ml-2 text-[2rem] md:text-4xl xl:text-5xl font-bold leading-[1.15] text-foreground">
-                <span className="whitespace-nowrap">{heroFirstSegment}</span>
-                {heroRemainingSegment ? ` ${heroRemainingSegment}` : ""}
+              <h1 className="text-[clamp(1.65rem,4.4vw,3.4rem)] font-bold leading-[1.12] tracking-[-0.01em] text-foreground">
+                <span className="mx-auto block w-fit max-w-full whitespace-nowrap text-[0.9em]">{heroFirstSegment}</span>
+                {heroRemainingSegment && (
+                  <span className="mt-2 block text-center">{heroRemainingSegment}</span>
+                )}
               </h1>
 
-              <div className="h-1.5 w-28 bg-gradient-to-r from-primary via-accent to-primary rounded-full" />
+              <div className="mx-auto h-1.5 w-28 bg-gradient-to-r from-primary via-accent to-primary rounded-full" />
             </div>
 
             <div className="p-8 md:p-12 lg:p-14 bg-primary/5 animate-in fade-in slide-in-from-right-8 duration-700 delay-150">
