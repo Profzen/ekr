@@ -342,6 +342,7 @@ export default function AdminClient() {
       }
     }
   const [articles, setArticles] = useState<Article[]>([]);
+  const [visibleArticles, setVisibleArticles] = useState(4);
   const [services, setServices] = useState<Service[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [varieties, setVarieties] = useState<ProductVariety[]>([]);
@@ -1725,7 +1726,7 @@ export default function AdminClient() {
                 {articles.length === 0 && (
                   <p className="text-sm text-muted-foreground">Aucun article enregistré.</p>
                 )}
-                {articles.map((article) => (
+                {articles.slice(0, visibleArticles).map((article) => (
                   <div key={article._id} className="rounded-2xl border border-border p-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -1786,6 +1787,15 @@ export default function AdminClient() {
                     </div>
                   </div>
                 ))}
+                {articles.length > visibleArticles && (
+                  <button
+                    type="button"
+                    onClick={() => setVisibleArticles((prev) => prev + 4)}
+                    className="w-full rounded-xl border border-border px-4 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/30 transition-colors"
+                  >
+                    Voir plus ({articles.length - visibleArticles} restants)
+                  </button>
+                )}
               </div>
             </div>
           </div>
