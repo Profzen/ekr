@@ -31,12 +31,12 @@ export function Partners({ partners }: PartnersProps) {
         ? Math.min(3, Math.max(totalPartners, 1))
         : Math.min(4, Math.max(totalPartners, 1));
 
-  const shouldAutoplay = totalPartners > slidesToShow;
+  const shouldAutoplay = totalPartners > 1;
   const sliderKey = `${slidesToShow}-${totalPartners}`;
 
   const settings = {
     dots: true,
-    infinite: shouldAutoplay,
+    infinite: true,
     speed: 500,
     slidesToShow,
     slidesToScroll: 1,

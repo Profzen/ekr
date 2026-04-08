@@ -1787,14 +1787,27 @@ export default function AdminClient() {
                     </div>
                   </div>
                 ))}
-                {articles.length > visibleArticles && (
-                  <button
-                    type="button"
-                    onClick={() => setVisibleArticles((prev) => prev + 4)}
-                    className="w-full rounded-xl border border-border px-4 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/30 transition-colors"
-                  >
-                    Voir plus ({articles.length - visibleArticles} restants)
-                  </button>
+                {articles.length > 4 && (
+                  <div className="flex gap-2">
+                    {articles.length > visibleArticles && (
+                      <button
+                        type="button"
+                        onClick={() => setVisibleArticles((prev) => prev + 4)}
+                        className="flex-1 rounded-xl border border-border px-4 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/30 transition-colors"
+                      >
+                        Voir plus ({articles.length - visibleArticles} restants)
+                      </button>
+                    )}
+                    {visibleArticles > 4 && (
+                      <button
+                        type="button"
+                        onClick={() => setVisibleArticles(4)}
+                        className="flex-1 rounded-xl border border-border px-4 py-2 text-xs font-semibold text-muted-foreground hover:bg-muted/30 transition-colors"
+                      >
+                        Réduire
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

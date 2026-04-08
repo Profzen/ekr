@@ -22,7 +22,7 @@ export function Intro({
   valuesTitle,
   valuesText,
 }: IntroProps) {
-  const rightCards = [
+  const cards = [
     {
       title: missionTitle,
       text: missionText,
@@ -35,14 +35,13 @@ export function Intro({
       icon: Eye,
       color: "bg-accent/5 text-accent-foreground border-accent/10",
     },
+    {
+      title: valuesTitle,
+      text: valuesText,
+      icon: Award,
+      color: "bg-secondary/5 text-secondary border-secondary/10",
+    },
   ];
-
-  const valuesCard = {
-    title: valuesTitle,
-    text: valuesText,
-    icon: Award,
-    color: "bg-secondary/5 text-secondary border-secondary/10",
-  };
 
   return (
     <section className="py-24 bg-background">
@@ -60,35 +59,32 @@ export function Intro({
 
             <p className="whitespace-pre-line text-lg text-muted-foreground leading-relaxed">{text}</p>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
+                <p className="text-2xl font-bold text-primary">60+</p>
+                <p className="text-xs text-muted-foreground mt-1">Emplois directs</p>
+              </div>
+              <div className="p-4 rounded-xl bg-accent/5 border border-accent/10">
+                <p className="text-2xl font-bold text-accent-foreground">42</p>
+                <p className="text-xs text-muted-foreground mt-1">Producteurs accompagnés</p>
+              </div>
+            </div>
+
             <blockquote className="pl-6 border-l-4 border-accent italic text-foreground font-medium text-xl">
               "Cultiver l'excellence pour nourrir l'avenir."
             </blockquote>
 
-            {/* Nos Valeurs — below the intro */}
-            <div
-              className={clsx(
-                "p-8 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-1",
-                valuesCard.color
-              )}
-            >
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-white rounded-xl shadow-sm shrink-0">
-                  <valuesCard.icon size={24} />
-                </div>
-                <div>
-                  <h3 className="whitespace-pre-line text-xl font-bold mb-3">{valuesCard.title}</h3>
-                  <p className="whitespace-pre-line opacity-90 leading-relaxed text-sm md:text-base">{valuesCard.text}</p>
-                </div>
-              </div>
-            </div>
+            <p className="text-base text-muted-foreground leading-relaxed">
+              Notre engagement va au-delà de la simple commercialisation. Nous investissons dans la formation, l'innovation et le développement communautaire pour bâtir un écosystème agricole résilient et prospère.
+            </p>
           </div>
 
-          <div className="flex flex-col gap-6 justify-between animate-in fade-in slide-in-from-right-8 duration-700 delay-100">
-            {rightCards.map((card, idx) => (
+          <div className="flex flex-col gap-4 justify-between animate-in fade-in slide-in-from-right-8 duration-700 delay-100">
+            {cards.map((card, idx) => (
               <div
                 key={idx}
                 className={clsx(
-                  "p-8 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-1",
+                  "p-6 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-1",
                   card.color
                 )}
               >
@@ -97,8 +93,8 @@ export function Intro({
                     <card.icon size={24} />
                   </div>
                   <div>
-                    <h3 className="whitespace-pre-line text-xl font-bold mb-3">{card.title}</h3>
-                    <p className="whitespace-pre-line opacity-90 leading-relaxed text-sm md:text-base">{card.text}</p>
+                    <h3 className="whitespace-pre-line text-lg font-bold mb-2">{card.title}</h3>
+                    <p className="whitespace-pre-line opacity-90 leading-relaxed text-sm">{card.text}</p>
                   </div>
                 </div>
               </div>
