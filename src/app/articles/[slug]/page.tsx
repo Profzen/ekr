@@ -201,8 +201,9 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         <div className="bg-white -mt-24 relative z-10 p-6 md:p-8 rounded-2xl shadow-xl border border-border/50">
           <ArticleActions title={article.title} />
 
-          <div className="space-y-8">
-            <div className="overflow-hidden rounded-xl border border-border/40 shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left column: Image */}
+            <div className="overflow-hidden rounded-xl border border-border/40 shadow-md h-fit sticky top-28">
               <img
                 src={article.image}
                 alt={article.title}
@@ -210,22 +211,25 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
               />
             </div>
 
-            <div className="prose prose-lg prose-green max-w-none text-foreground leading-relaxed">
-              <p className="lead whitespace-pre-line font-medium text-xl text-muted-foreground mb-8">{article.excerpt}</p>
-              {renderContentWithBold(article.content)}
-            </div>
-          </div>
+            {/* Right column: Content */}
+            <div className="space-y-6">
+              <div className="prose prose-lg prose-green max-w-none text-foreground leading-relaxed">
+                <p className="lead whitespace-pre-line font-medium text-xl text-muted-foreground mb-8">{article.excerpt}</p>
+                {renderContentWithBold(article.content)}
+              </div>
 
-          <div className="mt-12 pt-8 border-t border-border/50">
-            <div className="flex flex-wrap gap-2">
-              {["Agriculture", "Export", "Développement", "Afrique"].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 bg-muted/50 rounded-full text-sm font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
-                >
-                  #{tag}
-                </span>
-              ))}
+              <div className="pt-6 border-t border-border/50">
+                <div className="flex flex-wrap gap-2">
+                  {["Agriculture", "Export", "Développement", "Afrique"].map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 bg-muted/50 rounded-full text-sm font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -3352,116 +3352,77 @@ export default function AdminClient() {
 
         {activeSection === "profile" && (
           <div className="grid gap-8 lg:grid-cols-2">
-            <div className="flex flex-1 flex-col rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <h2 className="text-xl font-semibold text-foreground">
-                  Profil du Directeur General
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setDirectorEditing((prev) => !prev)}
-                  className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground"
-                >
-                  {directorEditing ? "Fermer" : "Modifier"}
-                </button>
-              </div>
-
-              {!directorEditing && (
-                <div className="mt-6 flex flex-wrap items-center gap-6 rounded-2xl border border-border bg-muted/20 p-4">
-                  <div className="h-28 w-20 overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-                    {director.photoUrl ? (
-                      <img
-                        src={director.photoUrl}
-                        alt="Photo DG"
-                        className="h-full w-full object-contain p-1"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                        Photo
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {director.name || "Directeur General"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {director.title || "Fonction"}
-                    </p>
-                  </div>
+            {/* Left column: Profile + Photo */}
+            <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <h2 className="text-xl font-semibold text-foreground">
+                    Profil du Directeur General
+                  </h2>
                 </div>
-              )}
 
-              {directorEditing && (
-                <form onSubmit={handleDirectorSubmit} className="mt-6 grid gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Nom complet
-                    </label>
-                    <input
-                      name="name"
-                      value={director.name}
-                      onChange={handleDirectorChange}
-                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
-                      placeholder="Nom complet"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Titre / Fonction
-                    </label>
-                    <input
-                      name="title"
-                      value={director.title}
-                      onChange={handleDirectorChange}
-                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
-                      placeholder="Titre / Fonction"
-                      required
-                    />
-                  </div>
-                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
-                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                <div className="mt-6 grid gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Nom complet
+                      </label>
                       <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(event) => {
-                          const file = event.target.files?.[0];
-                          if (!file) return;
-                          setDirectorFile(file);
-                          setDirectorPreview(URL.createObjectURL(file));
-                        }}
-                      />
-                      Choisir une photo
-                    </label>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      Cliquez pour sélectionner la photo officielle.
-                    </p>
-                  </div>
-                  {(directorPreview || director.photoUrl) && (
-                    <div className="max-w-[260px] overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-                      <img
-                        src={directorPreview || director.photoUrl}
-                        alt="Photo DG"
-                        className="aspect-[3/4] w-full object-contain p-2"
+                        name="name"
+                        value={director.name}
+                        onChange={handleDirectorChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+                        placeholder="Nom complet"
+                        required
                       />
                     </div>
-                  )}
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Biographie
-                    </label>
-                    <textarea
-                      name="bio"
-                      value={director.bio}
-                      onChange={handleDirectorChange}
-                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
-                      rows={5}
-                      placeholder="Biographie"
-                      required
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                        Titre / Fonction
+                      </label>
+                      <input
+                        name="title"
+                        value={director.title}
+                        onChange={handleDirectorChange}
+                        className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+                        placeholder="Titre / Fonction"
+                        required
+                      />
+                    </div>
+                    <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+                            if (!file) return;
+                            setDirectorFile(file);
+                            setDirectorPreview(URL.createObjectURL(file));
+                          }}
+                        />
+                        Choisir une photo
+                      </label>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Cliquez pour sélectionner la photo officielle.
+                      </p>
+                    </div>
+                    {(directorPreview || director.photoUrl) && (
+                      <div className="w-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+                        <img
+                          src={directorPreview || director.photoUrl}
+                          alt="Photo DG"
+                          className="w-full object-contain p-2"
+                        />
+                      </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Right column: Message & Biographie + Fond d'accueil */}
+            <div className="flex flex-col gap-8">
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground mb-6">Message & Biographie</h2>
+                <form onSubmit={handleDirectorSubmit} className="grid gap-5">
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
                       Message du DG
@@ -3471,8 +3432,22 @@ export default function AdminClient() {
                       value={director.message}
                       onChange={handleDirectorChange}
                       className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
-                      rows={4}
+                      rows={6}
                       placeholder="Message du DG"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Biographie
+                    </label>
+                    <textarea
+                      name="bio"
+                      value={director.bio}
+                      onChange={handleDirectorChange}
+                      className="w-full px-4 py-3 rounded-lg bg-muted/30 border border-border focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-sm"
+                      rows={6}
+                      placeholder="Biographie"
                       required
                     />
                   </div>
@@ -3491,70 +3466,72 @@ export default function AdminClient() {
                     )}
                   </button>
                 </form>
-              )}
-            </div>
-            <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
-              <h2 className="text-xl font-semibold text-foreground">Fond Accueil</h2>
-              <div className="mt-6 space-y-3">
-                <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(event) => {
-                        const file = event.target.files?.[0];
-                        if (!file) return;
-                        setHeroBackgroundFile(file);
-                        setHeroBackgroundPreview(URL.createObjectURL(file));
-                      }}
-                    />
-                    Choisir une image
-                  </label>
-                </div>
-                {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
-                  <div className="space-y-3">
-                    <div className="overflow-hidden rounded-xl border border-border bg-card">
-                      <img
-                        src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
-                        alt="Prévisualisation fond accueil"
-                        className="h-96 w-full object-cover"
+              </div>
+
+              {/* Fond d'accueil — below message & bio */}
+              <div className="rounded-3xl border border-border bg-card p-4 md:p-8 shadow-sm">
+                <h2 className="text-xl font-semibold text-foreground">Fond Accueil</h2>
+                <div className="mt-6 space-y-3">
+                  <div className="rounded-xl border border-dashed border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (!file) return;
+                          setHeroBackgroundFile(file);
+                          setHeroBackgroundPreview(URL.createObjectURL(file));
+                        }}
                       />
-                    </div>
-                    {heroBackgroundFile && (
-                      <button
-                        type="button"
-                        onClick={handleHeroBackgroundSave}
-                        disabled={contentSaving}
-                        className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
-                      >
-                        {contentSaving ? (
-                          <span className="inline-flex items-center gap-2">
-                            <Spinner className="h-3 w-3 border-white" />
-                            Enregistrement...
-                          </span>
-                        ) : (
-                          "Valider le fond"
-                        )}
-                      </button>
-                    )}
+                      Choisir une image
+                    </label>
                   </div>
-                )}
-                <button
-                  type="button"
-                  onClick={handleRevertToDefaultBackground}
-                  disabled={contentSaving}
-                  className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
-                >
-                  {contentSaving ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Spinner className="h-3 w-3 border-white" />
-                      Enregistrement...
-                    </span>
-                  ) : (
-                    "Revenir au fond par defaut"
+                  {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
+                    <div className="space-y-3">
+                      <div className="overflow-hidden rounded-xl border border-border bg-card">
+                        <img
+                          src={heroBackgroundPreview || content.homeHeroBackgroundUrl}
+                          alt="Prévisualisation fond accueil"
+                          className="h-48 w-full object-cover"
+                        />
+                      </div>
+                      {heroBackgroundFile && (
+                        <button
+                          type="button"
+                          onClick={handleHeroBackgroundSave}
+                          disabled={contentSaving}
+                          className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
+                        >
+                          {contentSaving ? (
+                            <span className="inline-flex items-center gap-2">
+                              <Spinner className="h-3 w-3 border-white" />
+                              Enregistrement...
+                            </span>
+                          ) : (
+                            "Valider le fond"
+                          )}
+                        </button>
+                      )}
+                    </div>
                   )}
-                </button>
+                  <button
+                    type="button"
+                    onClick={handleRevertToDefaultBackground}
+                    disabled={contentSaving}
+                    className="w-full rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-white"
+                  >
+                    {contentSaving ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Spinner className="h-3 w-3 border-white" />
+                        Enregistrement...
+                      </span>
+                    ) : (
+                      "Revenir au fond par defaut"
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

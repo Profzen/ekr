@@ -1,7 +1,7 @@
 import connectToDatabase from "@/lib/db";
 import ArticleModel from "@/models/Article";
-import Link from "next/link";
-import { Calendar, Tag, ArrowRight, Play, ZoomIn } from "lucide-react";
+import { Play, ZoomIn } from "lucide-react";
+import { ArticlesGrid } from "@/components/ArticlesGrid";
 
 export const dynamic = "force-dynamic";
 
@@ -118,8 +118,6 @@ export default async function ArticlesPage() {
           date: article.date,
         }));
 
-  const useHorizontalCarousel = resolvedArticles.length > 4;
-
   return (
     <div className="pt-16 md:pt-24 min-h-screen bg-background pb-24">
       <section className="py-32 bg-gradient-to-br from-primary/15 via-primary/5 to-accent/15 relative overflow-hidden">
@@ -138,7 +136,7 @@ export default async function ArticlesPage() {
               Découvrez la vie de la coopérative, nos événements et les dernières innovations du secteur agricole.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto opacity-90 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-              Explorez nos derniers articles, reportages et analyses sur les tendances du marché agricole, les bonnes pratiques de production et les initiatives d'EKR Africa Agrovision Group.
+              Explorez nos derniers articles, reportages et analyses sur les tendances du marché agricole, les bonnes pratiques de production et les initiatives d&apos;EKR Africa Agrovision Group.
             </p>
           </div>
         </div>
@@ -151,91 +149,7 @@ export default async function ArticlesPage() {
             <div className="h-px flex-grow bg-border/50"></div>
           </div>
 
-          {useHorizontalCarousel ? (
-            <div className="overflow-x-auto pb-4 [scrollbar-width:thin]">
-              <div className="flex gap-6 min-w-max pr-2">
-                {resolvedArticles.map((article) => (
-                  <Link
-                    key={article.id}
-                    href={`/articles/${article.id}`}
-                    className="group w-[300px] md:w-[340px] flex-shrink-0 flex flex-col h-full bg-card border border-border/50 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300"
-                  >
-                    <div className="relative aspect-video overflow-hidden">
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary uppercase tracking-wide flex items-center gap-2">
-                        <Tag size={12} />
-                        {article.category}
-                      </div>
-                    </div>
-
-                    <div className="p-6 flex flex-col flex-grow">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-medium">
-                        <Calendar size={14} />
-                        {article.date}
-                      </div>
-
-                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                        {article.title}
-                      </h3>
-
-                      <p className="text-muted-foreground mb-6 line-clamp-3 leading-relaxed flex-grow">
-                        {article.excerpt}
-                      </p>
-
-                      <span className="text-primary font-semibold text-sm flex items-center gap-2 mt-auto group-hover:translate-x-1 transition-transform">
-                        Lire l'article <ArrowRight size={16} />
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {resolvedArticles.map((article) => (
-                <Link
-                  key={article.id}
-                  href={`/articles/${article.id}`}
-                  className="group flex flex-col h-full bg-card border border-border/50 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="relative aspect-video overflow-hidden">
-                    <img
-                      src={article.image}
-                      alt={article.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary uppercase tracking-wide flex items-center gap-2">
-                      <Tag size={12} />
-                      {article.category}
-                    </div>
-                  </div>
-
-                  <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4 font-medium">
-                      <Calendar size={14} />
-                      {article.date}
-                    </div>
-
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                      {article.title}
-                    </h3>
-
-                    <p className="text-muted-foreground mb-6 line-clamp-3 leading-relaxed flex-grow">
-                      {article.excerpt}
-                    </p>
-
-                    <span className="text-primary font-semibold text-sm flex items-center gap-2 mt-auto group-hover:translate-x-1 transition-transform">
-                      Lire l'article <ArrowRight size={16} />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+          <ArticlesGrid articles={resolvedArticles} />
         </div>
       </section>
 

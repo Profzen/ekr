@@ -320,25 +320,19 @@ export default async function Home() {
     };
   });
 
-  const normalizedDefaultPartners = figmaPartners.map((partner) => ({
-    id: partner.id,
-    name: partner.name,
-    logoUrl: undefined as string | undefined,
-  }));
-
   const normalizedDbPartners = partners.map((partner) => ({
     id: partner._id,
     name: partner.name,
     logoUrl: partner.logoUrl,
   }));
 
-  const seenPartnerNames = new Set<string>();
-  const resolvedPartners = [...normalizedDbPartners, ...normalizedDefaultPartners].filter((partner) => {
-    const key = partner.name.trim().toLowerCase();
-    if (seenPartnerNames.has(key)) return false;
-    seenPartnerNames.add(key);
-    return true;
-  });
+  const resolvedPartners = normalizedDbPartners.length > 0
+    ? normalizedDbPartners
+    : figmaPartners.map((partner) => ({
+        id: partner.id,
+        name: partner.name,
+        logoUrl: undefined as string | undefined,
+      }));
 
   const figmaActivities = [
     { id: "1", title: "Culture", icon: "Sprout", description: "" },
