@@ -65,7 +65,7 @@ export function Intro({
                 <p className="text-xs text-muted-foreground mt-1">Emplois directs</p>
               </div>
               <div className="p-4 rounded-xl bg-accent/5 border border-accent/10">
-                <p className="text-2xl font-bold text-accent-foreground">42</p>
+                <p className="text-2xl font-bold text-accent-foreground">42+</p>
                 <p className="text-xs text-muted-foreground mt-1">Producteurs accompagnés</p>
               </div>
             </div>

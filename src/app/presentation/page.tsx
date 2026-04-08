@@ -221,10 +221,10 @@ export default async function PresentationPage() {
               <div className="mx-auto h-1.5 w-28 bg-gradient-to-r from-primary via-accent to-primary rounded-full" />
             </div>
 
-            <div className="p-8 md:p-12 lg:p-14 bg-primary/5 animate-in fade-in slide-in-from-right-8 duration-700 delay-150">
+            <div className="p-8 md:p-12 lg:p-14 bg-primary/5 overflow-hidden animate-in fade-in slide-in-from-right-8 duration-700 delay-150">
               <blockquote className="relative w-full mb-6">
                 <p className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
-                  « Chaque projet, chaque producteur partenaire fait partie de notre écosystème d'excellence au service de l'agriculture africaine. »
+                  «&nbsp;Chaque projet, chaque producteur partenaire fait partie de notre écosystème d'excellence au service de l'agriculture africaine.&nbsp;»
                 </p>
               </blockquote>
               <p className="mt-10 text-lg md:text-xl text-muted-foreground leading-relaxed">
