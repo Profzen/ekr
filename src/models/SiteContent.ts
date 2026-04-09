@@ -10,7 +10,7 @@ const SiteContentSchema = new Schema(
     heroSubtitle: {
       type: String,
       default:
-        "EKR Africa Agrovision Group : Une coopérative visionnaire dédiée à la valorisation des filières piment long et gingembre, de la production à l'exportation.",
+        "EKR Africa Agrovision Group : Une entreprise visionnaire dédiée à la valorisation des filières piment long et gingembre, de la production à l'exportation.",
     },
     
     // Intro Section
@@ -28,7 +28,7 @@ const SiteContentSchema = new Schema(
     homeHeroIntro: {
       type: String,
       default:
-        "Société d’accompagnement des activités agricoles en Afrique. Nous structurons des coopératives agricoles, notamment la filière piment long et gingembre, destinées à l’exportation et à la commercialisation.",
+        "Société d'accompagnement des activités agricoles en Afrique. Nous structurons des filières agricoles, notamment la filière piment long et gingembre, destinées à l'exportation et à la commercialisation.",
     },
     homeMessage: { type: String, default: "" },
     homeAbout: { type: String, default: "" },

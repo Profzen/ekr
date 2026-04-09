@@ -45,7 +45,7 @@ const figmaArticles = [
     excerpt:
       "Retour sur les actions menées pour renforcer la qualité, la traçabilité et l'accès au marché pour les producteurs partenaires.",
     content: "EKR Africa poursuit la structuration des filières à fort potentiel...",
-    category: "Coopérative",
+    category: "Entreprise",
     image:
       "https://images.unsplash.com/photo-1596434220574-9af8bf9a0891?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
   },

@@ -2905,7 +2905,7 @@ export default function AdminClient() {
                         : "border-border"
                     }`}
                     rows={3}
-                    placeholder="Sous-titre du Hero (ex: EKR Africa Agrovision Group : Une coopérative visionnaire...)"
+                    placeholder="Sous-titre du Hero (ex: EKR Africa Agrovision Group : Une entreprise visionnaire...)"
                   />
                 </div>
               </div>

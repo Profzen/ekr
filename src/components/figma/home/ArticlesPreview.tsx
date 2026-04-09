@@ -24,7 +24,7 @@ export function ArticlesPreview({ articles }: ArticlesPreviewProps) {
               Actualités & Perspectives
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl">
-              Restez informés sur les dernières innovations agricoles et la vie de notre coopérative.
+              Restez informés sur les dernières innovations agricoles et la vie de notre entreprise.
             </p>
           </div>
           <Link

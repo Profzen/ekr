@@ -108,7 +108,7 @@ export default async function PresentationServicesContactPage() {
             </h2>
             <p className="mt-6 text-sm sm:text-base leading-relaxed text-slate-700">
               {content?.presentationAbout ||
-                "EKR AFRICA AGROVISION GROUP est une société coopérative agricole active dans les filières piment long et gingembre destinées à l’exportation et à la commercialisation. Nous réalisons des diagnostics de terrain, des consultations, des plans d’affaires, l’incubation de projets et l’appui à la recherche de financement."}
+                "EKR AFRICA AGROVISION GROUP est une entreprise agricole active dans les filières piment long et gingembre destinées à l'exportation et à la commercialisation. Nous réalisons des diagnostics de terrain, des consultations, des plans d'affaires, l'incubation de projets et l'appui à la recherche de financement."}
             </p>
             <div className="mt-6 space-y-4 flex-1">
               <div className="rounded-xl border-l-4 border-emerald-600 bg-white p-4">

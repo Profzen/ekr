@@ -20,7 +20,7 @@ const figmaContent = {
   hero: {
     title: "L'Excellence Agricole au Service du Développement",
     subtitle:
-      "EKR Africa Agrovision Group : Une coopérative visionnaire dédiée à la valorisation des filières piment long et gingembre, de la production à l'exportation.",
+      "EKR Africa Agrovision Group : Une entreprise visionnaire dédiée à la valorisation des filières piment long et gingembre, de la production à l'exportation.",
     ctaPrimary: "Découvrir nos services",
     ctaSecondary: "Nous contacter",
     image:
@@ -133,7 +133,7 @@ const figmaArticles = [
     date: "08 Février 2026",
     excerpt:
       "Retour sur les actions menées pour renforcer la qualité, la traçabilité et l'accès au marché pour les producteurs partenaires.",
-    category: "Coopérative",
+    category: "Entreprise",
     imageUrl:
       "https://images.unsplash.com/photo-1596434220574-9af8bf9a0891?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
   },
@@ -144,7 +144,7 @@ const figmaPartners = [
   { id: "2", name: "Global Logistics" },
   { id: "3", name: "BioCert International" },
   { id: "4", name: "Banque Agricole" },
-  { id: "5", name: "Coopérative Sud" },
+  { id: "5", name: "Entreprise Sud" },
 ];
 
 const formatDate = (value?: Date | null) =>
