@@ -153,52 +153,57 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
   return (
     <article className="pt-16 md:pt-24 min-h-screen bg-background pb-24">
-      <div className="relative h-[60vh] w-full overflow-hidden">
-        <img src={readingBannerUrl} alt="Bannière actualités" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
-
-        <div className="absolute bottom-0 left-0 w-full p-8 md:p-16 text-white">
-          <div className="container mx-auto max-w-4xl">
-            <Link
-              href="/articles"
-              className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors font-medium text-sm uppercase tracking-wide"
-            >
-              <ArrowLeft size={16} />
-              Retour aux actualités
-            </Link>
-
-            <div className="flex items-center gap-4 mb-4">
-              <span className="bg-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                {article.category}
-              </span>
-              <span className="flex items-center gap-2 text-sm font-medium opacity-90">
-                <Calendar size={14} />
-                {article.date}
-              </span>
+      <div className="relative w-full overflow-hidden bg-gradient-to-r from-gray-400 to-gray-600">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+            {/* Left: Banner image */}
+            <div className="relative h-56 lg:h-auto overflow-hidden flex">
+              <img src={readingBannerUrl} alt="Bannière actualités" className="absolute inset-0 w-full h-full object-cover block" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-500/50 hidden lg:block" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-500/60 to-transparent lg:hidden" />
             </div>
 
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              {article.title}
-            </h1>
+            {/* Right: Title & meta */}
+            <div className="flex flex-col justify-center p-6 md:p-8 lg:p-10 text-white">
+              <Link
+                href="/articles"
+                className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors font-medium text-sm uppercase tracking-wide w-fit"
+              >
+                <ArrowLeft size={16} />
+                Retour aux actualités
+              </Link>
 
-            <div className="flex items-center gap-6 text-sm font-medium opacity-80">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={16} />
-                </div>
-                <span>Par EKR Team</span>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="bg-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  {article.category}
+                </span>
+                <span className="flex items-center gap-2 text-sm font-medium opacity-90">
+                  <Calendar size={14} />
+                  {article.date}
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Tag size={14} />
-                <span>Agriculture, Innovation</span>
+
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-4">
+                {article.title}
+              </h1>
+
+              <div className="flex items-center gap-6 text-sm font-medium opacity-80">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <User size={16} />
+                  </div>
+                  <span>Par EKR Team</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Tag size={14} />
+                  <span>Agriculture, Innovation</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-6xl py-12">
-        <div className="bg-white -mt-24 relative z-10 p-6 md:p-8 rounded-2xl shadow-xl border border-border/50">
+        <div className="bg-white -mt-12 relative z-10 p-6 md:p-8 rounded-2xl shadow-xl border border-border/50">
           <ArticleActions title={article.title} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
