@@ -133,7 +133,7 @@ export default async function ArticlesPage() {
               </div>
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-              Découvrez la vie de la coopérative, nos événements et les dernières innovations du secteur agricole.
+              Découvrez la vie de l&apos;entreprise, nos événements et les dernières innovations du secteur agricole.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto opacity-90 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
               Explorez nos derniers articles, reportages et analyses sur les tendances du marché agricole, les bonnes pratiques de production et les initiatives d&apos;EKR Africa Agrovision Group.
