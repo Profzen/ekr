@@ -56,8 +56,8 @@ export function Partners({ partners }: PartnersProps) {
         <h2 className="text-3xl font-bold mb-12 text-foreground">Nos Partenaires de Confiance</h2>
 
         <Slider key={sliderKey} {...settings} className="partners-slider">
-          {partners.map((partner) => (
-            <div key={partner.id} className="px-2 md:px-3 py-6 outline-none">
+          {displayPartners.map((partner, idx) => (
+            <div key={`${partner.id}-${idx}`} className="px-2 md:px-3 py-6 outline-none">
               <div className="mx-auto flex w-full max-w-[240px] items-center justify-center h-24 bg-white rounded-xl shadow-sm border border-border/50 hover:shadow-md transition-shadow p-3 group">
                 {partner.logoUrl ? (
                   <img
