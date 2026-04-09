@@ -32,6 +32,11 @@ export function Partners({ partners }: PartnersProps) {
         : Math.min(4, Math.max(totalPartners, 1));
 
   const shouldAutoplay = totalPartners > 1;
+  // Duplicate partners when count <= slidesToShow so react-slick has items to scroll
+  const displayPartners =
+    totalPartners > 0 && totalPartners <= slidesToShow
+      ? [...partners, ...partners]
+      : partners;
   const sliderKey = `${slidesToShow}-${totalPartners}`;
 
   const settings = {
