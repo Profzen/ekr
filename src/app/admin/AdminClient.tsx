@@ -2847,27 +2847,53 @@ export default function AdminClient() {
               </button>
             </form>
             <div className="mt-4 space-y-2 text-sm">
-              {gallery.map((item) => (
-                <div key={item._id} className="rounded-xl border border-border p-3">
-                  <p className="font-semibold text-foreground">{item.title}</p>
-                  <p className="text-xs text-muted-foreground">{item.category}</p>
-                  <button
-                    type="button"
-                    onClick={() => deleteGalleryItem(item._id)}
-                    disabled={actionLoading[`gallery-${item._id}`]}
-                    className="mt-2 text-xs font-semibold text-red-600"
-                  >
-                    {actionLoading[`gallery-${item._id}`] ? (
-                      <span className="inline-flex items-center gap-2">
-                        <Spinner className="h-3 w-3 border-red-500" />
-                        Suppression...
-                      </span>
-                    ) : (
-                      "Supprimer"
-                    )}
-                  </button>
-                </div>
-              ))}
+              {gallery.map((item) => {
+                const isVideo =
+                  item.imageUrl.includes("/video/upload/") ||
+                  /\.(mp4|webm|ogg)(\?|$)/i.test(item.imageUrl);
+
+                return (
+                  <div key={item._id} className="rounded-xl border border-border p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="h-16 w-16 overflow-hidden rounded-lg border border-border bg-muted/20 shrink-0">
+                        {isVideo ? (
+                          <video
+                            src={item.imageUrl}
+                            className="h-full w-full object-cover"
+                            muted
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={item.imageUrl}
+                            alt={item.title}
+                            className="h-full w-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-foreground truncate">{item.title}</p>
+                        <p className="text-xs text-muted-foreground">{item.category}</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => deleteGalleryItem(item._id)}
+                      disabled={actionLoading[`gallery-${item._id}`]}
+                      className="mt-2 text-xs font-semibold text-red-600"
+                    >
+                      {actionLoading[`gallery-${item._id}`] ? (
+                        <span className="inline-flex items-center gap-2">
+                          <Spinner className="h-3 w-3 border-red-500" />
+                          Suppression...
+                        </span>
+                      ) : (
+                        "Supprimer"
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

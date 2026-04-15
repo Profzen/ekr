@@ -1,5 +1,6 @@
 import connectToDatabase from "@/lib/db";
 import ArticleModel from "@/models/Article";
+import GalleryItemModel from "@/models/GalleryItem";
 import { Play, ZoomIn } from "lucide-react";
 import { ArticlesGrid } from "@/components/ArticlesGrid";
 
@@ -79,14 +80,25 @@ export default async function ArticlesPage() {
     publishedAt?: Date | null;
     category?: string;
   }> = [];
+  let galleryItems: Array<{
+    _id: string;
+    title: string;
+    imageUrl: string;
+    isActive: boolean;
+  }> = [];
 
   try {
     await connectToDatabase();
-    const fetched = await ArticleModel.find({ status: "published" })
-      .sort({ publishedAt: -1, createdAt: -1 })
-      .lean();
+    const [fetchedArticles, fetchedGallery] = await Promise.all([
+      ArticleModel.find({ status: "published" })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .lean(),
+      GalleryItemModel.find({ isActive: true })
+        .sort({ order: 1, createdAt: -1 })
+        .lean(),
+    ]);
 
-    articles = fetched.map((article) => ({
+    articles = fetchedArticles.map((article) => ({
       _id: article._id.toString(),
       title: article.title,
       excerpt: article.excerpt,
@@ -95,8 +107,16 @@ export default async function ArticlesPage() {
       publishedAt: article.publishedAt,
       category: article.category,
     }));
+
+    galleryItems = fetchedGallery.map((item) => ({
+      _id: item._id.toString(),
+      title: item.title,
+      imageUrl: item.imageUrl,
+      isActive: item.isActive ?? true,
+    }));
   } catch (error) {
     articles = [];
+    galleryItems = [];
   }
 
   const resolvedArticles =
@@ -116,6 +136,19 @@ export default async function ArticlesPage() {
           category: article.category,
           image: article.image,
           date: article.date,
+        }));
+
+  const resolvedGallery =
+    galleryItems.length > 0
+      ? galleryItems.map((item) => ({
+          id: item._id,
+          src: item.imageUrl,
+          title: item.title,
+        }))
+      : galleryImages.map((src, idx) => ({
+          id: `fallback-${idx}`,
+          src,
+          title: `Gallery ${idx + 1}`,
         }));
 
   return (
@@ -161,11 +194,11 @@ export default async function ArticlesPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {galleryImages.map((src, idx) => (
-              <div key={src} className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer">
+            {resolvedGallery.map((item, idx) => (
+              <div key={item.id} className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer">
                 <img
-                  src={src}
-                  alt={`Gallery ${idx + 1}`}
+                  src={item.src}
+                  alt={item.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
