@@ -1531,6 +1531,7 @@ export default function AdminClient() {
                     />
                     Choisir une bannière
                   </label>
+                  <p className="mt-2 text-xs text-muted-foreground">Format recommandé : 16:9</p>
                 </div>
                 {(articleBannerPreview || articleBannerUrl) && (
                   <div className="space-y-3">
@@ -1577,6 +1578,7 @@ export default function AdminClient() {
                     }}
                     className="block w-full text-sm border rounded p-2"
                   />
+                  <p className="mt-2 text-xs text-muted-foreground">Format recommandé : 16:9</p>
                   {bannerPreview && (
                     <img
                       src={bannerPreview}
@@ -1650,7 +1652,7 @@ export default function AdminClient() {
                         Choisir une image
                       </label>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Cliquez pour sélectionner l’image de couverture.
+                        Cliquez pour sélectionner l’image de couverture. Format recommandé : 16:9.
                       </p>
                     </div>
                     {(articlePreview || form.coverImage) && (
@@ -1950,6 +1952,7 @@ export default function AdminClient() {
                       />
                       Choisir une image
                     </label>
+                    <p className="mt-2 text-xs text-muted-foreground">Format recommandé : 16:9</p>
                   </div>
 
                   {(productPreview || productForm.imageUrl) && (
@@ -2235,6 +2238,7 @@ export default function AdminClient() {
                       />
                       Choisir une image
                     </label>
+                    <p className="mt-2 text-xs text-muted-foreground">Format recommandé : 16:9</p>
                   </div>
 
                   {(varietyPreview || varietyForm.imageUrl) && (
@@ -2390,6 +2394,7 @@ export default function AdminClient() {
                     className="hidden"
                   />
                 </label>
+                <p className="mt-2 text-xs text-muted-foreground">Format recommandé : 16:9</p>
                 {servicePreview && (
                   <div className="mt-3 relative inline-block">
                     <img src={servicePreview} alt="Aperçu" className="h-12 w-12 rounded-lg object-cover" />
@@ -2566,7 +2571,7 @@ export default function AdminClient() {
                   Choisir une photo
                 </label>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Cliquez pour selectionner une photo.
+                  Cliquez pour selectionner une photo. Format recommandé : 1:1 (carré).
                 </p>
               </div>
               {teamPreview && (
@@ -2685,7 +2690,7 @@ export default function AdminClient() {
                   Choisir un logo
                 </label>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Cliquez pour sélectionner le logo.
+                  Cliquez pour sélectionner le logo. Format recommandé : 16:9.
                 </p>
               </div>
               {partnerPreview && (
@@ -2814,7 +2819,7 @@ export default function AdminClient() {
                   Choisir un média
                 </label>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Cliquez pour sélectionner une image ou une vidéo.
+                  Cliquez pour sélectionner une image ou une vidéo. Format recommandé (images) : 16:9.
                 </p>
               </div>
               {galleryPreview &&
@@ -3452,7 +3457,7 @@ export default function AdminClient() {
                         Choisir une photo
                       </label>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Cliquez pour sélectionner la photo officielle.
+                        Cliquez pour sélectionner la photo officielle. Format recommandé : 1:1 (carré).
                       </p>
                     </div>
                     {(directorPreview || director.photoUrl) && (
@@ -3536,6 +3541,7 @@ export default function AdminClient() {
                       />
                       Choisir une image
                     </label>
+                    <p className="mt-2 text-xs text-muted-foreground">Format recommandé : 16:9</p>
                   </div>
                   {(heroBackgroundPreview || content.homeHeroBackgroundUrl) && (
                     <div className="space-y-3">
