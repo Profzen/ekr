@@ -16,6 +16,12 @@ import { Partners } from "@/components/figma/home/Partners";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Accueil",
+  description:
+    "EKR Africa Agrovision Group: entreprise agricole panafricaine, exportation de gingembre et piment long, structuration des filières, actualités et partenaires.",
+};
+
 const figmaContent = {
   hero: {
     title: "L'Excellence Agricole au Service du Développement",

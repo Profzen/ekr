@@ -4,6 +4,12 @@ import GalleryItemModel from "@/models/GalleryItem";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Articles & Galerie",
+  description:
+    "Actualités, médias, photos et vidéos d’EKR Africa Agrovision Group.",
+};
+
 export default async function ArticlesGaleriePage() {
   let normalizedArticles: Array<{
     _id: string;
@@ -129,14 +135,14 @@ export default async function ArticlesGaleriePage() {
                 item.imageUrl.endsWith(".mov") ? (
                   <video
                     src={item.imageUrl}
-                    className="h-32 w-full rounded-xl object-cover"
+                    className="aspect-video w-full rounded-xl object-cover"
                     controls
                   />
                 ) : (
                   <img
                     src={item.imageUrl}
                     alt={item.title}
-                    className="h-32 w-full rounded-xl object-cover"
+                    className="aspect-video w-full rounded-xl object-cover"
                   />
                 )}
                 <p className="mt-4 text-sm font-semibold text-slate-900">

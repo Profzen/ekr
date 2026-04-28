@@ -4,6 +4,12 @@ import { ProductCardLink } from "@/components/products/ProductCardLink";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Produits",
+  description:
+    "Produits agricoles EKR Africa Agrovision Group: gingembre frais, gingembre séché, piment long frais et séché.",
+};
+
 const fallbackProducts = [
   {
     id: "1",

@@ -8,6 +8,12 @@ import { MapPin, Phone, Mail, Linkedin, Facebook, Instagram, MessageCircle, Twit
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Présentation",
+  description:
+    "Présentation d’EKR Africa Agrovision Group: mission, vision, histoire, services, équipe et contact.",
+};
+
 const figmaContent = {
   intro: {
     title: "Une Vision Durable pour l'Agriculture Africaine",

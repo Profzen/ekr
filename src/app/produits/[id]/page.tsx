@@ -6,6 +6,35 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  try {
+    await connectToDatabase();
+    const record = await ProductModel.findById(id).lean();
+    const productName = record?.productName || "Produit";
+    const form = record?.form || "";
+    const description = record?.description || "Produit agricole EKR Africa Agrovision Group.";
+
+    return {
+      title: form ? `${productName} ${form}` : productName,
+      description,
+      alternates: { canonical: `/produits/${id}` },
+      openGraph: {
+        title: form ? `${productName} ${form}` : productName,
+        description,
+        type: "article",
+        images: [record?.imageUrl || "/agro2.jpg"],
+      },
+    };
+  } catch {
+    return {
+      title: "Produit",
+      description: "Produit agricole EKR Africa Agrovision Group.",
+    };
+  }
+}
+
 type ProductDetail = {
   id: string;
   productName: string;

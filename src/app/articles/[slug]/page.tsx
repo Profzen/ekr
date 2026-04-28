@@ -8,6 +8,55 @@ import { ArticleActions } from "@/components/figma/articles/ArticleActions";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+
+  try {
+    await connectToDatabase();
+    const query = isValidObjectId(slug) ? { $or: [{ slug }, { _id: slug }] } : { slug };
+    let record = await ArticleModel.findOne(query).lean();
+
+    if (!record) {
+      const candidates = await ArticleModel.find({ status: "published" })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .limit(100)
+        .lean();
+      record =
+        candidates.find((item) => slugify(item.title) === slug) ||
+        candidates.find((item) => item._id.toString() === slug) ||
+        null;
+    }
+
+    const title = record?.title || "Article";
+    const description = record?.excerpt || "Article EKR Africa Agrovision Group.";
+
+    return {
+      title,
+      description,
+      alternates: {
+        canonical: `/articles/${slug}`,
+      },
+      openGraph: {
+        title,
+        description,
+        type: "article",
+        images: [record?.coverImage || "/article.jpeg"],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [record?.coverImage || "/article.jpeg"],
+      },
+    };
+  } catch {
+    return {
+      title: "Article",
+      description: "Article EKR Africa Agrovision Group.",
+    };
+  }
+}
+
 const fallbackArticles = [
   {
     id: "1",

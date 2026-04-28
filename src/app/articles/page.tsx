@@ -6,6 +6,12 @@ import { ArticlesGrid } from "@/components/ArticlesGrid";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Articles & Galerie",
+  description:
+    "Actualités, projets, événements et galerie media d’EKR Africa Agrovision Group.",
+};
+
 const figmaArticles = [
   {
     id: "1",
@@ -195,7 +201,7 @@ export default async function ArticlesPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {resolvedGallery.map((item, idx) => (
-              <div key={item.id} className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer">
+              <div key={item.id} className="relative aspect-video rounded-xl overflow-hidden group cursor-pointer">
                 <img
                   src={item.src}
                   alt={item.title}
